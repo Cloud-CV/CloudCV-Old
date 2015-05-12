@@ -1,0 +1,14 @@
+db
+/media
+/django-jquery-file-upload/media
+/bin
+/include
+/lib
+/local
+/share
+/env
+/venv
+*.log
+*.pot
+*.pyc
+local_settings.py
