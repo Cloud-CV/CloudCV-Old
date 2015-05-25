@@ -36,6 +36,7 @@ import traceback
 import uuid
 import datetime
 import shortuuid
+<<<<<<< HEAD
 import redis
 
 r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
@@ -46,6 +47,58 @@ class Request:
 
     def run_executable(self, src_path, output_path, result_path):
         stitchImages.delay(src_path, self.socketid, output_path, result_path)
+=======
+import mimetypes
+
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+class Request:
+    socketid = None
+
+    def run_executable(self, list, result_path):
+        """
+        Deprecated Image Stitching code. We dont want to loose it. So, it is commented.
+        """
+        # try:
+        #     popen = subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #     count=1
+        #     print 'Coming Here'
+        #     while True:
+        #         popen.poll()
+        #         if(popen.stdout):
+        #             line=popen.stdout.readline()
+        #             popen.stdout.flush()
+        #
+        #         if(popen.stderr):
+        #             errline = popen.stderr.readline()
+        #             popen.stderr.flush()
+        #
+        #         if line:
+        #             self.log_to_terminal(line)
+        #             # fi.write(line+'*!*'+socketid+'\n')
+        #             print count,line, '\n'
+        #
+        #             count += 1
+        #                     # time.sleep(1)
+        #         if errline:
+        #             self.log_to_terminal(errline)
+        #             # fi.write(line+'*!*'+socketid+'\n')
+        #             print count,line, '\n'
+        #             count += 1
+        #
+        #         if line == '':
+        #             break
+        #
+        #     self.log_to_terminal('Thank you for using CloudCV')
+        #     r.publish('chat', json.dumps({'web_result': result_path, 'socketid': str(self.socketid)}))
+        # except Exception as e:
+        #     self.log_to_terminal(str(traceback.format_exc()))
+        #     print str(traceback.format_exc())
+        #
+        # return '\n', '\n'
+
+        runImageStitching.delay(list, result_path, self.socketid)
+>>>>>>> views.py documented and some redundant code removed
 
     def log_to_terminal(self, message):
         r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
@@ -157,7 +210,11 @@ class PictureCreateView(CreateView):
 class BasicPlusVersionCreateView(PictureCreateView):
     template_name_suffix = '_basicplus_form'
 
+<<<<<<< HEAD
 
+=======
+" All Views "
+>>>>>>> views.py documented and some redundant code removed
 def homepage(request):
     """
     View for home page
@@ -509,4 +566,3 @@ class ImagesList(APIView):
         images = Image.objects.all()
         serializer = ImagesSerializer(images, many=True)
         return Response(serializer.data)
-
