@@ -1,5 +1,21 @@
 __author__ = 'clint'
 
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+from urlparse import urlparse
+from PIL import Image
+from os.path import splitext, basename
+from querystring_parser import parser
+
+from app.models import Picture, RequestLog, Poi
+from app.executable.caffe_classify import caffe_classify, caffe_classify_image
+from app.executable.poi_demo import findRelativeImportance
+#from app.executable.poi_demo import findImportantPeople
+
+import app.conf as conf
+import redis
 import time
 import subprocess
 import os
@@ -13,23 +29,6 @@ import threading
 import operator
 import sys
 
-from urlparse import urlparse
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_exempt
-
-from PIL import Image
-from querystring_parser import parser
-from os.path import splitext, basename
-import redis
-
-from app.models import Picture, RequestLog, Poi
-from app.executable.caffe_classify import caffe_classify, caffe_classify_image
-#from app.executable.poi_demo import findImportantPeople
-from app.executable.poi_demo import findRelativeImportance
-import app.conf as conf
-
 redis_obj = redis.StrictRedis(host='localhost', port=6379, db=0)
 classify_channel_name = 'classify_queue'
 
@@ -40,11 +39,9 @@ download_directory = conf.PIC_DIR
 # Input image is saved here (symbolic links) - after resizing to 500 x 500
 physical_job_root = conf.LOCAL_CLASSIFY_JOB_DIR
 demo_log_file = physical_job_root + 'classify_demo.log'
-##
-###
-
 
 def log_to_terminal(message, socketid):
+    """Method for logging to terminal"""
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
 
 
@@ -63,10 +60,8 @@ class CustomPrint():
         log_to_terminal(text, self.socketid)
 
 def classify_wrapper_redis(src_path, socketid, result_path):
+    """ Method for pushing jobs into redis classify queue"""
     try:
-
-        ## PUSH job into redis classify queue
-
         redis_obj.publish(classify_channel_name, json.dumps({'src_path': src_path, 'socketid': socketid, 'result_path': result_path}))
         log_to_terminal('Task Scheduled..Please Wait', socketid)
 
