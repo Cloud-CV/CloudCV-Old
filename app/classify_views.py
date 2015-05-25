@@ -34,6 +34,9 @@ demo_log_file = physical_job_root + 'classify_demo.log'
 
 
 def log_to_terminal(message, socketid):
+    """
+    Method for publishing the message and socket-id to the channel 'chat'. 
+    """
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
 
 
@@ -54,10 +57,10 @@ class CustomPrint():
 
 
 def classify_wrapper_redis(src_path, socketid, result_path):
+    """
+    PUSH job into redis classify queue
+    """
     try:
-
-        # PUSH job into redis classify queue
-
         redis_obj.publish(classify_channel_name, json.dumps(
             {'src_path': src_path, 'socketid': socketid, 'result_path': result_path}))
         log_to_terminal('Task Scheduled..Please Wait', socketid)
@@ -71,6 +74,9 @@ def classify_wrapper_local(src_path, socketid, result_path):
 
 
 def response_mimetype(request):
+    """
+    To check the type of data in response.
+    """
     if "application/json" in request.META['HTTP_ACCEPT']:
         return "application/json"
     else:
@@ -198,6 +204,9 @@ class JSONResponse(HttpResponse):
 
 @csrf_exempt
 def demoClassify(request):
+    """
+    To classify the demo images
+    """
     post_dict = parser.parse(request.POST.urlencode())
     try:
         if not os.path.exists(demo_log_file):

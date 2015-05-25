@@ -21,6 +21,31 @@ import traceback
 import shortuuid
 import requests
 import redis
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from PIL import Image
+from querystring_parser import parser
+from os.path import splitext, basename
+from urlparse import urlparse
+
+from app.models import Picture, RequestLog, Decaf, Decafmodel
+from .response import JSONResponse, response_mimetype
+from app.celery.web_tasks.DecafTask import decafImages
+import app.conf as conf
+
+import redis
+import traceback
+import time
+import subprocess
+import os
+import json
+import traceback
+import operator
+import shortuuid
+import requests
 import re
 
 redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
@@ -134,6 +159,9 @@ class DecafCreateView(CreateView):
         return response
 
     def get_context_data(self, **kwargs):
+        """
+        Method to get the context data.
+        """
         context = super(DecafCreateView, self).get_context_data(**kwargs)
         context['pictures'] = Decaf.objects.all()
         return context
@@ -141,6 +169,9 @@ class DecafCreateView(CreateView):
 
 @csrf_exempt
 def demoDecaf(request):
+    """
+    Method for processing the Decaf-Server Demo Images
+    """
     post_dict = parser.parse(request.POST.urlencode())
     try:
         if 'src' not in post_dict:
@@ -191,6 +222,9 @@ def decafDemo(request):
 
 
 def downloadAndSaveImages(url_list, socketid):
+    """
+    To download and save images.
+    """
     try:
         uuid = shortuuid.uuid()
         directory = os.path.join(conf.PIC_DIR, str(uuid))
@@ -225,6 +259,9 @@ def downloadAndSaveImages(url_list, socketid):
 
 @csrf_exempt
 def decafDropbox(request):
+    """
+    Try Decaf-Server through Dropbox
+    """
     post_dict = parser.parse(request.POST.urlencode())
     try:
         if 'urls' not in post_dict:
