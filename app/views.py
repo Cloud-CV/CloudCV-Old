@@ -4,21 +4,30 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
-from cloudcv17 import config
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import CreateView, DeleteView
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize
-from app.models import Picture, RequestLog
-from celeryTasks.webTasks.stitchTask import stitchImages
-from log import log_to_terminal, log_and_exit
+from django.conf import settings
+from PIL import Image
+from io import BytesIO
+
+from app.celery.web_tasks.ImageStitchingTask import runImageStitching
+from app.models import Picture, RequestLog, Decaf
 from app.core.job import Job
+from querystring_parser import parser
+from log import logger, log, log_to_terminal, log_and_exit
 from savefile import saveFilesAndProcess
 import app.thirdparty.dropbox_auth as dbauth
 import app.thirdparty.google_auth as gauth
+
 import app.conf as conf
-
-from PIL import Image
-from querystring_parser import parser
-
+import base64
+import redis
+import decaf_views
+import StringIO
 import time
 import subprocess
 import os
@@ -42,10 +51,50 @@ class Request:
         r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
 
 
+def run_executable(list, session, socketid, ):
+        try:
+
+            popen=subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            count=1
+
+            while True:
+                popen.poll()
+                if(popen.stdout):
+                    line=popen.stdout.readline()
+                    popen.stdout.flush()
+
+                if(popen.stderr):
+                   errline=popen.stdout.readline()
+                   popen.stderr.flush()
+
+
+                if line:
+                    r.publish('chat', json.dumps({'message': str(line), 'socketid': str(socketid)}))
+                    print count,line, '\n'
+                    count += 1
+
+                if errline:
+                    r.publish('chat', json.dumps({'message': str(errline), 'socketid': str(socketid)}))
+                    print count,line, '\n'
+                    count += 1
+
+                if line == '':
+                    break
+            r.publish('chat', json.dumps({'message': str('Thank you for using CloudCV'), 'socketid': str(socketid)}))
+
+        except Exception as e:
+            r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
+        return '\n', '\n'
+
+
 class PictureCreateView(CreateView):
     model = Picture
 
     def form_valid(self, form):
+        """
+        Method for checking the django form validation and then saving 
+        the images after resizing them.  
+        """
         try:
             request_obj = Request()
 
@@ -110,10 +159,16 @@ class BasicPlusVersionCreateView(PictureCreateView):
 
 
 def homepage(request):
+    """
+    View for home page
+    """
     return render(request, 'index.html')
 
 
 def ec2(request):
+    """
+    This functionality is deprecated. We need to remove it from the codebase. 
+    """
     token = request.GET['dropbox_token']
     emailid = request.GET['emailid']
 
@@ -161,6 +216,10 @@ def ec2(request):
 
 @csrf_exempt
 def demoUpload(request, executable):
+    """
+    Method called when the image stitching of demo images is done by 
+    clicking on the button 'Submit these' at /image-stitch url.   
+    """
     try:
         if request.method == 'POST':
 
@@ -190,6 +249,9 @@ def demoUpload(request, executable):
 
 
 def log_every_request(job_obj):
+    """
+    Method for logging. 
+    """
     try:
         now = datetime.datetime.utcnow()
         req_obj = RequestLog(cloudcvid=job_obj.userid, noOfImg=job_obj.count,
@@ -203,9 +265,10 @@ def log_every_request(job_obj):
 
 @csrf_exempt
 def matlabReadRequest(request):
-    redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
-
-    if request.method == 'POST':
+    """
+    Method that makes request to the matlab api. 
+    """
+    if request.method == 'POST':    # post request
         post_dict = parser.parse(request.POST.urlencode())
 
         try:
@@ -226,6 +289,9 @@ def matlabReadRequest(request):
 
 
 def authenticate(request, auth_name):
+    """
+    Authentication method: Currently used for Python API.
+    """
     if auth_name == 'dropbox':
         is_API = 'type' in request.GET and request.GET['type'] == 'api'
         contains_UUID = 'userid' in request.GET
@@ -260,6 +326,9 @@ def authenticate(request, auth_name):
 
 @csrf_exempt
 def callback(request, auth_name):
+    """
+    Callback method associated with authentication part. 
+    """
     if auth_name == 'dropbox':
         post_dict = parser.parse(request.POST.urlencode())
         code = str(post_dict['code'])
