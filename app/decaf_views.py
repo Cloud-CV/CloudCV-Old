@@ -1,26 +1,5 @@
 __author__ = 'dexter'
 
-from os.path import splitext, basename
-from urlparse import urlparse
-from querystring_parser import parser
-from PIL import Image
-
-from django.views.generic import CreateView
-from django.views.decorators.csrf import csrf_exempt
-
-from app.models import Picture, Decaf, Decafmodel
-import app.conf as conf
-from .response import JSONResponse, response_mimetype
-from celeryTasks.webTasks.decafTask import decafImages
-from cloudcv17 import config
-
-import time
-import os
-import json
-import traceback
-import shortuuid
-import requests
-import redis
 from django.views.generic import CreateView, DeleteView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
