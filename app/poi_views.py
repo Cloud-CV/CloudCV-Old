@@ -34,6 +34,7 @@ demo_log_file = physical_job_root + 'classify_demo.log'
 
 
 def log_to_terminal(message, socketid):
+    """Method for logging to terminal"""
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
 
 
@@ -54,6 +55,7 @@ class CustomPrint():
 
 
 def classify_wrapper_redis(src_path, socketid, result_path):
+    """ Method for pushing jobs into redis classify queue"""
     try:
         # PUSH job into redis classify queue
         redis_obj.publish(classify_channel_name, json.dumps(

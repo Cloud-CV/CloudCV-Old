@@ -1,5 +1,20 @@
 __author__ = 'clint'
 
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+from urlparse import urlparse
+from PIL import Image
+from querystring_parser import parser
+from os.path import splitext, basename
+
+from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
+from app.executable.LDA_files.test import caffe_classify, caffe_classify_image
+from app.executable.LDA_files import train_fast
+from app.classify_views import  classify_wrapper_local as default_classify
+
+import app.conf as conf
 import time
 import os
 import json
@@ -30,7 +45,6 @@ physical_job_root = conf.LOCAL_CLASSIFY_JOB_DIR
 demo_log_file = physical_job_root + 'classify_demo.log'
 
 rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
-
 
 def log_to_terminal(message, socketid):
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
@@ -177,6 +191,9 @@ class JSONResponse(HttpResponse):
 
 @csrf_exempt
 def trainamodel(request):
+    """
+    Method for training a model
+    """
     data = {}
     post_dict = parser.parse(request.POST.urlencode())
     socketid = post_dict['socketid']
@@ -198,6 +215,9 @@ def trainamodel(request):
 
 @csrf_exempt
 def testmodel(request):
+    """
+    Method for testing an already trained model.
+    """
     data = {}
     try:
         post_dict = parser.parse(request.POST.urlencode())

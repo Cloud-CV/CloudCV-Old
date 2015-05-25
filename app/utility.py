@@ -1,4 +1,3 @@
-
 from django.http import HttpResponse
 
 from fileupload.models import Picture
