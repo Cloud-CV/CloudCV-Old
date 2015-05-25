@@ -1,15 +1,12 @@
-
 from fileupload.models import Picture
-
 from django.http import HttpResponse, HttpResponseRedirect
+from log import Logger
+from PIL import Image
+
+import os
 import time
 import subprocess
 import json
-from log import Logger
-import os
-from PIL import Image
-
-
 
 def run_executable(list, fi):
     try:
@@ -30,6 +27,9 @@ def run_executable(list, fi):
     return output,'\n'
 
 def getThumbnail(image_url_prefix, name):
+    """
+    Method for creating the thumbnails
+    """
     im = Image.open('/var/www/html/cloudcv/fileupload'+image_url_prefix+name)
     size=128,128
     im.thumbnail(size, Image.ANTIALIAS)
@@ -129,10 +129,7 @@ def saveFilesAndProcess(request, param_obj, log):
     except Exception as e:
         log.write('S',str(e))
 
-
-
     #value=os.spawnl(os.P_WAIT,'/var/www/html/cloudcv/fileupload/run_exectutable.py', list) 
-
     result='new process spawned'
     log.write('S',str(result))
 
@@ -165,5 +162,3 @@ class JSONResponse(HttpResponse):
     def __init__(self,obj='',json_opts={},mimetype="application/json",*args,**kwargs):
         content = json.dumps(obj,**json_opts)
         super(JSONResponse,self).__init__(content,mimetype,*args,**kwargs)
-
-

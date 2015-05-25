@@ -1,5 +1,20 @@
 __author__ = 'clint'
 
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+from urlparse import urlparse
+from PIL import Image
+from querystring_parser import parser
+from os.path import splitext, basename
+
+from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
+from app.executable.LDA_files.test import caffe_classify, caffe_classify_image
+from app.executable.LDA_files import train_fast
+from app.classify_views import  classify_wrapper_local as default_classify
+
+import app.conf as conf
 import time
 import subprocess
 import os
@@ -15,23 +30,8 @@ import sys
 import scipy.io as sio
 import caffe
 import numpy as np
-
-from urlparse import urlparse
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_exempt
-
-from PIL import Image
-from querystring_parser import parser
-from os.path import splitext, basename
 import redis
 
-from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
-from app.executable.LDA_files.test import caffe_classify, caffe_classify_image
-from app.executable.LDA_files import train_fast
-from app.classify_views import  classify_wrapper_local as default_classify
-import app.conf as conf
 redis_obj = redis.StrictRedis(host='localhost', port=6379, db=0)
 classify_channel_name = 'classify_queue'
 
@@ -42,9 +42,6 @@ download_directory = conf.PIC_DIR
 # Input image is saved here (symbolic links) - after resizing to 500 x 500
 physical_job_root = conf.LOCAL_CLASSIFY_JOB_DIR
 demo_log_file = physical_job_root + 'classify_demo.log'
-##
-###
-
 
 def log_to_terminal(message, socketid):
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
@@ -268,6 +265,9 @@ def trainModel(save_dir, socketid):
 
 @csrf_exempt
 def trainamodel(request):
+    """
+    Method for training a model
+    """
     data = {}
     try:
         post_dict = parser.parse(request.POST.urlencode())
@@ -301,6 +301,9 @@ def trainamodel(request):
 
 @csrf_exempt
 def testmodel(request):
+    """
+    Method for testing an already trained model.
+    """
     data = {}
     try:
         post_dict = parser.parse(request.POST.urlencode())

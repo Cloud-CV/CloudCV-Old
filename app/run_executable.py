@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+from app.executable import caffe_classify
+from log import Logger
+from log import log
+from thirdparty import dropbox_upload as dbu
+
 import subprocess
 import json
 import sqlite3
@@ -9,13 +14,7 @@ import traceback
 import os
 import os.path
 import sys
-
 import redis
-from app.executable import caffe_classify
-from log import Logger
-from log import log
-from thirdparty import dropbox_upload as dbu
-
 
 path = '/var/www/html/cloudcv/fileupload'
 if path not in sys.path:

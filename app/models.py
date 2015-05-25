@@ -8,7 +8,6 @@ class Picture(models.Model):
     necessary, but makes the code simpler. ImageField depends on PIL or
     pillow (where Pillow is easily installable in a virtualenv. If you have
     problems installing pillow, use a more generic FileField instead.
-
     """
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
@@ -31,10 +30,13 @@ class Picture(models.Model):
 
 class Decaf(models.Model):
 
-    # This is a small demo using just two fields. The slug field is really not
-    # necessary, but makes the code simpler. ImageField depends on PIL or
-    # pillow (where Pillow is easily installable in a virtualenv. If you have
-    # problems installing pillow, use a more generic FileField instead.
+    """
+    This is a small demo using just two fields. The slug field is really not
+    necessary, but makes the code simpler. ImageField depends on PIL or
+    pillow (where Pillow is easily installable in a virtualenv. If you have
+    problems installing pillow, use a more generic FileField instead.
+
+    """
 
     #file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
@@ -57,11 +59,13 @@ class Decaf(models.Model):
 
 class Decafmodel(models.Model):
 
-    # This is a small demo using just two fields. The slug field is really not
-    # necessary, but makes the code simpler. ImageField depends on PIL or
-    # pillow (where Pillow is easily installable in a virtualenv. If you have
-    # problems installing pillow, use a more generic FileField instead.
+    """
+    This is a small demo using just two fields. The slug field is really not
+    necessary, but makes the code simpler. ImageField depends on PIL or
+    pillow (where Pillow is easily installable in a virtualenv. If you have
+    problems installing pillow, use a more generic FileField instead.
 
+    """
     #file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
@@ -83,11 +87,13 @@ class Decafmodel(models.Model):
 
 class Trainaclass(models.Model):
 
-    # This is a small demo using just two fields. The slug field is really not
-    # necessary, but makes the code simpler. ImageField depends on PIL or
-    # pillow (where Pillow is easily installable in a virtualenv. If you have
-    # problems installing pillow, use a more generic FileField instead.
+    """ 
+    This is a small demo using just two fields. The slug field is really not
+    necessary, but makes the code simpler. ImageField depends on PIL or
+    pillow (where Pillow is easily installable in a virtualenv. If you have
+    problems installing pillow, use a more generic FileField instead.
 
+    """
     #file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
@@ -109,12 +115,13 @@ class Trainaclass(models.Model):
 
 
 class Classify(models.Model):
+    """ 
+    This is a small demo using just two fields. The slug field is really not
+    necessary, but makes the code simpler. ImageField depends on PIL or
+    pillow (where Pillow is easily installable in a virtualenv. If you have
+    problems installing pillow, use a more generic FileField instead.
 
-    # This is a small demo using just two fields. The slug field is really not
-    # necessary, but makes the code simpler. ImageField depends on PIL or
-    # pillow (where Pillow is easily installable in a virtualenv. If you have
-    # problems installing pillow, use a more generic FileField instead.
-
+    """
     #file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
@@ -136,11 +143,13 @@ class Classify(models.Model):
 
 class Poi(models.Model):
 
-    # This is a small demo using just two fields. The slug field is really not
-    # necessary, but makes the code simpler. ImageField depends on PIL or
-    # pillow (where Pillow is easily installable in a virtualenv. If you have
-    # problems installing pillow, use a more generic FileField instead.
+    """ 
+    This is a small demo using just two fields. The slug field is really not
+    necessary, but makes the code simpler. ImageField depends on PIL or
+    pillow (where Pillow is easily installable in a virtualenv. If you have
+    problems installing pillow, use a more generic FileField instead.
 
+    """
     #file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
@@ -162,6 +171,9 @@ class Poi(models.Model):
 
 
 class CloudCV_Users(models.Model):
+    """
+    Database fields for the users on CloudCV
+    """
     first_name = models.CharField(max_length = 20)
     last_name = models.CharField(max_length = 20)
     userid = models.CharField(max_length = 100, primary_key=True)
@@ -169,15 +181,27 @@ class CloudCV_Users(models.Model):
     is_active = models.BooleanField()
 
 class GoogleAccountInfo(models.Model):
+    """
+    Should be replaced with models of Python-social auth
+
+    """
     cloudcvid = models.ForeignKey(CloudCV_Users, unique = True)
     credential = CredentialsField()
     flow = FlowField()
 
 class DropboxAccount(models.Model):
+    """
+    Should be replaced with models of Python-social auth
+    
+    """
     cloudcvid = models.ForeignKey(CloudCV_Users, unique = True)
     access_token = models.CharField(max_length=100, null=False)
 
 class RequestLog(models.Model):
+    """
+    Fields required for logging the information.
+
+    """
     cloudcvid = models.CharField(max_length=100, null=False)
     jobid = models.CharField(max_length=100)
     noOfImg = models.IntegerField()
@@ -185,6 +209,3 @@ class RequestLog(models.Model):
     dateTime = models.DateTimeField()
     isDropbox = models.BooleanField()
     apiName =models.CharField(max_length=20, null=True)
-
-
-
