@@ -1,4 +1,22 @@
 __author__ = 'dexter'
+
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from PIL import Image
+from querystring_parser import parser
+from os.path import splitext, basename
+from urlparse import urlparse
+
+from app.models import Picture, RequestLog, Decaf, Decafmodel
+from .response import JSONResponse, response_mimetype
+from app.celery.web_tasks.DecafTask import decafImages
+import app.conf as conf
+
+import redis
+import traceback
 import time
 import subprocess
 import os
@@ -7,22 +25,7 @@ import traceback
 import operator
 import shortuuid
 import requests
-from os.path import splitext, basename
-from urlparse import urlparse
-import traceback
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from PIL import Image
-import redis
-from querystring_parser import parser
-from app.models import Picture, RequestLog, Decaf, Decafmodel
-import app.conf as conf
-from .response import JSONResponse, response_mimetype
-
-from app.celery.web_tasks.DecafTask import decafImages
+import re
 
 redis_obj = redis.StrictRedis(host='localhost', port=6379, db=0)
 ps_obj = redis_obj.pubsub()
@@ -35,6 +38,9 @@ def log_to_terminal(message, socketid):
         redis_obj.publish('chat', json.dumps({'error': str(message), 'socketid': str(socketid)}))
 
 def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_file_name='', modelname=''):
+    """
+    Deprecated Decaf-Server code. We dont want to loose it. So, it is commented.
+    """
     # try:
     #     #Entire Directory
     #     if os.path.isdir(os.path.join(src_path,single_file_name)):
@@ -101,6 +107,9 @@ class DecafCreateView(CreateView):
     socketid = None
 
     def getThumbnail(self, image_url_prefix, name):
+        """
+        Method to create thumbnail of image
+        """
         im = Image.open('/var/www/html/cloudcv/fileupload'+image_url_prefix+name)
         size = 128, 128
         im.thumbnail(size, Image.ANTIALIAS)
@@ -185,12 +194,18 @@ class DecafCreateView(CreateView):
         return response
 
     def get_context_data(self, **kwargs):
+        """
+        Method to get the context data.
+        """
         context = super(DecafCreateView, self).get_context_data(**kwargs)
         context['pictures'] = Decaf.objects.all()
         return context
 
 @csrf_exempt
 def demoDecaf(request):
+    """
+    Method for processing the Decaf-Server Demo Images
+    """
     post_dict = parser.parse(request.POST.urlencode())
     try:
 
@@ -244,8 +259,10 @@ def decafDemo(request):
     else:
         redis_obj.publish(decaf_channel_name, json.dumps({'dir': DEMO_IMAGE_PATH, 'flag': '2', 'socketid': post_dict['socketid']}))
 
-import re
 def downloadAndSaveImages(url_list, socketid):
+    """
+    To download and save images.
+    """
     try:
         uuid = shortuuid.uuid()
         directory = os.path.join(conf.PIC_DIR , str(uuid))
@@ -285,6 +302,9 @@ def downloadAndSaveImages(url_list, socketid):
 
 @csrf_exempt
 def decafDropbox(request):
+    """
+    Try Decaf-Server through Dropbox
+    """
     post_dict = parser.parse(request.POST.urlencode())
     try:
         if 'urls' not in post_dict:

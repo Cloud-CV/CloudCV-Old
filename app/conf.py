@@ -1,13 +1,13 @@
 __author__ = 'parallels'
-import os
 
+from django.conf import settings
+
+import os
 import sys
 path = '/home/ubuntu/cloudcv/cloudcv17'
 sys.path.append(path)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cloudcv17.settings")
-
-from django.conf import settings
 
 # user
 USER = 'ubuntu'
