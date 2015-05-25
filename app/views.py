@@ -1,8 +1,29 @@
 # encoding: utf-8
 
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import CreateView, DeleteView
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize
+from django.conf import settings
+from PIL import Image
+from io import BytesIO
 
+from app.celery.web_tasks.ImageStitchingTask import runImageStitching
+from app.models import Picture, RequestLog, Decaf
+from app.core.job import Job
+from querystring_parser import parser
+from log import logger, log, log_to_terminal, log_and_exit
+from savefile import saveFilesAndProcess
+import app.thirdparty.dropbox_auth as dbauth
+import app.thirdparty.google_auth as gauth
+
+import app.conf as conf
+import base64
+import redis
+import decaf_views
+import StringIO
 import time
 import subprocess
 import os
@@ -13,37 +34,15 @@ import datetime
 import shortuuid
 import mimetypes
 
-from django.views.generic import CreateView, DeleteView
-
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
-from querystring_parser import parser
-import redis
-
-from app.models import Picture, RequestLog, Decaf
-from log import logger, log, log_to_terminal, log_and_exit
-from app.core.job import Job
-from savefile import saveFilesAndProcess
-import app.thirdparty.dropbox_auth as dbauth
-import app.thirdparty.google_auth as gauth
-import decaf_views
-import app.conf as conf
-from django.conf import settings
-from PIL import Image
-import StringIO
-import base64
-from io import BytesIO
-
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-from app.celery.web_tasks.ImageStitchingTask import runImageStitching
 
 class Request:
     socketid = None
 
     def run_executable(self, list, result_path):
-
+        """
+        Deprecated Image Stitching code. We dont want to loose it. So, it is commented.
+        """
         # try:
         #     popen = subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         #     count=1
@@ -57,10 +56,8 @@ class Request:
         #         if(popen.stderr):
         #             errline = popen.stderr.readline()
         #             popen.stderr.flush()
-        #         # r = redis.StrictRedis(host = '127.0.0.1' , port=6379, db=0)
         #
         #         if line:
-        #             # r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
         #             self.log_to_terminal(line)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'
@@ -68,7 +65,6 @@ class Request:
         #             count += 1
         #                     # time.sleep(1)
         #         if errline:
-        #             # r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
         #             self.log_to_terminal(errline)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'
@@ -95,7 +91,6 @@ def run_executable(list, session, socketid, ):
 
             popen=subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             count=1
-            r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
 
             while True:
                 popen.poll()
@@ -131,6 +126,10 @@ class PictureCreateView(CreateView):
     model = Picture
 
     def form_valid(self, form):
+        """
+        Method for checking the django form validation and then saving 
+        the images after resizing them.  
+        """
         try:
             request_obj = Request()
 
@@ -203,10 +202,17 @@ class PictureCreateView(CreateView):
 class BasicPlusVersionCreateView(PictureCreateView):
     template_name_suffix = '_basicplus_form'
 
+" All Views "
 def homepage(request):
+    """
+    View for home page
+    """
     return render(request, 'index.html')
 
 def ec2(request):
+    """
+    This functionality is deprecated. We need to remove it from the codebase. 
+    """
     token = request.GET['dropbox_token']
     emailid = request.GET['emailid']
 
@@ -253,6 +259,10 @@ def ec2(request):
 
 @csrf_exempt
 def demoUpload(request, executable):
+    """
+    Method called when the image stitching of demo images is done by 
+    clicking on the button 'Submit these' at /image-stitch url.   
+    """
     try:
         if request.method == 'POST':
 
@@ -289,6 +299,9 @@ def demoUpload(request, executable):
     return HttpResponse('Not a post request')
 
 def log_every_request(job_obj):
+    """
+    Method for logging. 
+    """
     try:
         now = datetime.datetime.utcnow()
         req_obj = RequestLog(cloudcvid=job_obj.userid, noOfImg=job_obj.count,
@@ -296,14 +309,13 @@ def log_every_request(job_obj):
                           function=job_obj.executable, dateTime=now)
         req_obj.save()
     except Exception as e:
-        r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
         r.publish('chat', json.dumps({'error': str(traceback.format_exc()), 'socketid': job_obj.socketid}))
 
 @csrf_exempt
 def matlabReadRequest(request):
-    r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
-
-
+    """
+    Method that makes request to the matlab api. 
+    """
     if request.method == 'POST':    # post request
         post_dict = parser.parse(request.POST.urlencode())
 
@@ -326,6 +338,9 @@ def matlabReadRequest(request):
         # return HttpResponse(str(request))
 
 def authenticate(request, auth_name):
+    """
+    Authentication method: Currently used for Python API.
+    """
     if auth_name == 'dropbox':
         is_API = 'type' in request.GET and request.GET['type']=='api'
         contains_UUID = 'userid' in request.GET
@@ -360,6 +375,9 @@ def authenticate(request, auth_name):
 
 @csrf_exempt
 def callback(request, auth_name):
+    """
+    Callback method associated with authentication part. 
+    """
     if auth_name == 'dropbox':
         post_dict = parser.parse(request.POST.urlencode())
         code = str(post_dict['code'])
