@@ -17,18 +17,6 @@ import re
 
 r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
-''' Not using getThumbnail code anymore
-def getThumbnail(image_url_prefix, name):
-    # image_url_prefix = /media/pictures/
-    im = Image.open('/var/www/html/cloudcv/fileupload' + image_url_prefix + name)
-    size = 128, 128
-    im.thumbnail(size, Image.ANTIALIAS)
-    list = name.split('.')
-    file = image_url_prefix + 'thumbnails/' + name
-    im.save('/var/www/html/cloudcv/fileupload' + file, list[1])
-    return file
-'''
-
 
 def parseParameters(params):
     params = str(params)

@@ -57,7 +57,6 @@ logger = Logger()
 
 r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
-
 def log(message, name):
     r.lpush('message', str(name) + '  :  ' + str(message))
 

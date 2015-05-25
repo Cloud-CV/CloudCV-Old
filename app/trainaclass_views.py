@@ -43,8 +43,11 @@ download_directory = conf.PIC_DIR
 # Input image is saved here (symbolic links) - after resizing to 500 x 500
 physical_job_root = conf.LOCAL_CLASSIFY_JOB_DIR
 demo_log_file = physical_job_root + 'classify_demo.log'
+<<<<<<< HEAD
 
 rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
+=======
+>>>>>>> documentation changes
 
 def log_to_terminal(message, socketid):
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
