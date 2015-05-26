@@ -21,6 +21,7 @@ class Logger:
             self._fi_process = open(os.path.join(self.log_path, 'log_process.txt'), type)
 
     def getData(self):
+        """Returns the time along with date """
         return str(strftime("%Y-%m-%d %H:%M:%S", gmtime()))+' : '
 
     def write_opening(self):
@@ -37,7 +38,6 @@ class Logger:
         if(type == 'P'):
             self._fi_process.write(self.getData()+str(msg)+'\n')
 
-
     def close(self, type):
         if(type == 'S'):
             self._fi_server.close()
@@ -50,13 +50,10 @@ class Logger:
 
 logger = Logger()
 
-
 r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
-
 
 def log(message, name):
     r.lpush('message', str(name) + '  :  ' + str(message))
-
 
 def log_to_terminal(message, socketid):
     r.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
@@ -65,7 +62,6 @@ def log_and_exit(message, socketid):
     r.publish('chat', json.dumps({'exit': str(message), 'socketid': str(socketid)}))
 
 def log_error_to_terminal(message, socketid, end):
-
     if(end):
         r.publish('chat', json.dumps({'error': message, 'socketid': socketid, 'end': 'yes'}))
     else:

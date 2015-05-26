@@ -1,21 +1,22 @@
+from django.http import HttpResponse
+from PIL import Image
+from io import BytesIO
+
+from app.models import Picture
+from app.celery.api_tasks.tasks import saveDropboxFiles
+from app.log import logger, log_to_terminal, log_error_to_terminal
+from app.core.run_executables import parseParameters
+import app.core.execute as core_execute
+import app.thirdparty.ccv_dropbox as ccvdb
+
+import app.conf as conf
+import sys
+import redis
+import base64
 import time
 import os
 import traceback
 import json
-from django.http import HttpResponse
-from PIL import Image
-import sys
-import app.core.execute as core_execute
-from app.models import Picture
-import app.thirdparty.ccv_dropbox as ccvdb
-from app.celery.api_tasks.tasks import saveDropboxFiles
-
-from app.log import logger, log_to_terminal, log_error_to_terminal
-import redis
-from app.core.run_executables import parseParameters
-import app.conf as conf
-import base64
-from io import BytesIO
 r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
 
 ''' Not using getThumbnail code anymore
@@ -29,7 +30,6 @@ def getThumbnail(image_url_prefix, name):
     im.save('/var/www/html/cloudcv/fileupload' + file, list[1])
     return file
 '''
-
 
 def resizeImageAndTransfer(path, directory, size, file):
 
