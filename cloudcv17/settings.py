@@ -7,9 +7,10 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
+import redis
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 BASE_ABS_DIR = os.path.abspath(os.path.dirname(__file__))
 os.environ['CLOUDCV_ABS_DIR'] = BASE_ABS_DIR
@@ -37,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'rest_framework',
 )
 
 
@@ -124,8 +126,17 @@ LOGGING = {
 }
 
 """
-import redis
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 r.set('CLOUDCV_ABS_DIR', BASE_ABS_DIR)
 r.set('CLOUDCV_MEDIA_ROOT', MEDIA_ROOT)
 r.set('CLOUDCV_PIC_ROOT', os.path.join(MEDIA_ROOT, 'pictures', 'cloudcv'))
+
+# Global settings for REST framework API are kept in a single configuration dictionary 
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
