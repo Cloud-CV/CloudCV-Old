@@ -392,3 +392,69 @@ def callback(request, auth_name):
         return HttpResponse(json_response)
 
     return HttpResponse('Invalid URL')
+
+####################################################################
+
+from rest_framework.views import APIView
+
+class CloudCV_UserList(APIView):
+  """
+  List all cloudcv users, or create a new user.
+  """
+  def get(self, request, format=None):
+      cloudcv_user = CloudCV_User.objects.all()
+      serializer = CloudCV_UserSerializer(cloudcv_user, many=True)
+      return Response(serializer.data)
+
+  def post(self, request, format=None):
+      serializer = CloudCV_UserSerializer(data=request.data)
+      if serializer.is_valid():
+          serializer.save()
+          return Response(serializer.data, status=status.HTTP_201_CREATED)
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CloudCV_UserDetail(APIView):
+  """
+  Retrieve, update or delete a CloudCV_User instance.
+  """
+  def get_object(self, pk):
+      try:
+          return CloudCV_User.objects.get(pk=pk)
+      except CloudCV_User.DoesNotExist:
+          raise Http404
+
+  def get(self, request, pk, format=None):
+      cloudcv_user = self.get_object(pk)
+      serializer = CloudCV_UserSerializer(cloudcv_user)
+      return Response(serializer.data)
+
+  def put(self, request, pk, format=None):
+      cloudcv_user = self.get_object(pk)
+      serializer = CloudCV_UserSerializer(cloudcv_user, data=request.data)
+      if serializer.is_valid():
+          serializer.save()
+          return Response(serializer.data)
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def delete(self, request, pk, format=None):
+      cloudcv_user = self.get_object(pk)
+      cloudcv_user.delete()
+      return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RequestLogList(APIView):
+    """
+    List all the requst jobs and their respective details. 
+    """
+    def get(self, request, format=None):
+        job = RequestLog.objects.all()
+        serializer = RequestLogSerializer(job, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = RequestLogSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
