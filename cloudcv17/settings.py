@@ -7,12 +7,11 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
+from cloudcv17 import config
 import redis
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
-from cloudcv17 import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 BASE_ABS_DIR = os.path.abspath(os.path.dirname(__file__))
