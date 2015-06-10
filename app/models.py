@@ -86,7 +86,7 @@ class DictModel(models.Model):
     '''
     name = models.CharField(max_length=100)
 
-class group(models.Model):
+class Group(models.Model):
     '''
     This table stores the information about the group of people who 
     are doing research/work using cloudcv and is used to monitor that 
@@ -116,3 +116,4 @@ class Images(models.Model):
     user = models.ForeignKey(User)
     category = models.CharField(max_length = 100)
     url = models.TextField(validators=[URLValidator()])
+    
