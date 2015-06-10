@@ -1,211 +1,118 @@
 # encoding: utf-8
 from django.db import models
-from oauth2client.django_orm import CredentialsField
-from oauth2client.django_orm import FlowField
+from django.core.validators import URLValidator
 
-class Picture(models.Model):
-    """This is a small demo using just two fields. The slug field is really not
-    necessary, but makes the code simpler. ImageField depends on PIL or
-    pillow (where Pillow is easily installable in a virtualenv. If you have
-    problems installing pillow, use a more generic FileField instead.
-    """
-    file = models.ImageField(upload_to="pictures")
-    slug = models.SlugField(max_length=50, blank=True)
+class User(models.Model):
+    '''
+    It stores the information about the cloudcv users who sign up on CloudCV.
+    '''
+    # The next four variables represents the choices for the Purpose field
+    EDUCATION = 'ED'
+    RESERACH = 'RE'
+    BUSINESS = 'BU'
+    OTHERS = 'OT'
+    PURPOSE = (
+        (EDUCATION, 'Education'),
+        (RESERACH,'Research'),
+        (BUSINESS,'Business'),
+        (OTHERS,'Others'),
+        )
+    email_id = models.EmailField(max_length = 254, unique = True)
+    first_name = models.CharField(max_length =100)
+    last_name = models.CharField(max_length = 100)
+    username = models.Charfield(, max_length = 50, unique = True)
+    # The Next field represents the institution/company where the user belongs to.
+    institution = models.Charfield(max_length = 500)
+    last_login = models.DateTimeField()
+    date_joined = models.DateTimeField()
+    purpose = models.CharField(max_length = 2,
+        choices = PURPOSE,
+        default = EDUCATION)
 
-    def __unicode__(self):
-        return self.file.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('upload-new', )
-
-    def save(self, *args, **kwargs):
-        self.slug = self.file.name
-        super(Picture, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        """delete -- Remove to leave file."""
-        self.file.delete(False)
-        super(Picture, self).delete(*args, **kwargs)
-
-class Decaf(models.Model):
-
-    """
-    This is a small demo using just two fields. The slug field is really not
-    necessary, but makes the code simpler. ImageField depends on PIL or
-    pillow (where Pillow is easily installable in a virtualenv. If you have
-    problems installing pillow, use a more generic FileField instead.
-
-    """
-
-    #file = models.FileField(upload_to="pictures")
-    file = models.ImageField(upload_to="pictures")
-    slug = models.SlugField(max_length=50, blank=True)
-
-    def __unicode__(self):
-        return self.file.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('decaf', )
-
-    def save(self, *args, **kwargs):
-        self.slug = self.file.name
-        super(Decaf, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.file.delete(False)
-        super(Decaf, self).delete(*args, **kwargs)
-
-class Decafmodel(models.Model):
-
-    """
-    This is a small demo using just two fields. The slug field is really not
-    necessary, but makes the code simpler. ImageField depends on PIL or
-    pillow (where Pillow is easily installable in a virtualenv. If you have
-    problems installing pillow, use a more generic FileField instead.
-
-    """
-    #file = models.FileField(upload_to="pictures")
-    file = models.ImageField(upload_to="pictures")
-    slug = models.SlugField(max_length=50, blank=True)
-
-    def __unicode__(self):
-        return self.file.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('decaf', )
-
-    def save(self, *args, **kwargs):
-        self.slug = self.file.name
-        super(Decafmodel, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.file.delete(False)
-        super(Decafmodel, self).delete(*args, **kwargs)
-
-class Trainaclass(models.Model):
-
-    """ 
-    This is a small demo using just two fields. The slug field is really not
-    necessary, but makes the code simpler. ImageField depends on PIL or
-    pillow (where Pillow is easily installable in a virtualenv. If you have
-    problems installing pillow, use a more generic FileField instead.
-
-    """
-    #file = models.FileField(upload_to="pictures")
-    file = models.ImageField(upload_to="pictures")
-    slug = models.SlugField(max_length=50, blank=True)
-
-    def __unicode__(self):
-        return self.file.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('trainaclass', )
-
-    def save(self, *args, **kwargs):
-        self.slug = self.file.name
-        super(Trainaclass, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.file.delete(False)
-        super(Trainaclass, self).delete(*args, **kwargs)
-
-
-class Classify(models.Model):
-    """ 
-    This is a small demo using just two fields. The slug field is really not
-    necessary, but makes the code simpler. ImageField depends on PIL or
-    pillow (where Pillow is easily installable in a virtualenv. If you have
-    problems installing pillow, use a more generic FileField instead.
-
-    """
-    #file = models.FileField(upload_to="pictures")
-    file = models.ImageField(upload_to="pictures")
-    slug = models.SlugField(max_length=50, blank=True)
-
-    def __unicode__(self):
-        return self.file.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('classify', )
-
-    def save(self, *args, **kwargs):
-        self.slug = self.file.name
-        super(Classify, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.file.delete(False)
-        super(Classify, self).delete(*args, **kwargs)
-
-class Poi(models.Model):
-
-    """ 
-    This is a small demo using just two fields. The slug field is really not
-    necessary, but makes the code simpler. ImageField depends on PIL or
-    pillow (where Pillow is easily installable in a virtualenv. If you have
-    problems installing pillow, use a more generic FileField instead.
-
-    """
-    #file = models.FileField(upload_to="pictures")
-    file = models.ImageField(upload_to="pictures")
-    slug = models.SlugField(max_length=50, blank=True)
-
-    def __unicode__(self):
-        return self.file.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('poi', )
-
-    def save(self, *args, **kwargs):
-        self.slug = self.file.name
-        super(Poi, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.file.delete(False)
-        super(Poi, self).delete(*args, **kwargs)
-
-
-class CloudCV_Users(models.Model):
-    """
-    Database fields for the users on CloudCV
-    """
-    first_name = models.CharField(max_length = 20)
-    last_name = models.CharField(max_length = 20)
-    userid = models.CharField(max_length = 100, primary_key=True)
-    emailid = models.EmailField(max_length = 254, unique=True)
-    is_active = models.BooleanField()
-
-class GoogleAccountInfo(models.Model):
-    """
-    Should be replaced with models of Python-social auth
-
-    """
-    cloudcvid = models.ForeignKey(CloudCV_Users, unique = True)
-    credential = CredentialsField()
-    flow = FlowField()
-
-class DropboxAccount(models.Model):
-    """
-    Should be replaced with models of Python-social auth
-    
-    """
-    cloudcvid = models.ForeignKey(CloudCV_Users, unique = True)
-    access_token = models.CharField(max_length=100, null=False)
+    def __str__(self):
+        return "%s %s %s %s %s" % (self.first_name, self.last_name, self.username, self.institution, self.purpose)
 
 class RequestLog(models.Model):
-    """
-    Fields required for logging the information.
+    '''
+    It stores information about the number of job submissions on CloudCV. 
+    '''
+    PYTHON = 'PY'
+    MATLAB = 'MAT'
+    API = (
+        (PYTHON, 'Python'),
+        (MATLAB, 'Matlab'),
+        )
+    # The next four fields are choices for the processing state column 
+    START = 'STR'
+    RUNNING = 'RUN'
+    ERROR = 'ERR'
+    SUCCESS  = 'SUC'
+    PROCESSING_STATE= (
+        (START, 'Starting State'),
+        (RUNNING, 'In Progress'),
+        (ERROR, 'Error State'),
+        (SUCESS, 'Successful')
+        )
+    user = models.ForeignKey(User)
+    # The next field describes which of the two api (Python API or Matlab API) was used in the request.
+    api_used = models.CharField(max_length = 3, 
+        choices = API)
+    processing_state = models.CharField(max_length = 3,
+        choices = PROCESSING_STATE,
+        default = START)
+    job_id = models.CharField(max_length = 100)
+    no_of_images = models.PositiveIntegerField()
+    '''
+    for the next field, the data comes in the form on json data. So, 
+    DictModel is used for storing the json data. 
+    See the link : http://stackoverflow.com/questions/402217/how-to-store-a-dictionary-on-a-django-model
+    for more clarification 
+    '''
+    parameters = models.ForeignKey(DictModel)
+    duration = models.DateTimeField()
+    #####################################################
+    # ASK AHMED OR HARSH FOR THE NEXT FOUR FIELDS CLARIFICATIONS #
+    #####################################################
+    input_source_type = models.CharField()
+    input_source_value = models.PositiveIntegerField()
+    output_source_type = models.CharField()
+    output_source_value = models.PositiveIntegerField()
 
-    """
-    cloudcvid = models.CharField(max_length=100, null=False)
-    jobid = models.CharField(max_length=100)
-    noOfImg = models.IntegerField()
-    function = models.CharField(max_length=50)
-    dateTime = models.DateTimeField()
-    isDropbox = models.BooleanField()
-    apiName =models.CharField(max_length=20, null=True)
+class DictModel(models.Model):
+    '''
+    This model is used by the parameters column that acts as a container 
+    and is used to easily store and process json data in django model.
+
+    '''
+    name = models.CharField(max_length=100)
+
+class group(models.Model):
+    '''
+    This table stores the information about the group of people who 
+    are doing research/work using cloudcv and is used to monitor that 
+    which group is researching over what.
+    '''
+    group_id = models.PositiveIntegerField()
+    group_name = models.CharField(max_length = 100)
+    purpose = models.Charfield()
+    user = models.ForeignKey(User)
+
+class CurrentRequest(models.Model):
+    '''
+    To track the realtime RAM usage, Memory usage, CPU usage etc for 
+    the current running jobs.
+    '''
+    user = models.ForeignKey(User)
+    ram_usage = models.FloatField()
+    cpu_usage = models.FloatField()
+    disk_space_usage = models.FloatField()
+    no_of_jobs_running = models.PositiveIntegerField()
+
+class Images(models.Model):
+    '''
+    This table is used to store the images on which different operations 
+    are performed. 
+    '''
+    user = models.ForeignKey(User)
+    category = models.CharField(max_length = 100)
+    url = models.TextField(validators=[URLValidator()])
