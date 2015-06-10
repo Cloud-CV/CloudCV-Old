@@ -197,6 +197,38 @@ class DropboxAccount(models.Model):
     cloudcvid = models.ForeignKey(CloudCV_Users, unique = True)
     access_token = models.CharField(max_length=100, null=False)
 
+# from django.core.validators import URLValidator
+
+# class User(models.Model):
+#     '''
+#     It stores the information about the cloudcv users who sign up on CloudCV.
+#     '''
+#     # The next four variables represents the choices for the Purpose field
+#     EDUCATION = 'ED'
+#     RESERACH = 'RE'
+#     BUSINESS = 'BU'
+#     OTHERS = 'OT'
+#     PURPOSE = (
+#         (EDUCATION, 'Education'),
+#         (RESERACH,'Research'),
+#         (BUSINESS,'Business'),
+#         (OTHERS,'Others'),
+#         )
+#     email_id = models.EmailField(max_length = 254, unique = True)
+#     first_name = models.CharField(max_length =100)
+#     last_name = models.CharField(max_length = 100)
+#     username = models.Charfield(, max_length = 50, unique = True)
+#     # The Next field represents the institution/company where the user belongs to.
+#     institution = models.Charfield(max_length = 500)
+#     last_login = models.DateTimeField()
+#     date_joined = models.DateTimeField()
+#     purpose = models.CharField(max_length = 2,
+#         choices = PURPOSE,
+#         default = EDUCATION)
+
+#     def __str__(self):
+#         return "%s %s %s %s %s" % (self.first_name, self.last_name, self.username, self.institution, self.purpose)
+
 
 class RequestLog(models.Model):
     """
