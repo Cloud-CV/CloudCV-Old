@@ -1,0 +1,528 @@
+{% extends "upload_base.html" %}
+{% load upload_tags %}
+
+{% block content %}
+<style>
+
+    .button_link {
+    cursor: pointer;
+    }
+    .demo_img{
+    height: 300px;
+        padding: 6px;
+
+    }
+    .demo_img:hover {
+    border: 6px solid black;
+        padding: 0px;
+    cursor: pointer;
+    }
+
+</style>
+
+<div id="socket-error" class="modal hide fade" tabindex="-1" data-width="760">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>Socket Error</h3>
+  </div>
+  <div class="modal-body">
+    <div class="row-fluid">
+    	Socket connection cannot be established on port 8000 which is required to communicate with the CloudCV Servers. Please make sure that port 8000 is open and not blocked by firewall on your system.<br>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn">Close</button>
+  </div>
+</div>
+
+<div class="container">
+    <div class="page-header">
+        <h1 align="center">CloudCV: Visual Question Answering (VQA)</h1>
+        <br>
+        <font size="4">
+            <p style="text-align:center;"><font size="4">CloudCV can answer questions you ask about an image</font><br><br>
+                <span style="font-size: 14px;">Browsers currently supported: Google Chrome, Mozilla Firefox</span>
+            </p>
+        </font>
+        <br><br>
+    </div>
+</div>
+
+<div class="container">
+    <div class="page-header">
+        <h2>Try CloudCV VQA: Sample Images</h2>
+        <br>
+        <font size="4">Click on one of these images to send it to our servers (Or <a class="button_link"
+                                                                                    onclick="scrollToElement($('#userImages'))">upload</a>
+            your own images below)</font>
+        <br>
+        <br>
+
+        <div class="row">
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000493102.jpg"
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000389273.jpg"
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000075494.jpg"
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+        </div>
+        <div class="row">
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000018224.jpg"
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000438226.jpg"
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000247838.jpg"
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+            <br>
+        </div>
+        Note: nothing is pre-computed for these images. They are treated as a fresh upload with every click.
+    </div>
+</div>
+
+<div class="container">
+    <div class="page-header">
+        <h2 id="userImages">Try CloudCV VQA On Your Images</h2>
+        <form id="fileupload" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
+            <input type="hidden" name="socketid-hidden" value="test" id="socketid" value="$csrf_token"/>
+
+            <div class="row fileupload-buttonbar">
+                <div class="span7">
+                <span class="btn btn-primary fileinput-button">
+                    <i class="icon-plus icon-white"></i>
+                    <span>Add files...</span>
+                    <input type="file" name="file" multiple>
+                </span>
+                    <!--
+                            <button type="submit" class="btn btn-success start">
+                                <i class="icon-upload icon-white"></i>
+                                <span>Start upload</span>
+                            </button>-->
+                    <button type="button" class="btn btn-danger delete" id="deleteButton" style="display:none;">
+                        <i class="icon-trash icon-white"></i>
+                        <span>Delete All Files</span>
+                    </button>
+                    <!--Select All Files<input type="checkbox" class="toggle">-->
+                    <button type="reset" class="btn btn-warning cancel" id="cancelButton" style="display:none;">
+                        <i class="icon-ban-circle icon-white"></i>
+                        <span>Cancel upload</span>
+                    </button>
+                </div>
+
+                <div class="span5 fileupload-progress fade">
+                    <div class="progress progress-success progres-striped active">
+                        <div class="bar" style="width:0%"></div>
+                    </div>
+                    <div class="progress-extended">&nbsp;</div>
+                </div>
+            </div>
+            <div id="dropArea" style="height:100px;border-style:dashed;">
+                <h3 style="text-align: center;padding-bottom: 15px; padding-top: 15px"> You can also drag and drop images here </h3>
+            </div>
+
+            <div class="fileupload-loading"></div>
+            <table class="table table-striped">
+                <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody>
+            </table>
+        </form>
+        <div class="fileupload-content">
+            <table class="files"></table>
+            <div class="fileupload-progressbar"></div>
+        </div>
+        <br>
+    </div>
+</div>
+
+<div class="container">
+    <div class="page-header">
+
+        <h3 id="termstart">Terminal: </h3>
+
+        <div id="Console"
+             style="height:300px; color: #FFFFFF; background-color: #2B2A2B; overflow:scroll; padding: 10px;">
+            <ul id="comments" style='list-style-type:none;'>
+            </ul>
+        </div>
+        <br>
+
+        <div id="underTheHood">
+            <p><h3>How it works</h3></p>
+	    <p><h4><span style="color:#FF0000;"> For testing purposes, we have currently only included naive baselines in CloudCV VQA </span></h4></p>
+            <font size="4">
+                <ol>
+                    <li>You upload an image.</li>
+                    <li>Your request is sent to our servers with GPUs courtesy NVIDIA.</li>
+                    <li>Our servers run a simple <a class="button_link" onclick="scrollToElement($('#creditSection'))">VQA algorithm.</a></li>
+                    <li>Results and updates are shown in real-time.</li>
+                </ol>
+            </font><br><br>
+        </div>
+
+        <h3>Results </h3><br>
+
+        <div id="ResultImage" class="row" style="padding-bottom:100px;">
+        </div>
+
+        <div id="creditSection">
+	   <h3> Credits </h3>
+            <font size="4">
+		<a href="http://arxiv.org/abs/1505.00468">VQA: Visual Question Answering</a><br>
+            Stanislaw Antol, Aishwarya Agrawal, Jiasen Lu, Margaret Mitchell, Dhruv Batra, C. Lawrence Zitnick, Devi Parikh
+	    </font><br><br>
+        </div>
+
+        <div id="statcounter" style="display: none;">
+            <h3>No. of Visits:</h3>
+        </div>
+
+    </div>
+</div>
+
+<!-- modal-gallery is the modal dialog used for the image gallery -->
+<div id="modal-gallery" class="modal modal-gallery hide fade" data-filter=":odd">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">&times;</a>
+
+        <h3 class="modal-title"></h3>
+    </div>
+    <div class="modal-body">
+        <div class="modal-image"></div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn modal-download" target="_blank">
+            <i class="icon-download"></i>
+            <span>Download</span>
+        </a>
+        <a class="btn btn-success modal-play modal-slideshow" data-slideshow="5000">
+            <i class="icon-play icon-white"></i>
+            <span>Slideshow</span>
+        </a>
+        <a class="btn btn-info modal-prev">
+            <i class="icon-arrow-left icon-white"></i>
+            <span>Previous</span>
+        </a>
+        <a class="btn btn-primary modal-next">
+            <span>Next</span>
+            <i class="icon-arrow-right icon-white"></i>
+        </a>
+    </div>
+</div>
+{% upload_js %}
+
+<script>
+    var socketid;
+    var demo_running=0;
+
+</script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="{{ STATIC_URL }}js/vendor/jquery.ui.widget.js"></script>
+<!-- The Templates plugin is included to render the upload/download listings -->
+<script src="{{ STATIC_URL }}js/tmpl.min.js"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="{{ STATIC_URL }}js/load-image.min.js"></script>
+<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+<script src="{{ STATIC_URL }}js/canvas-to-blob.min.js"></script>
+<!-- Bootstrap JS is not required, but included for the responsive demo navigation -->
+<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+<!-- blueimp Gallery script -->
+<script src="{{ STATIC_URL }}js/jquery.blueimp-gallery.min.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="{{ STATIC_URL }}js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="{{ STATIC_URL }}js/jquery.fileupload.js"></script>
+<!-- The File Upload processing plugin -->
+<script src="{{ STATIC_URL }}js/jquery.fileupload-process.js"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="{{ STATIC_URL }}js/jquery.fileupload-image.js"></script>
+<!-- The File Upload audio preview plugin -->
+<script src="{{ STATIC_URL }}js/jquery.fileupload-audio.js"></script>
+<!-- The File Upload video preview plugin -->
+<script src="{{ STATIC_URL }}js/jquery.fileupload-video.js"></script>
+<!-- The File Upload validation plugin -->
+<script src="{{ STATIC_URL }}js/jquery.fileupload-validate.js"></script>
+<!-- The File Upload user interface plugin -->
+<script src="{{ STATIC_URL }}js/jquery.fileupload-ui.js"></script>
+<!-- The main application script -->
+<script src="{{ STATIC_URL }}js/main.js"></script>
+<script src="{{ STATIC_URL }}js/locale.js"></script>
+<script src="{{ STATIC_URL }}js/csrf.js"></script>
+<!-- The XDomainRequest Transport is included for cross-domain file deletion for IE8+ -->
+<!--[if gte IE 8]>
+<script src="{{ STATIC_URL }}js/cors/jquery.xdr-transport.js"></script>
+
+<![endif]-->
+    <script src="/node/socket.io/socket.io.js"></script>
+<script>
+
+    $(document).ready(function()
+    {
+
+        var host = location.origin;
+        console.log(host);
+        var socket = io.connect(host,{transports: ["websocket"]});
+
+
+        socket.on('connect', function(){
+            console.log("connect");
+        });
+
+        $('.demo_img').each(function(){
+            var width = $(this).width();
+            console.log(width);
+            $(this).css("height", width * 0.7);
+        });
+
+        $(window).on('resize', function(){
+        $('.demo_img').each(function(){
+            var width = $(this).width();
+            console.log(width);
+            $(this).css("height", width * 0.7);
+        });
+        });
+
+        socket.on('message', function(message)
+        {
+            if(message.socketid)
+            {
+                document.getElementById('socketid').value= message.socketid.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+                socketid = document.getElementById('socketid').value
+            }
+            if(message.visit)
+            {
+                $('#statcounter').append('<p>' + message.visit );
+                console.log(message.visit);
+            }
+            if(message.name)
+            {
+                console.log(message.name);
+                $('#comments').prepend('<li>' + message.name + '</li>');
+            }
+            if(message.web_result)
+            {
+                webResult = JSON.parse(message.web_result);
+                console.log(webResult);
+                processResult(webResult);
+            }
+        });
+    });
+
+</script>
+
+<script>
+    var imCount = 0;
+
+    window.onload= function()
+    {
+//        var li_vqa = document.getElementById("vqa");
+//        li_vqa.className = "active";
+        // Append trailing slash at the end of the URL
+        var url = window.location.pathname;
+        console.log(url);
+        var urlParts = url.split("/")
+        var result = '';
+        console.log(urlParts);
+        for (i = urlParts.length -1 ; i < urlParts.length; i++)
+        {
+            if (urlParts[i]!='')
+            {
+
+                if (urlParts[i].indexOf('#') > -1) {
+                    // trailing slash not required
+                    result = url;
+                }
+                else {
+                    //Assume this is a folder and add a slash
+                    result = url + '/';
+                    window.location.pathname=result;
+                }
+
+            }
+        }
+        url=result;
+        console.log(url);
+        //window.location.pathname=result;
+
+    };
+
+    function scrollToElement(dstElement)
+    {
+        try
+        {
+            var scrollPixels = dstElement.offset().top - $(".navbar-fixed-top").height()-30;
+            $('html, body').animate({
+            scrollTop: scrollPixels
+            }, 2000);
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
+    }
+
+    function submitDemoImage(src){
+        //Change the image to loading jpeg
+        console.log("Submitted demo image");
+        $('#comments').prepend('<br>');
+        $('#comments').prepend('<li>' + "Submitted demo image" + '</li>');
+        console.log(src);
+
+        scrollToElement($("#termstart"));
+
+            $.ajax({
+			type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+			url 		: '/app/demo_vqa/', // the url where we want to POST
+			data 		: {'src':src, 'socketid': window.socketid} // our data object
+		})// using the done promise callback
+			.done(function(data) {
+                console.log(data);
+			});
+    }
+
+    function submitQuestion(src, id){
+        //Change the image to loading jpeg
+        console.log("Submitted question.");
+        $('#comments').prepend('<li>' + "Asking the question..." + '</li>');
+        console.log(src);
+
+        var txtArea = document.getElementById("txt"+id);
+
+//        scrollToElement($("#termstart"));
+        var tableDiv = $("#"+id).first();
+        var alertCode = '<div class="alert alert-error" id="passwordsNoMatchRegister"/><span/><p/>Thinking...</p/></span/></div/>';
+        tableDiv.html += alertCode;
+
+            $.ajax({
+			type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+			url 		: '/app/vqa_qn/', // the url where we want to POST
+			data 		: {'src':src, 'socketid': window.socketid, 'imageid': id, 'qn':txtArea.value} // our data object
+		})// using the done promise callback
+			.done(function(data) {
+                console.log(data);
+			});
+    }
+
+    function createButton(context, imgsrc, imageid){
+        var textArea = document.createElement("textarea");
+        $(textArea).attr("rows","1");
+        $(textArea).attr("id","txt"+imageid);
+        $(textArea).attr("btid","bt"+imageid);
+        $(textArea).addClass("form-control")
+
+        var button = document.createElement("input");
+        button.type = "button";
+        button.value = "Answer";
+        $(button).attr("onclick","submitQuestion('"+imgsrc+"','"+imageid+"')");
+        $(button).attr("id","bt"+imageid);
+        $(button).addClass("btn");
+        $(button).addClass("btn-primary");
+        context.appendChild(textArea);
+	context.appendChild(document.createElement("br"));
+        context.appendChild(button);
+        $(textArea).keypress(function(e){
+            var btId = $(this).attr("btid");
+            if(e.keyCode==13) {
+                e.preventDefault();
+                $("#" + btId).click();
+            }
+        });
+    }
+
+    function processResult(webResult){
+
+        var firstKey = Object.keys(webResult)[0];
+
+        if (firstKey == "extracted"){
+
+            imCount = imCount + 1;
+
+            $('#comments').prepend('<li>' + "Rendering results..." + '</li>');
+            var parentDiv = document.getElementById("ResultImage");
+            var imageDiv = document.createElement("div");
+
+            var tableDiv = document.createElement("div");
+
+            imageDiv.className = "col-md-5";
+            imageDiv.style.paddingBottom="30px";
+
+            imageDiv.style.clear="both";
+
+            tableDiv.className="col-md-7";
+            tableDiv.style.paddingBottom="30px";
+
+            var newImage = document.createElement("img");
+            newImage.style.height = "300px";
+	    newImage.className = "img-responsive";
+
+            var newImageURL = webResult[firstKey];
+            var imID = "imDiv"+imCount;
+
+            newImage.src = newImageURL;
+            imageDiv.appendChild(newImage);
+            parentDiv.appendChild(imageDiv);
+
+            // Add question textbox and submit button here
+            createButton(tableDiv, newImageURL, imID);
+
+            var ansDiv = document.createElement("div");
+            $(ansDiv).attr("id",imID);
+            tableDiv.appendChild(ansDiv);
+
+            parentDiv.appendChild(tableDiv);
+
+            scrollToElement($(imageDiv));
+
+        }
+        else{
+
+            var imageID = firstKey;
+            var tableDiv = $("#"+imageID).first();
+            tableDiv.html("");
+
+            var tags = webResult[firstKey];
+
+            var tableElement = document.createElement("table");
+            var tableHead = document.createElement("thead");
+            var tableBody = document.createElement("tbody");
+            tableElement.className="table table-striped";
+
+            var tableRow = document.createElement("tr");
+            var listItem = document.createElement("th");
+            //listItem.className = "span4";
+            listItem.innerHTML = "Answer";
+            // add listItem to the listElement
+            tableRow.appendChild(listItem);
+            var listItem = document.createElement("th");
+            //listItem.className = "span3";
+            // add the item text
+            listItem.innerHTML = "Confidence";
+            listItem.style.textAlign="right";
+            // add listItem to the listElement
+            tableRow.appendChild(listItem);''
+            tableHead.appendChild(tableRow);
+            tableElement.appendChild(tableHead);
+
+
+            for (var key = 0; key<tags.length; key++)
+            {
+                var tag_list = tags[key];
+                var tableRow = document.createElement("tr");
+                console.log(key + ' ' + tag_list);
+
+                var listItem = document.createElement("td");
+                listItem.innerHTML = tag_list[0];
+                tableRow.appendChild(listItem);
+
+                listItem = document.createElement("td");
+                listItem.innerHTML = parseFloat(tag_list[1]).toFixed(4);
+                listItem.style.textAlign="right";
+                tableRow.appendChild(listItem);
+                tableBody.appendChild(tableRow);
+            }
+            tableElement.appendChild(tableBody);
+            tableDiv.append(tableElement);
+//            scrollToElement($(tableDiv));
+        }
+    }
+
+</script>
+{% endblock %}
