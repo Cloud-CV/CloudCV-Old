@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 		"""
 		return User.objects.create(**validated_data)
 
-	def update(seld, instance, validated_data):
+	def update(self, instance, validated_data):
 		instance.first_name = validated_data.get('first_name',instance.first_name)
 		instance.last_name = validated_data.get('last_name',instance.last_name)
 		instance.username = validated_data.get('username',instance.username)
@@ -32,6 +32,7 @@ class RequestLogSerializer(serializers.ModelSerializer):
 	'''
 	Serializer Class for RequestLog Model
 	'''
+	user_entries = UserSerializer(many=True)
 	class Meta:
 		model = RequestLog
 		fields = ('api_used','job_id','processing_state','no_of_images','parameters','duration','input_source_type','input_source_value','output_source_type','output_source_value')
@@ -42,7 +43,7 @@ class RequestLogSerializer(serializers.ModelSerializer):
 		"""
 		return RequestLog.objects.create(**validated_data)
 
-	def update(seld, instance, validated_data):
+	def update(self, instance, validated_data):
 		instance.cloudcvid = validated_data.get('cloudcvid',instance.cloudcvid)
 		instance.jobid = validated_data.get('jobid',instance.jobid)
 		instance.noOfImg = validated_data.get('noOfImg',instance.noOfImg)
@@ -57,6 +58,7 @@ class GroupSerializer(serializers.ModelSerializer):
 	'''
 	Serializer Class for Group Model
 	'''
+	user_entries = UserSerializer(many=True)
 	class Meta:
 		fields = ('group_id','group_name','purpose','user')
 
@@ -78,6 +80,7 @@ class CurrentRequestSerializer(serializers.ModelSerializer):
 	'''
 	Serializer Class for CurrentRequest Model
 	'''
+	user_entries = UserSerializer(many=True)
 	class Meta:
 		fields = ('ram_usage','cpu_usage','disk_space_usage','no_of_jobs_running')
 
@@ -100,6 +103,7 @@ class ImagesSerializer(serializers.ModelSerializer):
 	'''
 	Serializer Class for Images Model
 	'''
+	user_entries = UserSerializer(many=True)
 	class Meta:
 		fields = ('category','url')
 
