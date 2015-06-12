@@ -2,7 +2,7 @@ import operator
 import numpy as np
 
 import sys
-path = '/home/ubuntu/cloudcv/cloudcv17'
+path = '/home/ubuntu/cloudcv/cloudcv_gsoc'
 sys.path.append(path)
 
 import os
@@ -23,7 +23,7 @@ MODEL_FILE = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy
 PRETRAINED = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
 
 caffe.set_phase_test()
-caffe.set_mode_gpu()
+caffe.set_mode_cpu()
 
 net = caffe.Classifier(MODEL_FILE, PRETRAINED,
                     mean=np.load(os.path.join(conf.CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy')),

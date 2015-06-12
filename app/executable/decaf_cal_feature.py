@@ -4,7 +4,7 @@
      environment because this path is already added by the Django python environment.
 """
 import sys
-path = '/home/ubuntu/cloudcv/cloudcv17'
+path = '/home/ubuntu/cloudcv/cloudcv_gsoc'
 sys.path.append(path)
 
 import os
@@ -32,11 +32,12 @@ print "Started test script"
 MODEL_FILE = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
 PRETRAINED = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
 caffe.set_phase_test()
-caffe.set_mode_gpu()
+caffe.set_mode_cpu()
 net = caffe.Classifier(MODEL_FILE, PRETRAINED)
 
 
 def decaf_features(single_image, modelnet=net):
+    print str(modelnet)
     try:
         # Compute the features
         input_image = caffe.io.load_image(single_image)
@@ -57,9 +58,9 @@ def decaf_features_centre(single_image, modelnet=net):
     features = np.resize(features, (1,4096))
     return features
 
-def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results, modelname = '', modelnet=None):
+def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results, modelname = '', modelnet=net):
     if modelnet is None:
-        modelnet = net
+	modelnet=net
 
     r.publish('chat', json.dumps({'error': str('Using '+modelname+' model for calculating features'), 'socketid': socketid}))
     try:

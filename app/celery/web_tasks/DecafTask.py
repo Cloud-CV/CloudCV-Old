@@ -1,6 +1,6 @@
 __author__ = 'parallels'
 import sys
-path = '/home/ubuntu/cloudcv/cloudcv17'
+path = '/home/ubuntu/cloudcv/cloudcv_gsoc'
 sys.path.append(path)
 
 import os
@@ -17,7 +17,7 @@ import app.executable.decaf_cal_feature as decaf
 import caffe
 import app.conf as conf
 
-r = redis.StrictRedis(host='cloudcv.org', port=6379, db=0)
+r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
 
 from app.celery.celery.celery import celery
 
@@ -28,7 +28,7 @@ def decafImages(src_path, output_path, socketid, result_path, single_file_name='
         lPRETRAINED = str(os.path.join(conf.CAFFE_DIR, 'models', modelname, modelname+'.caffemodel'))
         r.publish('chat', json.dumps({'error': lMODEL_FILE+'   '+lPRETRAINED, 'socketid': socketid}))
         caffe.set_phase_test()
-        caffe.set_mode_gpu()
+        caffe.set_mode_cpu()
         modelnet = caffe.Classifier(lMODEL_FILE, lPRETRAINED)
         #r.publish('chat', json.dumps({'error': str(modelname), 'socketid': socketid}))
 
@@ -75,9 +75,11 @@ def decafImages(src_path, output_path, socketid, result_path, single_file_name='
             """
             tags = {}
             print 'Running caffe classify on a single image: ' + single_file_name
-
-            mat_file_path = decaf.calculate_decaf_image(single_file_name, src_path, output_path, 3, socketid, tags, modelname, modelnet)
-            """ Part 4/4
+	    try:
+            	mat_file_path = decaf.calculate_decaf_image(single_file_name, src_path, output_path, 3, socketid, tags, modelname, modelnet)
+            except Exception as e:
+		print str(e)
+	    """ Part 4/4
             sys.stdout=old_stdout
             """
             log_to_terminal("Results: "+str(tags), socketid)

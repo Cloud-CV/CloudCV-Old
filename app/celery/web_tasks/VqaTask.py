@@ -1,6 +1,6 @@
 __author__ = 'clint'
 import sys
-path = '/home/ubuntu/cloudcv/cloudcv17'
+path = '/home/ubuntu/cloudcv/cloudcv_gsoc'
 sys.path.append(path)
 
 import os

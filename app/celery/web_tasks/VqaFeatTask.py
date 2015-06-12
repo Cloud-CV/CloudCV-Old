@@ -1,6 +1,6 @@
 __author__ = 'clint'
 import sys
-path = '/home/ubuntu/cloudcv/cloudcv17'
+path = '/home/ubuntu/cloudcv/cloudcv_gsoc'
 sys.path.append(path)
 
 import os
@@ -21,7 +21,7 @@ import app.conf as conf
 
 celery = Celery('VqaFeatTask', backend = 'redis://0.0.0.0:6379/0', broker='redis://0.0.0.0:6379/0')
 
-r = redis.StrictRedis(host='cloudcv.org', port=6379, db=0)
+r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
 
 @celery.task
 def featExtraction(src_path, socketid, result_url_prefix,  feat_folder):
