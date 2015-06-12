@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>CloudCV-Server &mdash; CloudCV-Server 1.0 documentation</title>
+    <title>DIGITS Documentation &mdash; CloudCV-Server 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -43,12 +43,21 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">CloudCV-Server</a><ul>
-<li><a class="reference internal" href="#digits-documentation">DIGITS Documentation</a></li>
+<li><a class="reference internal" href="#"><strong>DIGITS Documentation</strong></a><ul>
+<li><a class="reference internal" href="#homepage">Homepage:</a></li>
+<li><a class="reference internal" href="#jobs">Jobs:</a><ul>
+<li><a class="reference internal" href="#job-details">Job Details</a></li>
+<li><a class="reference internal" href="#job-status">Job Status</a></li>
+<li><a class="reference internal" href="#job-update">Job Update</a></li>
+<li><a class="reference internal" href="#creating-a-job">Creating a Job</a><ul>
+<li><a class="reference internal" href="#creating-dataset">Creating Dataset</a></li>
+<li><a class="reference internal" href="#creating-model">Creating Model</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#homepage-index-json"><strong>Homepage [/index.json]:</strong></a></li>
-<li><a class="reference internal" href="#jobs"><strong>Jobs:</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
   <h4>Previous topic</h4>
@@ -82,29 +91,38 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="cloudcv-server">
-<h1>CloudCV-Server<a class="headerlink" href="#cloudcv-server" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="digits-documentation">
-<h2>DIGITS Documentation<a class="headerlink" href="#digits-documentation" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
-<div class="section" id="homepage-index-json">
-<h1><strong>Homepage [/index.json]:</strong><a class="headerlink" href="#homepage-index-json" title="Permalink to this headline">¶</a></h1>
-<p>It calls the method <em>get_job_list</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L74">(digits/views.py&#64;74)</a>
+  <div class="section" id="digits-documentation">
+<h1><strong>DIGITS Documentation</strong><a class="headerlink" href="#digits-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="homepage">
+<h2>Homepage:<a class="headerlink" href="#homepage" title="Permalink to this headline">¶</a></h2>
+<p>It calls the method <em>get_job_list()</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L74">(digits/views.py&#64;74)</a>
 that fetches all the datasets and models for all jobs and returns them in json format (if requested via the API) or as HTML (if accessed from the webapp). The <em>new_dataset_options</em>, <em>running_datasets</em>, <em>completed_datasets</em>, <em>new_model_options</em> and <em>running_models</em> variables hold the data in the webapp display mode.</p>
 </div>
 <div class="section" id="jobs">
-<h1><strong>Jobs:</strong><a class="headerlink" href="#jobs" title="Permalink to this headline">¶</a></h1>
+<h2>Jobs:<a class="headerlink" href="#jobs" title="Permalink to this headline">¶</a></h2>
 <p>DIGITS handles datasets and classification models in exactly the same fashion, jobs. The <em>show_job</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L86">(digits/views.py&#64;86)</a>
 , <em>edit_job</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L103">(digits/views.py&#64;103)</a>
 , <em>job_status</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L119">(digits/views.py&#64;119)</a> and <em>delete_job</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L138">(digits/views.py&#64;138)</a> functions handle the respective CRUD options for both, models and datasets, quite elegantly. These functions are called from the UI through the JS snippets present in <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L82L170">(digits/templates/job.html&#64;82-170)</a>.</p>
+<div class="section" id="job-details">
+<h3>Job Details<a class="headerlink" href="#job-details" title="Permalink to this headline">¶</a></h3>
 <p>On home page, when we click on any of the Datasets/Models shown there, it creates a GET request to <strong>/job/&lt;job-id&gt;</strong>, which then (depending on the type of job) redirects to :</p>
 <ul class="simple">
 <li>the <strong>/datasets/&lt;job-id&gt;</strong> to show the details about the specific DatasetJob <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/dataset/views.py#L15">(digits/dataset/views.py&#64;15)</a>. The details include Job Information, Parse Folder, Create DB (train) and visualizations for the Create DB(train) and Create DB(val).</li>
 <li>the <strong>/models/&lt;job-id&gt;</strong> to  show the details about the specific ModelJob <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/views.py#L27">(digits/model/views.py&#64;27)</a>. The details include Solver, Network(train/val), Network(deploy), Raw Caffe Output, details about the dataset used along with the visualization of the Accuracy and Loss that occurred.</li>
 </ul>
+</div>
+<div class="section" id="job-status">
+<h3>Job Status<a class="headerlink" href="#job-status" title="Permalink to this headline">¶</a></h3>
 <p>To get the status of a job in the json format, you can simply goto <strong>/jobs/&lt;job-id&gt;/status</strong>. The ‘jobs’  in this URL can be replaced, quite obvious now, with ‘models’ or ‘datasets’. The <em>job_status()</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L118">(digits/views.py&#64;118)</a> method handles this task.</p>
+</div>
+<div class="section" id="job-update">
+<h3>Job Update<a class="headerlink" href="#job-update" title="Permalink to this headline">¶</a></h3>
 <p>If you want to change the name of a Model/Dataset, then go to home page and then click on the Model/Dataset that you want to rename and you will see a new page. Goto the top where the name is written and you will see the edit button just after the name of Model/Dataset. Then edit the name and click Update. The <em>updateJobName()</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/templates/job.html#L92">(digits/templates/job.html&#64;92)</a> JS function calls the edit_job <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L103">(digits/views.py&#64;103)</a> function to execute this task.</p>
+</div>
+<div class="section" id="creating-a-job">
+<h3>Creating a Job<a class="headerlink" href="#creating-a-job" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="creating-dataset">
+<h4>Creating Dataset<a class="headerlink" href="#creating-dataset" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li>On home page of DIGITS, first click on the Images button and then you will see a bunch of options available. Click on one of the categories that you are looking for. For eg. we are going to add the dataset in Classification Model. So, clicking on Classification will give redirect to the url <cite>/datasets/images/classification/new</cite> and we will see a bunch of options for our Dataset type. Select the appropriate values and and a Dataset Name, then click on the <cite>Create</cite> button and then you can see a screen similar to the below image.</li>
 </ul>
@@ -112,6 +130,9 @@ that fetches all the datasets and models for all jobs and returns them in json f
 <ul class="simple">
 <li>The image_classification_dataset_new() method present at <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/dataset/images/classification/views.py#L127">(digits/dataset/images/classification/views.py&#64;217)</a> handles this task via a POST request, or you can use the webapp via a ‘GET’ request to obtain a form for the new dataset using <em>image_classification_dataset_create()</em> method located in the file <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/dataset/images/classification/views.py#L207">(digits/dataset/images/classification/views.py&#64;207)</a>.</li>
 </ul>
+</div>
+<div class="section" id="creating-model">
+<h4>Creating Model<a class="headerlink" href="#creating-model" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li>For creating a new Model, a Dataset is required. On the right side of home page, under New Models, there is a button Images. Choose Classification from the dropdown list that is shown by clicking on Images Button. After this, you will be redirected to the url <strong>/models/images/classification/new</strong>. Now, select one of the Dataset, choose one of the Networks and you can change the parameters in the Solver Options. Also, you can create a custom network yourself using a .prototxt file.</li>
 </ul>
@@ -119,6 +140,9 @@ that fetches all the datasets and models for all jobs and returns them in json f
 <ul class="simple">
 <li>You can use the <em>image_classification_model_create()</em> method from the file <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/images/classification/views.py#L50">digits/model/images/classification/views.py&#64;50</a> to achieve this task.</li>
 </ul>
+</div>
+</div>
+</div>
 </div>
 
 
