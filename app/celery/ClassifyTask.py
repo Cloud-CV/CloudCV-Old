@@ -1,11 +1,12 @@
 __author__ = 'parallels'
 import sys
-path = '/home/ubuntu/cloudcv/cloudcv_gsoc'
+path = '/home/ubuntu/cloudcv/cloudcv17'
 sys.path.append(path)
 
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cloudcv17.settings")
 
+from celery import Celery
 
 import json
 import operator
@@ -15,11 +16,12 @@ import os.path
 import redis
 from app.log import log, log_to_terminal, log_error_to_terminal, log_and_exit
 
-import app.executable.caffe_classify as default_classify
+from app.executable.caffe_classify import caffe_classify, caffe_classify_image
+import app.conf as conf
 
-from app.celery.celery.celery import celery
+celery = Celery('ClassifyTask', backend = 'redis://0.0.0.0:6379/0', broker='redis://0.0.0.0:6379/0')
 
-r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host='cloudcv.org', port=6379, db=0)
 
 @celery.task
 def classifyImages(src_path, socketid, result_path):
@@ -29,9 +31,17 @@ def classifyImages(src_path, socketid, result_path):
             for file_name in os.listdir(src_path):
                 image_path = os.path.join(src_path, file_name)
                 if os.path.isfile(image_path):
-
+                    """ Trying to get the output of classify python script to send to user - Part 1/4
+                    myPrint = CustomPrint(socketid)
+                    old_stdout=sys.stdout
+                    sys.stdout = myPrint
+                    """
                     print 'Running caffe classify...'
-                    tags = default_classify.caffe_classify_image(image_path)
+                    tags = caffe_classify_image(image_path)
+
+                    """ Part 2/2
+                    sys.stdout=old_stdout
+                    """
 
                     log_to_terminal("Results: "+str(tags), socketid)
 
@@ -45,10 +55,18 @@ def classifyImages(src_path, socketid, result_path):
             log_to_terminal('Thank you for using CloudCV', socketid)
         # Single File
         else:
+            """ Part 3/4
+            myPrint = CustomPrint(socketid)
+            old_stdout=sys.stdout
+            sys.stdout = myPrint
+            """
 
             print 'Running caffe classify...'
 
-            tags = default_classify.caffe_classify_image(src_path)
+            tags = caffe_classify_image(src_path)
+            """ Part 4/4
+            sys.stdout=old_stdout
+            """
 
             log_to_terminal("Results: "+str(tags), socketid)
 

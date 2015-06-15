@@ -99,7 +99,10 @@ def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_fil
     # except Exception as e:
     #     log_to_terminal(str(traceback.format_exc()), socketid)
     print "Inside decaf_wrapper_local: ModelName: " + modelname
-    decafImages(src_path, output_path, socketid, result_path, single_file_name, modelname)
+    try:
+    	decafImages.delay(src_path, output_path, socketid, result_path, single_file_name, modelname)
+    except Exception as e:
+	log_to_terminal(str(traceback.format_exc()),socketid);
 
 class DecafCreateView(CreateView):
     model = Decaf

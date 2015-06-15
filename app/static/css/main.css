@@ -29,7 +29,18 @@ padding-bottom: 20px;
     box-shadow: 0 0 8px rgba(0, 0, 0, .8);
 	-webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
 	-moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    width: 70%;
  }
+
+.past_team_picture {
+    border-radius: 100px;
+    -webkit-border-radius: 100px;
+    -moz-border-radius: 100px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    width: 50%;
+}
 
 .alert-box{font-size:15px; font-family: 'Source Sans Pro', sans-serif;position:fixed; }
 .news-section h1{

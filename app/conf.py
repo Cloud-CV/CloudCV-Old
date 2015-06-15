@@ -4,7 +4,7 @@ from django.conf import settings
 
 import os
 import sys
-path = '/home/ubuntu/cloudcv/cloudcv17'
+path = '/home/ubuntu/cloudcv/cloudcv_gsoc'
 sys.path.append(path)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cloudcv17.settings")
@@ -37,5 +37,4 @@ PIC_URL = '/media/pictures/cloudcv/'
 
 # CAFFE DIRECTORY
 CAFFE_DIR = '/home'+'/ubuntu/' + 'caffe'
-
 LOG_DIR = os.path.join(settings.BASE_ABS_DIR, 'logs')

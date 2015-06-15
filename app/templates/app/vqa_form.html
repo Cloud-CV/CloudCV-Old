@@ -37,11 +37,10 @@
 
 <div class="container">
     <div class="page-header">
-        <h1 align="center">CloudCV Image Classification</h1>
+        <h1 align="center">CloudCV: Visual Question Answering (VQA)</h1>
         <br>
         <font size="4">
-            <p style="text-align:center;"><font size="4">Use CloudCV to automatically find which objects are present
-                in an image</font><br><br>
+            <p style="text-align:center;"><font size="4">CloudCV can answer questions you ask about an image</font><br><br>
                 <span style="font-size: 14px;">Browsers currently supported: Google Chrome, Mozilla Firefox</span>
             </p>
         </font>
@@ -51,7 +50,7 @@
 
 <div class="container">
     <div class="page-header">
-        <h2>Try CloudCV Classification: Sample Images</h2>
+        <h2>Try CloudCV VQA: Sample Images</h2>
         <br>
         <font size="4">Click on one of these images to send it to our servers (Or <a class="button_link"
                                                                                     onclick="scrollToElement($('#userImages'))">upload</a>
@@ -60,19 +59,19 @@
         <br>
 
         <div class="row">
-            <img src="/app/media/pictures/demo/2007_000175.jpg"
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000493102.jpg"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/demo/2007_001288.jpg"
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000389273.jpg"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/demo/2007_006585.jpg"
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000075494.jpg"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
         </div>
         <div class="row">
-            <img src="/app/media/pictures/demo/2008_000189.jpg"
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000018224.jpg"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/demo/2007_009817.jpg"
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000438226.jpg"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/demo/2008_000336.jpg"
+            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000247838.jpg"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
             <br>
         </div>
@@ -82,11 +81,7 @@
 
 <div class="container">
     <div class="page-header">
-        <h2 id="userImages">Try CloudCV On Your Images</h2>
-        <br>
-        For a large number of images, we recommend using the CloudCV <a
-            href="https://github.com/batra-mlp-lab/pcloudcv/">Python</a> and
-        <a href="https://github.com/batra-mlp-lab/mcloudcv/">MATLAB</a> APIs.
+        <h2 id="userImages">Try CloudCV VQA On Your Images</h2>
         <form id="fileupload" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
             <input type="hidden" name="socketid-hidden" value="test" id="socketid" value="$csrf_token"/>
 
@@ -150,13 +145,13 @@
         <br>
 
         <div id="underTheHood">
-            <h3>How it works</h3><br>
+            <p><h3>How it works</h3></p>
+	    <p><h4><span style="color:#FF0000;"> For testing purposes, we have currently only included naive baselines in CloudCV VQA </span></h4></p>
             <font size="4">
                 <ol>
                     <li>You upload an image.</li>
                     <li>Your request is sent to our servers with GPUs courtesy NVIDIA.</li>
-                    <li>Our servers run <a class="button_link" onclick="scrollToElement($('#creditSection'))">classification
-                        algorithms.</a></li>
+                    <li>Our servers run a simple <a class="button_link" onclick="scrollToElement($('#creditSection'))">VQA algorithm.</a></li>
                     <li>Results and updates are shown in real-time.</li>
                 </ol>
             </font><br><br>
@@ -168,10 +163,11 @@
         </div>
 
         <div id="creditSection">
-            <h3>Credits</h3><br>
+	   <h3> Credits </h3>
             <font size="4">
-                This demo uses <a href="http://caffe.berkeleyvision.org/">Caffe</a> at the back end. Thank you Caffe team!
-            </font><br><br>
+		<a href="http://arxiv.org/abs/1505.00468">VQA: Visual Question Answering</a><br>
+            Stanislaw Antol, Aishwarya Agrawal, Jiasen Lu, Margaret Mitchell, Dhruv Batra, C. Lawrence Zitnick, Devi Parikh
+	    </font><br><br>
         </div>
 
         <div id="statcounter" style="display: none;">
@@ -260,6 +256,7 @@
 
     $(document).ready(function()
     {
+
         var host = location.origin;
         console.log(host);
         var socket = io.connect(host,{transports: ["websocket"]});
@@ -302,100 +299,22 @@
             }
             if(message.web_result)
             {
-                $('#comments').prepend('<li>' + "Rendering results..." + '</li>');
-                var parentDiv = document.getElementById("ResultImage");
-                var imageDiv = document.createElement("div");
-
-                var tableDiv = document.createElement("div");
-                var tableElement = document.createElement("table");
-                var tableHead = document.createElement("thead");
-                var tableBody = document.createElement("tbody");
-
-                imageDiv.className = "col-md-5";
-                imageDiv.style.paddingBottom="30px";
-
-                //imageDiv.style.paddingRight="15%";
-                imageDiv.style.clear="both";
-
-                tableDiv.className="col-md-7";
-                tableDiv.style.paddingBottom="30px";
-                tableElement.className="table table-striped";
-
-                var newImage = document.createElement("img");
-                newImage.style.height = "300px";
-                var webResult = message.web_result;
-
-		        webResult = JSON.parse(webResult);
-                console.log(message.web_result);
-		        var newImageURL = Object.keys(webResult)[0];
-		        var tags = webResult[newImageURL];
-		        console.log(tags);
-
-                var tableRow = document.createElement("tr");
-                var listItem = document.createElement("th");
-                //listItem.className = "span4";
-                listItem.innerHTML = "Tags";
-                // add listItem to the listElement
-                tableRow.appendChild(listItem);
-                var listItem = document.createElement("th");
-                //listItem.className = "span3";
-                // add the item text
-                listItem.innerHTML = "Confidence";
-                listItem.style.textAlign="right";
-                // add listItem to the listElement
-                tableRow.appendChild(listItem);''
-                tableHead.appendChild(tableRow);
-                tableElement.appendChild(tableHead);
-
-		        for (var key in tags)
-		        {
-		            var tag_list = tags[key];
-		            var tableRow = document.createElement("tr");
-                    console.log(key + ' ' + tags[key]);
-                    var listItem = document.createElement("td");
-                    //listItem.className = "span3";
-                    // add the item text
-                    listItem.innerHTML = tag_list[0];
-                    // add listItem to the listElement
-                    tableRow.appendChild(listItem);
-                    var listItem = document.createElement("td");
-                    //listItem.className = "span3";
-                    // add the item text
-                    listItem.innerHTML = parseFloat(tag_list[1]).toFixed(4);
-                    listItem.style.textAlign="right";
-                    // add listItem to the listElement
-                    tableRow.appendChild(listItem);
-                    tableBody.appendChild(tableRow);
-		        }
-                newImage.src = newImageURL;
-		newImage.className = "img-responsive";
-                imageDiv.appendChild(newImage);
-                parentDiv.appendChild(imageDiv);
-
-                tableElement.appendChild(tableBody);
-                tableDiv.appendChild(tableElement);
-                parentDiv.appendChild(tableDiv);
-
-                scrollToElement($(imageDiv));
-
-                //$('html, body').animate({
-                //scrollTop: $(imageDiv).offset().top
-                //}, 2000);
-
+                webResult = JSON.parse(message.web_result);
+                console.log(webResult);
+                processResult(webResult);
             }
-
         });
-
-
     });
 
 </script>
 
 <script>
+    var imCount = 0;
+
     window.onload= function()
     {
-        var li_classification = document.getElementById("classification");
-        li_classification.className = "active";
+//        var li_vqa = document.getElementById("vqa");
+//        li_vqa.className = "active";
         // Append trailing slash at the end of the URL
         var url = window.location.pathname;
         console.log(url);
@@ -451,12 +370,158 @@
 
             $.ajax({
 			type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
-			url 		: '/app/demo_classify/', // the url where we want to POST
+			url 		: '/app/demo_vqa/', // the url where we want to POST
 			data 		: {'src':src, 'socketid': window.socketid} // our data object
 		})// using the done promise callback
 			.done(function(data) {
                 console.log(data);
 			});
+    }
+
+    function submitQuestion(src, id){
+        //Change the image to loading jpeg
+        console.log("Submitted question.");
+        $('#comments').prepend('<li>' + "Asking the question..." + '</li>');
+        console.log(src);
+
+        var txtArea = document.getElementById("txt"+id);
+
+//        scrollToElement($("#termstart"));
+        var tableDiv = $("#"+id).first();
+        var alertCode = '<div class="alert alert-error" id="passwordsNoMatchRegister"/><span/><p/>Thinking...</p/></span/></div/>';
+        tableDiv.html += alertCode;
+
+            $.ajax({
+			type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+			url 		: '/app/vqa_qn/', // the url where we want to POST
+			data 		: {'src':src, 'socketid': window.socketid, 'imageid': id, 'qn':txtArea.value} // our data object
+		})// using the done promise callback
+			.done(function(data) {
+                console.log(data);
+			});
+    }
+
+    function createButton(context, imgsrc, imageid){
+        var textArea = document.createElement("textarea");
+        $(textArea).attr("rows","1");
+        $(textArea).attr("id","txt"+imageid);
+        $(textArea).attr("btid","bt"+imageid);
+        $(textArea).addClass("form-control")
+
+        var button = document.createElement("input");
+        button.type = "button";
+        button.value = "Answer";
+        $(button).attr("onclick","submitQuestion('"+imgsrc+"','"+imageid+"')");
+        $(button).attr("id","bt"+imageid);
+        $(button).addClass("btn");
+        $(button).addClass("btn-primary");
+        context.appendChild(textArea);
+	context.appendChild(document.createElement("br"));
+        context.appendChild(button);
+        $(textArea).keypress(function(e){
+            var btId = $(this).attr("btid");
+            if(e.keyCode==13) {
+                e.preventDefault();
+                $("#" + btId).click();
+            }
+        });
+    }
+
+    function processResult(webResult){
+
+        var firstKey = Object.keys(webResult)[0];
+
+        if (firstKey == "extracted"){
+
+            imCount = imCount + 1;
+
+            $('#comments').prepend('<li>' + "Rendering results..." + '</li>');
+            var parentDiv = document.getElementById("ResultImage");
+            var imageDiv = document.createElement("div");
+
+            var tableDiv = document.createElement("div");
+
+            imageDiv.className = "col-md-5";
+            imageDiv.style.paddingBottom="30px";
+
+            imageDiv.style.clear="both";
+
+            tableDiv.className="col-md-7";
+            tableDiv.style.paddingBottom="30px";
+
+            var newImage = document.createElement("img");
+            newImage.style.height = "300px";
+	    newImage.className = "img-responsive";
+
+            var newImageURL = webResult[firstKey];
+            var imID = "imDiv"+imCount;
+
+            newImage.src = newImageURL;
+            imageDiv.appendChild(newImage);
+            parentDiv.appendChild(imageDiv);
+
+            // Add question textbox and submit button here
+            createButton(tableDiv, newImageURL, imID);
+
+            var ansDiv = document.createElement("div");
+            $(ansDiv).attr("id",imID);
+            tableDiv.appendChild(ansDiv);
+
+            parentDiv.appendChild(tableDiv);
+
+            scrollToElement($(imageDiv));
+
+        }
+        else{
+
+            var imageID = firstKey;
+            var tableDiv = $("#"+imageID).first();
+            tableDiv.html("");
+
+            var tags = webResult[firstKey];
+
+            var tableElement = document.createElement("table");
+            var tableHead = document.createElement("thead");
+            var tableBody = document.createElement("tbody");
+            tableElement.className="table table-striped";
+
+            var tableRow = document.createElement("tr");
+            var listItem = document.createElement("th");
+            //listItem.className = "span4";
+            listItem.innerHTML = "Answer";
+            // add listItem to the listElement
+            tableRow.appendChild(listItem);
+            var listItem = document.createElement("th");
+            //listItem.className = "span3";
+            // add the item text
+            listItem.innerHTML = "Confidence";
+            listItem.style.textAlign="right";
+            // add listItem to the listElement
+            tableRow.appendChild(listItem);''
+            tableHead.appendChild(tableRow);
+            tableElement.appendChild(tableHead);
+
+
+            for (var key = 0; key<tags.length; key++)
+            {
+                var tag_list = tags[key];
+                var tableRow = document.createElement("tr");
+                console.log(key + ' ' + tag_list);
+
+                var listItem = document.createElement("td");
+                listItem.innerHTML = tag_list[0];
+                tableRow.appendChild(listItem);
+
+                listItem = document.createElement("td");
+                listItem.innerHTML = parseFloat(tag_list[1]).toFixed(4);
+                listItem.style.textAlign="right";
+                tableRow.appendChild(listItem);
+                tableBody.appendChild(tableRow);
+            }
+            tableElement.appendChild(tableBody);
+            tableDiv.append(tableElement);
+//            scrollToElement($(tableDiv));
+        }
     }
 
 </script>
