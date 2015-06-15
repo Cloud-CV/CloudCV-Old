@@ -5,13 +5,13 @@ import re
 import traceback
 import os
 import os.path
+from pymatbridge import Matlab
 import redis
 
-from app.log import log, log_to_terminal, log_error_to_terminal
+from app.log import log
+from app.log import Logger
 from app.executable import caffe_classify
 from app.thirdparty import dropbox_upload as dbu
-import app.conf as conf
-
 import time
 
 '''
@@ -20,7 +20,7 @@ if path not in sys.path:
     sys.path.append(path)
 '''
 
-
+os.environ['OMP_NUM_THREADS'] = '4'
 '''
 #------------------------------Initial Setup :- Argument Parser--------------------------
 parser = argparse.ArgumentParser()
@@ -41,8 +41,6 @@ parser.add_argument("--dropbox_token", type=str, help="Source Type")
 args = parser.parse_args()
 #----------------xxx-------------Argument Parser Code Ends---------------------xxx----------------------
 '''
-
-os.environ['OMP_NUM_THREADS'] = '4'
 r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
 jobid = ''
 
@@ -96,9 +94,12 @@ def run_matlab_code(mlab_inst, exec_path, task_args, socketid):
     return str(res)
 
 def run_executable(list, live=None, socketid=None):
-
-    # conn = sqlite3.connect('/var/www/html/cloudcv/db/message.db')
-    # c = conn.cursor()
+    #logger = Logger()
+    #logger.open('P')[
+    #logger.write('P','Starting Execution')
+    #logger.close('P')
+    conn = sqlite3.connect('/var/www/html/cloudcv/db/message.db')
+    c = conn.cursor()
 
     try:
         popen = subprocess.Popen(list, bufsize=1, stdin=open(os.devnull), stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
@@ -109,6 +110,9 @@ def run_executable(list, live=None, socketid=None):
         errline = ''
 
         r.publish('chat', json.dumps({'error': str(popen.pid), 'socketid': socketid}))
+        #popen.communicate()
+        #p = Popen(cmd, bufsize=1, stdin=open(os.devnull), stdout=PIPE, stderr=STDOUT)
+        lines = []
 
         while True:
             if popen.stdout:
@@ -124,23 +128,24 @@ def run_executable(list, live=None, socketid=None):
                 popen.stderr.flush()
 
             if line:
-                # print count, line, '\n'
+                #print count, line, '\n'
                 complete_output += str(line)
                 count += 1
 
             if errline:
-                # print count, errline, '\n'
+                #print count, errline, '\n'
                 complete_output += str(errline)
                 count += 1
             if popen.poll() is not None:
                 break
             else:
                 r.publish('chat', json.dumps({'error': str(popen.poll()), 'socketid': socketid}))
-        # conn.close()
+
         return complete_output
     except Exception as e:
-        # conn.close()
         raise e
+
+    conn.close()
 
 def parseParameters(params):
     params = str(params)
@@ -167,14 +172,18 @@ def parseParameters(params):
 def createList(directory, parsed_dict):
     list_for_exec = list()
     try:
-        if not os.path.exists(os.path.join(str(parsed_dict['result_path']), 'results')):
-                os.makedirs(os.path.join(str(parsed_dict['result_path']), 'results'))
-                os.chmod(os.path.join(str(parsed_dict['result_path']), 'results'), 0776)
+        if not os.path.exists(str(parsed_dict['result_path']).rstrip('/') + '/results'):
+                os.makedirs(str(parsed_dict['result_path']).rstrip('/') + '/results')
+                os.chmod(str(parsed_dict['result_path']).rstrip('/') + '/results', 0776)
 
         if parsed_dict['exec'] == 'ImageStitch':
-            list_for_exec = [os.path.join(conf.EXEC_DIR,'stitch_full'), '--img',
-                             os.path.join(str(parsed_dict['image_path'])), '--verbose', '1',
-                             '--output', os.path.join(str(parsed_dict['result_path']),'results/')]
+            list_for_exec = ['/var/www/html/cloudcv/fileupload/executable/stitch_full', '--img',
+                             str(parsed_dict['image_path']).rstrip('/') + '/', '--verbose', '1',
+                             '--output', str(parsed_dict['result_path']).rstrip('/') + '/results/',
+                             '--ncpus', str(min(parsed_dict['count'], 20)), '--warp']
+
+            param_dict = parseParameters(parsed_dict['params'])
+            list_for_exec.append(str(param_dict['warp']))
 
         elif parsed_dict['exec'] == 'VOCRelease5':
             list_for_exec = ['/var/www/html/cloudcv/voc-release5/PascalImagenetBboxPredictor/distrib/run_PascalImagenetBboxPredictor.sh',
@@ -256,6 +265,7 @@ def run_classification(userid, jobid, image_path, socketid, token, source_type, 
     sendsMessageToRedis(userid, jobid, source_type, socketid, message, result_path=result_path, result_text=str(result), dropbox_token=db_token)
     r.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
+
 def run_image_stitching(list, token, result_url, socketid, result_path, source_type):
    # logger.write('P', 'Inside Image Stitching')
     message = 'Image Stitching Completed'
@@ -272,7 +282,6 @@ def run_voc_release(list, token, result_url, socketid, result_path, source_type)
         print str(e)+'\n'
        # logger.write('P', str(e))
         raise e
-
 '''
 def parseArguments(a):
     i = 0
@@ -353,7 +362,7 @@ def run(parsed_dict, mlab_obj):
 
 
         elif(parsed_dict['exec'] == 'VOCRelease5'):
-            # output = run_executable(list)
+            #output = run_executable(list)
             output = run_matlab_code(mlab_obj, '/var/www/html/cloudcv/voc-dpm-matlab-bridge/pascal_object_detection.m', list, parsed_dict['socketid'])
             sendsMessageToRedis(userid, jobid, source_type, socketid, output, result_path, result_url,
                                 dropbox_token=db_token)

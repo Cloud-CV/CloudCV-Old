@@ -1,0 +1,14 @@
+net: "txtnet.prototxt"
+test_iter: 5
+test_interval: 5
+base_lr: 0.01
+lr_policy: "step"
+gamma: 0.1
+stepsize: 5
+display: 20
+max_iter: 10
+momentum: 0.9
+weight_decay: 0.005
+snapshot: 10
+snapshot_prefix: "_temp/caffenet_train"
+solver_mode: GPU

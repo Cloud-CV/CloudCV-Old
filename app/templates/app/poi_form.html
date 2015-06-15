@@ -75,19 +75,20 @@
         <br>
         <div class="row">
             <img src="/app/media/pictures/poiDemo/00001.jpg"
-                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4 img-responsive"></img>
+
             <img src="/app/media/pictures/poiDemo/00015.jpg"
-                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4 img-responsive"></img>
             <img src="/app/media/pictures/poiDemo/00016.jpg"
-                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4 img-responsive"></img>
         </div>
         <div class="row">
             <img src="/app/media/pictures/poiDemo/00004.jpg"
-                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4 img-responsive"></img>
             <img src="/app/media/pictures/poiDemo/00005.jpg"
-                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4 img-responsive"></img>
             <img src="/app/media/pictures/poiDemo/00006.jpg"
-                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+                 onclick="submitDemoImage(this.src)" class="demo_img col-md-4 img-responsive"></img>
             <br>
         </div>
         Note: nothing is pre-computed for these images. They are treated as a fresh upload with every click.
@@ -185,7 +186,7 @@
             <font size="4">
                 Version 1.0 of this demo uses <a href="http://http://opencv.org">OpenCV</a> to detect faces.<br>
         To know about the importance model used in this work,
-                refer to <cite><a href="http://arxiv.org/abs/1502.05678">VIP: Finding Important People in Images</a> by Clint S. Mathialagan, Andrew C. Gallagher and Dhruv Batra.</cite>
+                refer to <cite><a href="https://computing.ece.vt.edu/~mclint/vip">VIP: Finding Important People in Images</a> by Clint S. Mathialagan, Andrew C. Gallagher and Dhruv Batra.</cite>
             </font><br><br>
         </div>
 
@@ -340,7 +341,8 @@
                 tableElement.className="table table-striped";
 
                 var newImage = document.createElement("img");
-                newImage.style.height = "300px";
+		newImage.style.height = "300px";
+		newImage.className = "img-responsive";
                 var webResult = message.web_result;
 
 		        webResult = JSON.parse(webResult);
@@ -366,10 +368,10 @@
                 // add listItem to the listElement
                 tableRow.appendChild(listItem);
                 var listItem = document.createElement("th");
-                //listItem.className = "span3";
+                listItem.className = "span3";
                 // add the item text
                 listItem.innerHTML = "Importance";
-                listItem.style.textAlign="right";
+                listItem.style.textAlign="left";
                 // add listItem to the listElement
                 tableRow.appendChild(listItem);
                 tableHead.appendChild(tableRow);
@@ -468,7 +470,7 @@
                 }
                     else {
                     if (tags.length == 1)
-                        $(tableDiv).html("Oops! We could detected only one face in this image." +
+                        $(tableDiv).html("Oops! We could detect only one face in this image." +
                         "This demo works best if there are atleast two people in the image, as found by a face detector. " +
                         "Please try another image.");
                     else
