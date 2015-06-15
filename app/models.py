@@ -20,9 +20,9 @@ class User(models.Model):
     email_id = models.EmailField(max_length = 254, unique = True)
     first_name = models.CharField(max_length =100)
     last_name = models.CharField(max_length = 100)
-    username = models.Charfield(, max_length = 50, unique = True)
+    username = models.CharField(max_length = 50, unique = True)
     # The Next field represents the institution/company where the user belongs to.
-    institution = models.Charfield(max_length = 500)
+    institution = models.CharField(max_length = 500)
     last_login = models.DateTimeField()
     date_joined = models.DateTimeField()
     purpose = models.CharField(max_length = 2,
@@ -31,6 +31,15 @@ class User(models.Model):
 
     def __str__(self):
         return "%s %s %s %s %s" % (self.first_name, self.last_name, self.username, self.institution, self.purpose)
+
+class DictModel(models.Model):
+    '''
+    This model is used by the parameters column that acts as a container 
+    and is used to easily store and process json data in django model.
+
+    '''
+    name = models.CharField(max_length=100)
+
 
 class RequestLog(models.Model):
     '''
@@ -51,7 +60,7 @@ class RequestLog(models.Model):
         (START, 'Starting State'),
         (RUNNING, 'In Progress'),
         (ERROR, 'Error State'),
-        (SUCESS, 'Successful')
+        (SUCCESS, 'Successful')
         )
     user = models.ForeignKey(User)
     # The next field describes which of the two api (Python API or Matlab API) was used in the request.
@@ -73,19 +82,10 @@ class RequestLog(models.Model):
     #####################################################
     # ASK AHMED OR HARSH FOR THE NEXT FOUR FIELDS CLARIFICATIONS #
     #####################################################
-    input_source_type = models.CharField()
+    input_source_type = models.CharField(max_length = 100)
     input_source_value = models.PositiveIntegerField()
-    output_source_type = models.CharField()
+    output_source_type = models.CharField(max_length = 100)
     output_source_value = models.PositiveIntegerField()
-
-class DictModel(models.Model):
-    '''
-    This model is used by the parameters column that acts as a container 
-    and is used to easily store and process json data in django model.
-
-    '''
-    name = models.CharField(max_length=100)
-
 class Group(models.Model):
     '''
     This table stores the information about the group of people who 
@@ -94,7 +94,7 @@ class Group(models.Model):
     '''
     group_id = models.PositiveIntegerField()
     group_name = models.CharField(max_length = 100)
-    purpose = models.Charfield()
+    purpose = models.CharField(max_length = 100)
     user = models.ForeignKey(User)
 
 class CurrentRequest(models.Model):
