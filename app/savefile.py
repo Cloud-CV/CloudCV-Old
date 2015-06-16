@@ -2,7 +2,8 @@ from django.http import HttpResponse
 from PIL import Image
 from io import BytesIO
 
-from app.models import Picture
+# from app.models import Picture
+from app.models import *
 from app.celery.api_tasks.tasks import saveDropboxFiles
 from app.log import logger, log_to_terminal, log_error_to_terminal
 from app.core.run_executables import parseParameters

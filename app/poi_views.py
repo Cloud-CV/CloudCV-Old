@@ -9,7 +9,8 @@ from PIL import Image
 from os.path import splitext, basename
 from querystring_parser import parser
 
-from app.models import Picture, RequestLog, Poi
+# from app.models import Picture, RequestLog, Poi
+from app.models import *
 from app.executable.caffe_classify import caffe_classify, caffe_classify_image
 from app.executable.poi_demo import findRelativeImportance
 #from app.executable.poi_demo import findImportantPeople
@@ -132,7 +133,7 @@ def response_mimetype(request):
 
 
 class PoiCreateView(CreateView):
-    model = Poi
+    model = Images
     r = None
     socketid = None
 
@@ -181,7 +182,7 @@ class PoiCreateView(CreateView):
 
         for file in all_files:
             try:
-                a = Picture()
+                a = Images()
                 tick = time.time()
                 strtick = str(tick).replace('.','_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -224,12 +225,12 @@ class PoiCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(PoiCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Poi.objects.all()
+        context['pictures'] = Images.objects.all()
         return context
 
 
 class PoiDeleteView(DeleteView):
-    model = Poi
+    model = Images
 
     def delete(self, request, *args, **kwargs):
         """

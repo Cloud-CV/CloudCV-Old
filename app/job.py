@@ -46,7 +46,7 @@ def getThumbnail(image_url_prefix, name):
 
 def saveInPictureDatabase(file):
     try:
-        pic = Picture()
+        pic = Images()
         tick = time.time()
         
         strtick = str(tick).replace('.','_')

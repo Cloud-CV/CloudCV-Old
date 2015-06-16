@@ -10,14 +10,17 @@ from django.conf import settings
 from PIL import Image
 from io import BytesIO
 
+from rest_framework import permissions
 from app.celery.web_tasks.ImageStitchingTask import runImageStitching
-from app.models import Picture, RequestLog, Decaf
+# from app.models import Picture, RequestLog, Decaf
+from app.models import *
 from app.core.job import Job
 from querystring_parser import parser
 from log import logger, log, log_to_terminal, log_and_exit
 from savefile import saveFilesAndProcess
 import app.thirdparty.dropbox_auth as dbauth
 import app.thirdparty.google_auth as gauth
+from app.serializers import *
 
 import app.conf as conf
 import base64
@@ -123,7 +126,7 @@ def run_executable(list, session, socketid, ):
 
 
 class PictureCreateView(CreateView):
-    model = Picture
+    model = Images
 
     def form_valid(self, form):
         """
@@ -155,7 +158,7 @@ class PictureCreateView(CreateView):
 
             for file in all_files:
                 log_to_terminal(str('Saving file:' + file.name), request_obj.socketid)
-                a = Picture()
+                a = Images()
                 tick = time.time()
                 strtick = str(tick).replace('.','_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -401,46 +404,49 @@ class UserList(APIView):
     """
     List all Users, or create a new user.
     """
+    queryset = User.objects.all()
+    model = User
     def get(self, request, format=None):
-        user = User.objects.all()
+        user = self.queryset
         serializer = UserSerializer(user, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self, request, format=None):
+    #     serializer = UserSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserDetail(APIView):
-    """
-    Retrieve, update or delete a User instance.
-    """
-    def get_object(self, pk):
-        try:
-            return User.objects.get(pk=pk)
-        except User.DoesNotExist:
-            raise Http404
+# class UserDetail(APIView):
+#     """
+#     Retrieve, update or delete a User instance.
+#     """
+#     queryset = User.objects.all()
+#     def get_object(self, pk):
+#         try:
+#             return self.queryset.get(pk=pk)
+#         except User.DoesNotExist:
+#             raise Http404
 
-    def get(self, request, pk, format=None):
-        user = self.get_object(pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
+#     def get(self, request, pk, format=None):
+#         user = self.get_object(pk)
+#         serializer = UserSerializer(user)
+#         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        user = self.get_object(pk)
-        serializer = UserSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     def put(self, request, pk, format=None):
+#         user = self.get_object(pk)
+#         serializer = UserSerializer(user, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
-        user = self.get_object(pk)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+#     def delete(self, request, pk, format=None):
+#         user = self.get_object(pk)
+#         user.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class RequestLogList(APIView):
@@ -526,11 +532,11 @@ class CurrentRequestDetail(APIView):
     """
     Retrieve, update or delete a CurrentRequest instance.
     """
-  def get_object(self, pk):
-    try:
-        return CurrentRequest.objects.get(pk=pk)
-    except CurrentRequest.DoesNotExist:
-        raise Http404
+    def get_object(self, pk):
+        try:
+            return CurrentRequest.objects.get(pk=pk)
+        except CurrentRequest.DoesNotExist:
+            raise Http404
 
     def get(self, request, pk, format=None):
         current_requset = self.get_object(pk)

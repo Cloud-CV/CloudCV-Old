@@ -24,7 +24,8 @@ from querystring_parser import parser
 from os.path import splitext, basename
 import redis
 
-from app.models import Picture, RequestLog, Decaf, Classify, Vqa
+# from app.models import Picture, RequestLog, Decaf, Classify, Vqa
+from app.models import *
 from app.executable.caffe_classify import caffe_classify, caffe_classify_image
 import app.conf as conf
 from app.celery.web_tasks.VqaFeatTask import featExtraction
@@ -117,7 +118,7 @@ class VqaCreateView(CreateView):
 
         for file in all_files:
             try:
-                a = Picture()
+                a = Images()
                 tick = time.time()
                 strtick = str(tick).replace('.', '_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -158,12 +159,12 @@ class VqaCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(VqaCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Classify.objects.all()
+        context['pictures'] = Images.objects.all()
         return context
 
 
 class VqaDeleteView(DeleteView):
-    model = Classify
+    model = Images
 
     def delete(self, request, *args, **kwargs):
         """

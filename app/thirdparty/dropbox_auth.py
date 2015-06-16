@@ -7,7 +7,7 @@ import json
 import dropbox
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
+# from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
 
 def handleAuth(request, is_API, contains_UUID):
     APP_KEY = '3bh4nkyaszl2nhd'

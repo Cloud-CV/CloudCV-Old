@@ -9,7 +9,8 @@ from PIL import Image
 from querystring_parser import parser
 from os.path import splitext, basename
 
-from app.models import Picture, RequestLog, Decaf, Classify
+# from app.models import Picture, RequestLog, Decaf, Classify
+from app.models import *
 from app.executable.caffe_classify import caffe_classify, caffe_classify_image
 import app.conf as conf
 from app.celery.web_tasks.ClassifyTask import classifyImages
@@ -175,7 +176,7 @@ def response_mimetype(request):
 
 
 class ClassifyCreateView(CreateView):
-    model = Classify
+    model = Images
     r = None
     socketid = None
 
@@ -224,7 +225,7 @@ class ClassifyCreateView(CreateView):
 
         for file in all_files:
             try:
-                a = Picture()
+                a = Images()
                 tick = time.time()
                 strtick = str(tick).replace('.','_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -266,12 +267,12 @@ class ClassifyCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(ClassifyCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Classify.objects.all()
+        context['pictures'] = Images.objects.all()
         return context
 
 
 class ClassifyDeleteView(DeleteView):
-    model = Classify
+    model = Images
 
     def delete(self, request, *args, **kwargs):
         """

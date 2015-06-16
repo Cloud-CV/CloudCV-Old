@@ -1,5 +1,5 @@
-from app.models import Picture, CloudCV_Users, GoogleAccountInfo
-
+# from app.models import Picture, CloudCV_Users, GoogleAccountInfo
+from app.models import *
 import requests
 import json
 import uuid
