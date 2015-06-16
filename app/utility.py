@@ -1,4 +1,5 @@
-from fileupload.models import Picture
+# from fileupload.models import Picture
+from fileupload.models import *
 from django.http import HttpResponse, HttpResponseRedirect
 from log import Logger
 from PIL import Image
@@ -39,7 +40,7 @@ def getThumbnail(image_url_prefix, name):
 
 def saveInPictureDatabase(file, log):
     try:
-        pic = Picture()
+        pic = Images()
         tick=time.time()
         
         strtick=str(tick).replace('.','_')
