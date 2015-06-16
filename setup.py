@@ -11,7 +11,12 @@ import os
 
 #Check root privilege
 if os.geteuid() != 0:
-    exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
+	exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
+
+#Stopping nginx server if it is already running
+if not os.system('/etc/init.d/nginx status'):
+	print "\nStopping nginx server."
+	os.system('nginx -s stop')
 
 #Pre-defined values
 values = dict()
@@ -46,4 +51,7 @@ if os.path.islink('/etc/nginx/sites-enabled/fileupload_nginx.conf'):
 os.system("cp ./fileupload_nginx.conf /etc/nginx/sites-enabled/fileupload_nginx.conf")
 print "Done.\n"
 
-print "Setup completed successfully. Your server is up and running."
+print "Starting nginx server.\n"
+os.system('nginx')
+
+print "Setup completed successfully. Your server is up and running.\n"
