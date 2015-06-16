@@ -15,6 +15,7 @@ if os.geteuid() != 0:
 
 #Pre-defined values
 values = dict()
+values['django_address']='127.0.0.1:8000'
 values['node_address']='127.0.0.1:5000'
 values['IP_address']='54.147.160.171'
 values['project_path']='/home/ubuntu/cloudcv/cloudcv_gsoc'
