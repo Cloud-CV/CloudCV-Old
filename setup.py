@@ -26,6 +26,7 @@ values['IP_address']='54.147.160.171'
 values['project_path']=os.path.dirname(os.path.abspath(__file__))
 values['user']='ubuntu'
 values['caffe_path']='/home/ubuntu/caffe'
+values['virtualenv_path']='/home/ubuntu/cloudcv/ccv'
 
 #Setting up the conf.py file
 print "\nSetting up the ./app/conf.py file."
@@ -33,6 +34,16 @@ tmp = Template(open('./app/conf.py').read())
 new = tmp.safe_substitute(values)
 print "Overwriting the ./app/conf.py file with system specific values."
 out = open('./app/conf.py', 'w')
+out.write(new)
+out.close()
+print "Done."
+
+#Setting up the cloudcv17_uwsgi.ini file
+print "\nSetting up the cloudcv17_uwsgi.ini file."
+tmp = Template(open('./cloudcv17_uwsgi.ini').read())
+new = tmp.safe_substitute(values)
+print "Overwriting the cloudcv17_uwsgi.ini file with system specific values."
+out = open('cloudcv17_uwsgi.ini', 'w')
 out.write(new)
 out.close()
 print "Done."
