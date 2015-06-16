@@ -40,6 +40,8 @@ out = open('fileupload_nginx.conf', 'w')
 out.write(new)
 out.close()
 print "Creating a link to the /etc/nginx/sites-enabled/ folder"
+if os.path.islink('/etc/nginx/sites-enabled/fileupload_nginx.conf'):
+	os.system("rm /etc/nginx/sites-enabled/fileupload_nginx.conf")
 os.system("ln -s ./fileupload_nginx.conf /etc/nginx/sites-enabled/fileupload_nginx.conf")
 print "Done.\n"
 
