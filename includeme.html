@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DIGITS Documentation &mdash; DigitsDocNightFury 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DigitsDocNightFury 1.0 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to DigitsDocNightFury’s documentation!" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to DigitsDocNightFury’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">DigitsDocNightFury 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="digits-documentation">
+<h1><strong>DIGITS Documentation</strong><a class="headerlink" href="#digits-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="homepage">
+<h2>Homepage<a class="headerlink" href="#homepage" title="Permalink to this headline">¶</a></h2>
+<p>It calls the method <em>get_job_list()</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L74">(digits/views.py&#64;74)</a>
+that fetches all the datasets and models for all jobs and returns them in json format (if requested via the API) or as HTML (if accessed from the webapp). The <em>new_dataset_options</em>, <em>running_datasets</em>, <em>completed_datasets</em>, <em>new_model_options</em> and <em>running_models</em> variables hold the data in the webapp display mode.</p>
+</div>
+<div class="section" id="jobs">
+<h2>Jobs<a class="headerlink" href="#jobs" title="Permalink to this headline">¶</a></h2>
+<p>DIGITS handles datasets and classification models in exactly the same fashion, jobs. The <em>show_job</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L86">(digits/views.py&#64;86)</a>
+, <em>edit_job</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L103">(digits/views.py&#64;103)</a>
+, <em>job_status</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L119">(digits/views.py&#64;119)</a> and <em>delete_job</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L138">(digits/views.py&#64;138)</a> functions handle the respective CRUD options for both, models and datasets, quite elegantly. These functions are called from the UI through the JS snippets present in <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L82L170">(digits/templates/job.html&#64;82-170)</a>.</p>
+<div class="section" id="job-details">
+<h3>Job Details<a class="headerlink" href="#job-details" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>On home page, when we click on any of the Datasets/Models shown there, it creates a GET request to <strong>/job/&lt;job-id&gt;</strong>, which then (depending on the type of job) redirects to :</p>
+<ul class="simple">
+<li>the <strong>/datasets/&lt;job-id&gt;</strong> to show the details about the specific DatasetJob <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/dataset/views.py#L15">(digits/dataset/views.py&#64;15)</a>. The details include Job Information, Parse Folder, Create DB (train) and visualizations for the Create DB(train) and Create DB(val).</li>
+<li>the <strong>/models/&lt;job-id&gt;</strong> to  show the details about the specific ModelJob <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/views.py#L27">(digits/model/views.py&#64;27)</a>. The details include Solver, Network(train/val), Network(deploy), Raw Caffe Output, details about the dataset used along with the visualization of the Accuracy and Loss that occurred.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="job-status">
+<h3>Job Status<a class="headerlink" href="#job-status" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>To get the status of a job in the json format, you can simply goto <strong>/jobs/&lt;job-id&gt;/status</strong>. The ‘jobs’  in this URL can be replaced, quite obvious now, with ‘models’ or ‘datasets’. The <em>job_status()</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L118">(digits/views.py&#64;118)</a> method handles this task.</div></blockquote>
+</div>
+<div class="section" id="job-update">
+<h3>Job Update<a class="headerlink" href="#job-update" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>If you want to change the name of a Model/Dataset, then go to home page and then click on the Model/Dataset that you want to rename and you will see a new page. Goto the top where the name is written and you will see the edit button just after the name of Model/Dataset. Then edit the name and click Update. The <em>updateJobName()</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/templates/job.html#L92">(digits/templates/job.html&#64;92)</a> JS function calls the edit_job <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/views.py#L103">(digits/views.py&#64;103)</a> function to execute this task.</div></blockquote>
+</div>
+<div class="section" id="creating-a-job">
+<h3>Creating a Job<a class="headerlink" href="#creating-a-job" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="creating-dataset">
+<h4>Creating Dataset<a class="headerlink" href="#creating-dataset" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><p>On home page of DIGITS, first click on the Images button and then you will see a bunch of options available. Click on one of the categories that you are looking for. For eg. we are going to add the dataset in Classification Model. So, clicking on Classification will give redirect to the url <cite>/datasets/images/classification/new</cite> and we will see a bunch of options for our Dataset type. Select the appropriate values and and a Dataset Name, then click on the <cite>Create</cite> button and then you can see a screen similar to the below image.</p>
+<blockquote>
+<div><img alt="_static/1.png" src="_static/1.png" />
+</div></blockquote>
+<p>The image_classification_dataset_new() method present at <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/dataset/images/classification/views.py#L127">(digits/dataset/images/classification/views.py&#64;217)</a> handles this task via a POST request, or you can use the webapp via a ‘GET’ request to obtain a form for the new dataset using <em>image_classification_dataset_create()</em> method located in the file <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/dataset/images/classification/views.py#L207">(digits/dataset/images/classification/views.py&#64;207)</a>.</p>
+</div></blockquote>
+</div>
+<div class="section" id="creating-model">
+<h4>Creating Model<a class="headerlink" href="#creating-model" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><p>For creating a new Model, a Dataset is required. On the right side of home page, under New Models, there is a button Images. Choose Classification from the dropdown list that is shown by clicking on Images Button. After this, you will be redirected to the url <strong>/models/images/classification/new</strong>. Now, select one of the Dataset, choose one of the Networks and you can change the parameters in the Solver Options. Also, you can create a custom network yourself using a .prototxt file.</p>
+<blockquote>
+<div><img alt="_static/2.png" src="_static/2.png" />
+</div></blockquote>
+<p>You can use the image_classification_model_create() method from the file <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/images/classification/views.py#L49">digits/model/images/classification/views.py&#64;49</a> to achieve this task.</p>
+</div></blockquote>
+</div>
+<div class="section" id="delete-job">
+<h4>Delete Job<a class="headerlink" href="#delete-job" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div>A previously created job (dataset/model) can deleted (or even aborted in the case of a model) using DIGITS. Simply click on the delete button associated with the DatasetJob or ModelJob.</div></blockquote>
+</div>
+</div>
+</div>
+<div class="section" id="classify-a-model">
+<h2>Classify a Model<a class="headerlink" href="#classify-a-model" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>To classify a Model, goto the homepage of DIGITS and click on one of the Model under the completed category. It will take you to the link <strong>/models/&lt;job-id&gt;</strong> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/views.py#L27">(digits/model/views.py&#64;27)</a> where at the bottom of the HTML page, there are lot of options for classifying.</p>
+<p>For classifying a Model, DIGITS provides the functionality to classify using Single Image, multiple images, using a .txt file <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/templates/models/images/classification/show.html#L60">(digits/templates/models/images/classification/show.html&#64;160)</a> or through a URL of an image or set of Images. Select the way in which you want to classify and click the classify button and here you go. You will see a list of classification results according to the images supplied and their percentage predictions. The respective methods for these options of classification can be found as follows :</p>
+<ul>
+<li><p class="first"><em>image_classification_model_classify_many()</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/images/classification/views.py#L288">(digits/model/images/classification/views.py&#64;288)</a></p>
+</li>
+<li><p class="first"><em>image_classification_model_classify_one()</em> <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/images/classification/views.py#L231">(digits/model/images/classification/views.py&#64;231)</a></p>
+<img alt="_static/3.png" src="_static/3.png" />
+</li>
+</ul>
+<p>You can also view the outputs (ROC curves) of classification by calling the image_classification_model_large_graph() method from the file (<a class="reference external" href="mailto:digits/model/images/classification/views&#46;py&#37;&#52;&#48;218">digits/model/images/classification/views<span>&#46;</span>py<span>&#64;</span>218</a>). The final outputs would look something like the images below.</p>
+<blockquote>
+<div><img alt="_static/4.png" src="_static/4.png" />
+</div></blockquote>
+<p>The TOP-N classification of images is also supported by DIGITS and can be accessed by calling the <em>image_classification_model_top_n()</em>  method from <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/images/classification/views.py#L364">(digits/model/images/classification/views.py&#64;364)</a></p>
+<p>The visualization of the learning rate graph can be acquired by calling the <em>models_visualize_lr()</em> method from <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/views.py#L99">(digits/model/views.py&#64;99)</a></p>
+<blockquote>
+<div><img alt="_static/5.png" src="_static/5.png" />
+</div></blockquote>
+<p>You can obtain a visualization of the neural network that you use for creating your model by using the <em>models_visualize_network()</em> method from <a class="reference external" href="https://github.com/NVIDIA/DIGITS/blob/master/digits/model/views.py#L86">(digits/model/views.py&#64;86)</a></p>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong>DIGITS Documentation</strong></a><ul>
+<li><a class="reference internal" href="#homepage">Homepage</a></li>
+<li><a class="reference internal" href="#jobs">Jobs</a><ul>
+<li><a class="reference internal" href="#job-details">Job Details</a></li>
+<li><a class="reference internal" href="#job-status">Job Status</a></li>
+<li><a class="reference internal" href="#job-update">Job Update</a></li>
+<li><a class="reference internal" href="#creating-a-job">Creating a Job</a><ul>
+<li><a class="reference internal" href="#creating-dataset">Creating Dataset</a></li>
+<li><a class="reference internal" href="#creating-model">Creating Model</a></li>
+<li><a class="reference internal" href="#delete-job">Delete Job</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#classify-a-model">Classify a Model</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to DigitsDocNightFury&#8217;s documentation!</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/includeme.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Mohit.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.4</a>
+      
+      |
+      <a href="_sources/includeme.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>
