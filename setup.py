@@ -18,12 +18,14 @@ if not os.system('/etc/init.d/nginx status'):
 	print "Stopping nginx server."
 	os.system('nginx -s stop')
 
+project_path = os.path.dirname(os.path.abspath(__file__))
+print project_path
 #Pre-defined values
 values = dict()
 values['django_address']='127.0.0.1:8000'
 values['node_address']='127.0.0.1:5000'
 values['IP_address']='54.147.160.171'
-values['project_path']=os.path.dirname(os.path.abspath(__file__))
+values['project_path']=project_path
 values['user']='ubuntu'
 values['caffe_path']='/home/ubuntu/caffe'
 values['virtualenv_path']='/home/ubuntu/cloudcv/ccv'
@@ -62,8 +64,33 @@ if os.path.islink('/etc/nginx/sites-enabled/fileupload_nginx.conf'):
 os.system("cp ./fileupload_nginx.conf /etc/nginx/sites-enabled/fileupload_nginx.conf")
 print "Done.\n"
 
+#Starting nginx server
 print "Starting nginx server."
 os.system('nginx')
 os.system('/etc/init.d/nginx status')
+
+#Starting the uswgi process
+print "\nSetting up the uwsgi process."
+if not os.path.isdir('/etc/uwsgi'):
+	os.system('mkdir /etc/uwsgi')
+print "Copying the cloudcv17_uwsgi.ini to /etc/uwsgi"
+os.system('cp cloudcv17_uwsgi.ini /etc/uwsgi/')
+print "Creating upstart for uWSGI emperor"
+script = """
+# Emperor uWSGI script
+
+description "uWSGI Emperor"
+start on runlevel [2345]
+stop on runlevel [06]
+
+respawn
+
+exec uwsgi --emperor /etc/uwsgi
+"""
+out = open('/etc/init/emperor.uwsgi.conf', 'w')
+out.write(script)
+out.close()
+print "Starting uWSGI emperor."
+os.system('start emperor.uwsgi')
 
 print "\nSetup completed successfully. Your server is up and running.\n"
