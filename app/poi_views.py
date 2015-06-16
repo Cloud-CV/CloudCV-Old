@@ -77,7 +77,7 @@ def response_mimetype(request):
 
 
 class PoiCreateView(CreateView):
-    model = Poi
+    model = Images
     r = None
     socketid = None
     count_hits = 0
@@ -115,7 +115,7 @@ class PoiCreateView(CreateView):
 
         for file in all_files:
             try:
-                a = Picture()
+                a = Images()
                 tick = time.time()
                 strtick = str(tick).replace('.', '_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -157,12 +157,12 @@ class PoiCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(PoiCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Poi.objects.all()
+        context['pictures'] = Images.objects.all()
         return context
 
 
 class PoiDeleteView(DeleteView):
-    model = Poi
+    model = Images
 
     def delete(self, request, *args, **kwargs):
         """

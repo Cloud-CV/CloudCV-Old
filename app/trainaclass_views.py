@@ -9,7 +9,8 @@ from PIL import Image
 from querystring_parser import parser
 from os.path import splitext, basename
 
-from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
+# from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
+from app.models import *
 from app.executable.LDA_files.test import caffe_classify, caffe_classify_image
 from app.executable.LDA_files import train_fast
 from app.classify_views import  classify_wrapper_local as default_classify
@@ -65,7 +66,7 @@ def response_mimetype(request):
 
 
 class TrainaclassCreateView(CreateView):
-    model = Trainaclass
+    model = Images
     r = None
     socketid = None
     count_hits = 0
@@ -126,7 +127,7 @@ class TrainaclassCreateView(CreateView):
 
                 for file in all_files:
                     try:
-                        a = Picture()
+                        a = Images()
                         tick = time.time()
                         strtick = str(tick).replace('.', '_')
                         fileName, fileExtension = os.path.splitext(file.name)
@@ -162,12 +163,12 @@ class TrainaclassCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainaclassCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Trainaclass.objects.all()
+        context['pictures'] = Images.objects.all()
         return context
 
 
 class TrainaclassDeleteView(DeleteView):
-    model = Trainaclass
+    model = Images
 
     def delete(self, request, *args, **kwargs):
         """

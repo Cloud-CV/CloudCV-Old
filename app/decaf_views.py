@@ -10,7 +10,8 @@ from querystring_parser import parser
 from os.path import splitext, basename
 from urlparse import urlparse
 
-from app.models import Picture, RequestLog, Decaf, Decafmodel
+# from app.models import Picture, RequestLog, Decaf, Decafmodel
+from app.models import Images
 from .response import JSONResponse, response_mimetype
 from app.celery.web_tasks.DecafTask import decafImages
 import app.conf as conf
@@ -53,7 +54,7 @@ def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_fil
 
 
 class DecafCreateView(CreateView):
-    model = Decaf
+    model = Images
     r = None
     socketid = None
 
@@ -142,7 +143,7 @@ class DecafCreateView(CreateView):
         Method to get the context data.
         """
         context = super(DecafCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Decaf.objects.all()
+        context['pictures'] = Images.objects.all()
         return context
 
 
@@ -268,7 +269,7 @@ def decafDropbox(request):
 
 
 class DecafModelCreateView(CreateView):
-    model = Decafmodel
+    model = Images
     r = None
     socketid = None
 
@@ -361,7 +362,7 @@ class DecafModelCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(DecafModelCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Decaf.objects.all()
+        context['pictures'] = Images.objects.all()
         return context
 
 

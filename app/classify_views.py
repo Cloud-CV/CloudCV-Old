@@ -84,7 +84,7 @@ def response_mimetype(request):
 
 
 class ClassifyCreateView(CreateView):
-    model = Classify
+    model = Images
     r = None
     socketid = None
     count_hits = 0
@@ -130,7 +130,7 @@ class ClassifyCreateView(CreateView):
 
         for file in all_files:
             try:
-                a = Picture()
+                a = Images()
                 tick = time.time()
                 strtick = str(tick).replace('.', '_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -172,12 +172,12 @@ class ClassifyCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(ClassifyCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Classify.objects.all()
+        context['pictures'] = Images.objects.all()
         return context
 
 
 class ClassifyDeleteView(DeleteView):
-    model = Classify
+    model = Images
 
     def delete(self, request, *args, **kwargs):
         """
