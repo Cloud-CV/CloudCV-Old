@@ -15,7 +15,7 @@ if os.geteuid() != 0:
 
 #Stopping nginx server if it is already running
 if not os.system('/etc/init.d/nginx status'):
-	print "\nStopping nginx server."
+	print "Stopping nginx server."
 	os.system('nginx -s stop')
 
 #Pre-defined values
@@ -23,7 +23,7 @@ values = dict()
 values['django_address']='127.0.0.1:8000'
 values['node_address']='127.0.0.1:5000'
 values['IP_address']='54.147.160.171'
-values['project_path']='/home/ubuntu/cloudcv/cloudcv_gsoc'
+values['project_path']=os.path.dirname(os.path.abspath(__file__))
 values['user']='ubuntu'
 values['caffe_path']='/home/ubuntu/caffe'
 
@@ -35,7 +35,7 @@ print "Overwriting the ./app/conf.py file with system specific values."
 out = open('./app/conf.py', 'w')
 out.write(new)
 out.close()
-print "Done.\n"
+print "Done."
 
 #Setting up the fileupload_nginx.conf file
 print "\nSetting up the fileupload_nginx.conf file."
@@ -51,7 +51,8 @@ if os.path.islink('/etc/nginx/sites-enabled/fileupload_nginx.conf'):
 os.system("cp ./fileupload_nginx.conf /etc/nginx/sites-enabled/fileupload_nginx.conf")
 print "Done.\n"
 
-print "Starting nginx server.\n"
+print "Starting nginx server."
 os.system('nginx')
+os.system('/etc/init.d/nginx status')
 
-print "Setup completed successfully. Your server is up and running.\n"
+print "\nSetup completed successfully. Your server is up and running.\n"
