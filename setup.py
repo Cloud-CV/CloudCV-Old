@@ -26,6 +26,7 @@ values = dict()
 values['django_address']='127.0.0.1:8000'
 values['node_address']='127.0.0.1:5000'
 values['IP_address']='54.147.160.171'
+values['server_port']='80'
 values['project_path']=project_path
 values['user']='ubuntu'
 values['caffe_path']='/home/ubuntu/caffe'
