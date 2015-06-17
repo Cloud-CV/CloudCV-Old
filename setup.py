@@ -10,10 +10,16 @@ Author - Prashant Jalan
 #Module import
 from string import Template
 import os
+import redis
 
 #Check root privilege
 if os.geteuid() != 0:
 	exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
+
+#Check redis server
+rs = redis.Redis("localhost")
+if not rs.ping():
+	exit("The redis server is not running.\nMake sure you have configured the redis server to run robustly at its default port. Exiting.")
 
 #Stopping nginx server if it is already running
 if not os.system('/etc/init.d/nginx status'):
