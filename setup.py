@@ -117,8 +117,8 @@ print "Starting uWSGI emperor."
 os.system('start emperor.uwsgi')
 
 #Handling forever node.js
-print "Stopping forever for ./nodejs/chat.js in case already running"
-os.system('/home/ubuntu/cloudcv/node_modules/forever/bin/forever stop '+project_path+'/nodejs/chat.js')
+print "Stopping all forever instances"
+os.system('/home/ubuntu/cloudcv/node_modules/forever/bin/forever stopall')
 print "Starting forever for ./nodejs/chat.js"
 foreverStartCMD = '/home/ubuntu/cloudcv/node_modules/forever/bin/forever start '+project_path+'/nodejs/chat.js'
 os.system(foreverStartCMD)
