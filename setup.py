@@ -81,10 +81,10 @@ print "Copying the file to the /etc/nginx/sites-enabled/ folder"
 if os.path.islink('/etc/nginx/sites-enabled/fileupload_nginx.conf'):
 	os.system("rm /etc/nginx/sites-enabled/fileupload_nginx.conf")
 os.system("cp "+project_path+"/fileupload_nginx.conf /etc/nginx/sites-enabled/fileupload_nginx.conf")
-print "Done.\n"
+print "Done."
 
 #Ensuring nginx starts up on system reboot
-print "Ensuring nginx starts up on system reboot."
+print "\nEnsuring nginx starts up on system reboot."
 os.system('update-rc.d nginx defaults')
 
 #Starting nginx server
@@ -117,7 +117,7 @@ print "Starting uWSGI emperor."
 os.system('start emperor.uwsgi')
 
 #Handling forever node.js
-print "Stopping all forever instances"
+print "\nStopping all forever instances"
 os.system('/home/ubuntu/cloudcv/node_modules/forever/bin/forever stopall')
 print "Starting forever for ./nodejs/chat.js"
 foreverStartCMD = '/home/ubuntu/cloudcv/node_modules/forever/bin/forever start '+project_path+'/nodejs/chat.js'
