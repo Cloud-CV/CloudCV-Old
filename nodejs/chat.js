@@ -4,7 +4,7 @@ function(req,res)
 {
     res.writeHead(200);
     res.end('Hello Http');
-}).listen(5000);
+}).listen($node_port);
 
 var io = require('socket.io').listen(server);
 var fs = require('fs');
