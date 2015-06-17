@@ -31,12 +31,23 @@ project_path = os.path.dirname(os.path.abspath(__file__))
 values = dict()
 values['django_address']='127.0.0.1:8000'
 values['node_address']='127.0.0.1:5000'
+values['node_port']='5000'
 values['IP_address']='54.147.160.171'
 values['server_port']='80'
 values['project_path']=project_path
 values['user']='ubuntu'
 values['caffe_path']='/home/ubuntu/caffe'
 values['virtualenv_path']='/home/ubuntu/cloudcv/ccv'
+
+#Setting up the chat.js file
+print "\nSetting up the ./nodejs/chat.js file."
+tmp = Template(open(project_path+'/nodejs/chat.js').read())
+new = tmp.safe_substitute(values)
+print "Overwriting the ./nodejs/chat.js file with system specific values."
+out = open(project_path+'/nodejs/chat.js', 'w')
+out.write(new)
+out.close()
+print "Done."
 
 #Setting up the conf.py file
 print "\nSetting up the ./app/conf.py file."
