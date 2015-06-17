@@ -37,4 +37,8 @@ PIC_URL = '/media/pictures/cloudcv/'
 
 # CAFFE DIRECTORY
 CAFFE_DIR = '$caffe_path'
+import sys
+#Adding caffe to path
+sys.path.append("$caffe_path/python")
+
 LOG_DIR = os.path.join(settings.BASE_ABS_DIR, 'logs')
