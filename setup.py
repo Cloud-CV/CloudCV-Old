@@ -120,6 +120,20 @@ os.system('start emperor.uwsgi')
 print "Stopping forever for ./nodejs/chat.js in case already running"
 os.system('/home/ubuntu/cloudcv/node_modules/forever/bin/forever stop '+project_path+'/nodejs/chat.js')
 print "Starting forever for ./nodejs/chat.js"
-os.system('/home/ubuntu/cloudcv/node_modules/forever/bin/forever start '+project_path+'/nodejs/chat.js')
+foreverStartCMD = '/home/ubuntu/cloudcv/node_modules/forever/bin/forever start '+project_path+'/nodejs/chat.js'
+os.system(foreverStartCMD)
+
+#Creating upstart script for forever
+print "\nCreating upstart script for forever"
+script = """
+# Node.js forever script
+
+description "node.js forever"
+start on startup
+"""
+script += "exec " + foreverStartCMD + "\n"
+out = open('/etc/init/forever.nodejs.conf', 'w')
+out.write(script)
+out.close()
 
 print "\nSetup completed successfully. Your server is up and running.\n"
