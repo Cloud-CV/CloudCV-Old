@@ -45,3 +45,31 @@ urlpatterns += patterns('app.trainaclass_views',
                         url(r'^trainmodel/$', 'trainamodel', name="trainamodel"),
                         url(r'^testmodel/$', 'testmodel', name="testmodel"),
                         )
+
+########################################################################
+
+# from app import views
+
+# '''
+# the below module import is used for importing the foramt type in which we 
+# the data like json or xml
+# '''
+# from rest_framework.urlpatterns import format_suffix_patterns
+
+# urlpatterns += patterns('app.serializers',
+#     url(r'^api/users/$', views.UserList.as_view()),
+#     url(r'^api/users/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
+#     url(r'^api/requests/$', views.RequestLogList.as_view()),
+#     url(r'^api/requests/(?P<pk>[0-9]+)/$', views.RequestLogDetail.as_view()),
+#     url(r'^api/groups/$', views.GroupList.as_view()),
+#     url(r'^api/groups/(?P<pk>[0-9]+)/$', views.GroupDetail.as_view()),
+#     url(r'^api/current_requests/$', views.CurrentRequestList.as_view()),
+#     url(r'^api/current_requests/(?P<pk>[0-9]+)/$', views.CurrentRequestDetail.as_view()),
+#     url(r'^api/images/$', views.ImagesList.as_view()),
+#     url(r'^api/images/(?P<pk>[0-9]+)/$', views.ImagesDetail.as_view()),
+#     url(r'^api/models/$', views.ModelStorageList.as_view()),
+#     url(r'^api/models/(?P<pk>[0-9]+)/$', views.ModelStorageDetail.as_view()),
+
+# )
+
+# urlpatterns = format_suffix_patterns(urlpatterns)
