@@ -72,6 +72,10 @@ if os.path.islink('/etc/nginx/sites-enabled/fileupload_nginx.conf'):
 os.system("cp "+project_path+"/fileupload_nginx.conf /etc/nginx/sites-enabled/fileupload_nginx.conf")
 print "Done.\n"
 
+#Ensuring nginx starts up on system reboot
+print "Ensuring nginx starts up on system reboot."
+os.system('update-rc.d nginx defaults')
+
 #Starting nginx server
 print "Starting nginx server."
 os.system('nginx')
@@ -100,5 +104,11 @@ out.write(script)
 out.close()
 print "Starting uWSGI emperor."
 os.system('start emperor.uwsgi')
+
+#Handling forever node.js
+print "Stopping forever for ./nodejs/chat.js in case already running"
+os.system('/home/ubuntu/cloudcv/node_modules/forever/bin/forever stop '+project_path+'/nodejs/chat.js')
+print "Starting forever for ./nodejs/chat.js"
+os.system('/home/ubuntu/cloudcv/node_modules/forever/bin/forever start '+project_path+'/nodejs/chat.js')
 
 print "\nSetup completed successfully. Your server is up and running.\n"
