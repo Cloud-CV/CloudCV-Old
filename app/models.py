@@ -1,6 +1,11 @@
 # encoding: utf-8
+'''
+Author: Deshraj
+'''
+
 from django.db import models
 from django.core.validators import URLValidator
+from jsonfield import JSONField
 
 class User(models.Model):
     '''
@@ -21,8 +26,7 @@ class User(models.Model):
     first_name = models.CharField(max_length =100)
     last_name = models.CharField(max_length = 100)
     username = models.CharField(max_length = 50, unique = True)
-    # The Next field represents the institution/company where the user belongs to.
-    institution = models.CharField(max_length = 500)
+    institution = models.CharField(max_length = 500) # Represents the institution/company where the user belongs to.
     last_login = models.DateTimeField()
     date_joined = models.DateTimeField()
     purpose = models.CharField(max_length = 2,
@@ -32,14 +36,14 @@ class User(models.Model):
     def __str__(self):
         return "%s %s %s %s %s" % (self.first_name, self.last_name, self.username, self.institution, self.purpose)
 
-class DictModel(models.Model):
-    '''
-    This model is used by the parameters column that acts as a container 
-    and is used to easily store and process json data in django model.
-
-    '''
-    name = models.CharField(max_length=100)
-
+class ModelStorage(models.Model):
+    """
+    To store the Models that are being used by the different User Groups. 
+    """
+    file_location = models.CharField(max_length = 1000)   # next field defines the parameters that are used
+    parameters = JSONField()                   # the parameters can be many. So, they are stored in the json format 
+    neural_network = models.CharField(max_length = 1000)  # it defines the location of the .prototxt file for the particular model.
+    database_used = models.CharField(max_length = 1000)   # it defines the location of the .prototxt file for the particular database.
 
 class RequestLog(models.Model):
     '''
@@ -63,9 +67,8 @@ class RequestLog(models.Model):
         (SUCCESS, 'Successful')
         )
     user = models.ForeignKey(User)
-    # The next field describes which of the two api (Python API or Matlab API) was used in the request.
     api_used = models.CharField(max_length = 3, 
-        choices = API)
+        choices = API)  # describes which of the two api (Python API or Matlab API) was used in the request.
     processing_state = models.CharField(max_length = 3,
         choices = PROCESSING_STATE,
         default = START)
@@ -77,21 +80,20 @@ class RequestLog(models.Model):
     See the link : http://stackoverflow.com/questions/402217/how-to-store-a-dictionary-on-a-django-model
     for more clarification 
     '''
-    parameters = models.ForeignKey(DictModel)
+    parameters = JSONField()
     duration = models.DateTimeField()
-    #####################################################
-    # ASK AHMED OR HARSH FOR THE NEXT FOUR FIELDS CLARIFICATIONS #
-    #####################################################
     input_source_type = models.CharField(max_length = 100)
     input_source_value = models.PositiveIntegerField()
     output_source_type = models.CharField(max_length = 100)
     output_source_value = models.PositiveIntegerField()
+
 class Group(models.Model):
     '''
     This table stores the information about the group of people who 
     are doing research/work using cloudcv and is used to monitor that 
     which group is researching over what.
     '''
+    model = models.ForeignKey(ModelStorage)
     group_id = models.PositiveIntegerField()
     group_name = models.CharField(max_length = 100)
     purpose = models.CharField(max_length = 100)
@@ -110,7 +112,7 @@ class CurrentRequest(models.Model):
 
 class Images(models.Model):
     '''
-    This table is used to store the images on which different operations 
+    To store the images on which different operations 
     are performed. 
     '''
     user = models.ForeignKey(User)
