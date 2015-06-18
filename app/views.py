@@ -405,6 +405,8 @@ from rest_framework.response import Response
 from django.http import Http404
 from rest_framework import generics
 from serializers import *
+from rest_framework import filters
+import django_filters
 
 # class UserList(APIView):
 #     """
@@ -588,6 +590,8 @@ class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     model = User
+    filter_fields = ('first_name','last_name','username','email_id','institution','last_login','date_joined','purpose')
+
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -604,6 +608,8 @@ class RequestLogList(generics.ListCreateAPIView):
     queryset = RequestLog.objects.all()
     serializer_class = RequestLogSerializer
     model = RequestLog
+    filter_fields = ('user','api_used','job_id','processing_state','no_of_images','parameters','duration','input_source_type','input_source_value','output_source_type','output_source_value')
+
 
 class RequestLogDetail(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -620,6 +626,7 @@ class GroupList(generics.ListCreateAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     model = Group
+    filter_fields = ('model','group_id','group_name','purpose','user')
 
 class GroupDetail(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -636,6 +643,8 @@ class CurrentRequestList(generics.ListCreateAPIView):
     queryset = CurrentRequest.objects.all()
     serializer_class = CurrentRequestSerializer
     model = CurrentRequest
+    filter_fields = ('user','ram_usage','cpu_usage','disk_space_usage','no_of_jobs_running')
+
 
 class CurrentRequestDetail(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -652,6 +661,7 @@ class ImagesList(generics.ListCreateAPIView):
     queryset = Images.objects.all()
     serializer_class = ImagesSerializer
     model = Images
+    filter_fields = ('user','category','url')
 
 class ImagesDetail(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -668,6 +678,7 @@ class ModelStorageList(generics.ListCreateAPIView):
     queryset = ModelStorage.objects.all()
     serializer_class = ModelStorageSerializer
     model = ModelStorage
+    filter_fields = ('file_location','parameters', 'neural_network','database_used')
 
 class ModelStorageDetail(generics.RetrieveUpdateDestroyAPIView):
     """
