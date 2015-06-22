@@ -1,9 +1,6 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
+'''
+Author: Deshraj
+'''
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
@@ -27,6 +24,16 @@ def user_POST(self):
 	}
 	self.client.post(url, data, format='json')
 
+def model_POST(self):
+	# POST request so as to ensure that ModelStorage instance is created 
+	url = '/api/models/'
+	data = {
+		"file_location": "/cloudcv_deshraj/hello.py",
+		"parameters": "{'hello':'world'}",
+		"neural_network": "/neuralnetwork/prototxt",
+		"database_used": "/database/prototxt"
+	}
+	self.client.post(url, data, format='json')
 
 class SimpleTest(TestCase):
 	def test_basic_addition(self):
@@ -147,9 +154,9 @@ class RequestLogTest(APITestCase):
 			"parameters": "{\"foo\":\"bar\"}",
 			"duration": "0001-01-01T01:01:00Z",
 			"input_source_type": "type1",
-			"input_source_value": 1,
+			"input_source_value": 2,
 			"output_source_type": "type2",
-			"output_source_value": 1
+			"output_source_value": 2
 		}
 		RequestLogTest.test_POST(self)
 		response = self.client.put(url, data, format='json')
@@ -162,3 +169,192 @@ class RequestLogTest(APITestCase):
 		RequestLogTest.test_POST(self)
 		response = self.client.delete(url)
 		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class CurrentRequestTest(APITestCase):
+	"""
+	Ensure CRUD in REST API for CurrentRequest Model.
+	"""
+	def test_GET(self):
+		#GET Request for ensuring all CurrentRequest instances are there
+		url = '/api/current_requests/'
+		response = self.client.get(url, format='json')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_POST(self):
+		# POST request so as to ensure that CurrentRequest instance is created 
+		url = '/api/current_requests/'
+		data = {
+			"user": 1,
+			"ram_usage": 10.0,
+			"cpu_usage": 5.0,
+			"disk_space_usage": 10.0,
+			"no_of_jobs_running": 1
+		}
+		user_POST(self) #global funciton declared on the top of the file 
+		response = self.client.post(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		self.assertEqual(response.data, data)
+
+	def test_PUT(self):
+		# PUT method so as to ensure that CurrentRequest instance can be updated 
+		url = '/api/current_requests/1/'
+		data = {
+			"user": 1,
+			"ram_usage": 20.0,
+			"cpu_usage": 5.0,
+			"disk_space_usage": 10.0,
+			"no_of_jobs_running": 2
+		}
+		CurrentRequestTest.test_POST(self)
+		response = self.client.put(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, data)
+		
+	def test_DELETE(self):
+		# DELETE method for deleting the test CurrentRequest instance 
+		url = '/api/current_requests/1/'
+		CurrentRequestTest.test_POST(self)
+		response = self.client.delete(url)
+		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+
+class ModelStorageTest(APITestCase):
+	"""
+	Ensure CRUD in REST API for ModelStorage Model.
+	"""
+	def test_GET(self):
+		#GET Request for ensuring all ModelStorage instances are there
+		url = '/api/models/'
+		response = self.client.get(url, format='json')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_POST(self):
+		# POST request so as to ensure that ModelStorage instance is created 
+		url = '/api/models/'
+		data = {
+			"file_location": "/cloudcv_deshraj/hello.py",
+			"parameters": "{'hello':'world'}",
+			"neural_network": "/neuralnetwork/prototxt",
+			"database_used": "/database/prototxt"
+		}
+		# user_POST(self) #global funciton declared on the top of the file 
+		response = self.client.post(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		self.assertEqual(response.data, data)
+
+	def test_PUT(self):
+		# PUT method so as to ensure that ModelStorage instance can be updated 
+		url = '/api/models/1/'
+		data = {
+			"file_location": "/cloudcv_harsh/hello.py",
+			"parameters": "{'hello':'world'}",
+			"neural_network": "/neuralnetwork/prototxt",
+			"database_used": "/database/prototxt"
+		}
+		ModelStorageTest.test_POST(self)
+		response = self.client.put(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, data)
+		
+	def test_DELETE(self):
+		# DELETE method for deleting the test ModelStorage instance 
+		url = '/api/models/1/'
+		ModelStorageTest.test_POST(self)
+		response = self.client.delete(url)
+		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class ImagesTest(APITestCase):
+	"""
+	Ensure CRUD in REST API for Images Model.
+	"""
+	def test_GET(self):
+		#GET Request for ensuring all Images instances are there
+		url = '/api/images/'
+		response = self.client.get(url, format='json')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_POST(self):
+		# POST request so as to ensure that Images instance is created 
+		url = '/api/images/'
+		data = {
+		    "user": 1,
+		    "category": "Train A Class",
+		    "url": "http://gsoc.cloudcv.org:9000/api/image"
+		}
+		user_POST(self) #global funciton declared on the top of the file 
+		response = self.client.post(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		self.assertEqual(response.data, data)
+
+	def test_PUT(self):
+		# PUT method so as to ensure that Images instance can be updated 
+		url = '/api/images/1/'
+		data = {
+		    "user": 1,
+		    "category": "Classification",
+		    "url": "http://gsoc.cloudcv.org:9000/api/image"
+		}
+		ImagesTest.test_POST(self)
+		response = self.client.put(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, data)
+		
+	def test_DELETE(self):
+		# DELETE method for deleting the test Images instance 
+		url = '/api/images/1/'
+		ImagesTest.test_POST(self)
+		response = self.client.delete(url)
+		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class GroupTest(APITestCase):
+	"""
+	Ensure CRUD in REST API for Group Model.
+	"""
+	def test_GET(self):
+		#GET Request for ensuring all Group instances are there
+		url = '/api/groups/'
+		response = self.client.get(url, format='json')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_POST(self):
+		# POST request so as to ensure that Group instance is created 
+		url = '/api/groups/'
+		data = {
+		    "model": 1,
+		    "group_id": 1,
+		    "group_name": "Rangers",
+		    "purpose": "Research",
+		    "user": 1
+		}
+		user_POST(self) #global funciton declared on the top of the file 
+		model_POST(self) #global funciton declared on the top of the file
+		response = self.client.post(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		self.assertEqual(response.data, data)
+
+	def test_PUT(self):
+		# PUT method so as to ensure that Group instance can be updated 
+		url = '/api/groups/1/'
+		data = {
+		    "model": 1,
+		    "group_id": 1,
+		    "group_name": "Crawlers",
+		    "purpose": "Education",
+		    "user": 1
+		}
+		GroupTest.test_POST(self)
+		response = self.client.put(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, data)
+		
+	def test_DELETE(self):
+		# DELETE method for deleting the test Group instance 
+		url = '/api/groups/1/'
+		GroupTest.test_POST(self)
+		response = self.client.delete(url)
+		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
