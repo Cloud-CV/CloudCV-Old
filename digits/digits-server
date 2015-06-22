@@ -1,0 +1,7 @@
+#!/bin/bash
+# Copyright (c) 2014-2015, NVIDIA CORPORATION.  All rights reserved.
+
+$(command -v python) $(command -v gunicorn) \
+    --config gunicorn_config.py \
+    digits.webapp:app \
+    $@
