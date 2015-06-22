@@ -44,12 +44,16 @@ class RequestLogSerializer(serializers.ModelSerializer):
 		return RequestLog.objects.create(**validated_data)
 
 	def update(self, instance, validated_data):
-		instance.cloudcvid = validated_data.get('cloudcvid',instance.cloudcvid)
-		instance.jobid = validated_data.get('jobid',instance.jobid)
-		instance.noOfImg = validated_data.get('noOfImg',instance.noOfImg)
-		instance.dateTime = validated_data.get('dateTime',instance.dateTime)
-		instance.isDropbox = validated_data.get('isDropbox',instance.isDropbox)
-		instance.apiName = validated_data.get('apiName',instance.apiName)
+		instance.api_used = validated_data.get('api_used',instance.api_used)
+		instance.job_id = validated_data.get('job_id',instance.job_id)
+		instance.processing_state = validated_data.get('processing_state',instance.processing_state)
+		instance.no_of_images = validated_data.get('no_of_images',instance.no_of_images)
+		instance.parameters = validated_data.get('parameters',instance.parameters)
+		instance.duration = validated_data.get('duration',instance.duration)
+		instance.input_source_type = validated_data.get('input_source_type',instance.input_source_type)
+		instance.input_source_value = validated_data.get('input_source_value',instance.input_source_value)
+		instance.output_source_type = validated_data.get('output_source_type',instance.output_source_type)
+		instance.output_source_value = validated_data.get('output_source_value',instance.output_source_value)
 		instance.save()
 		return instance
 
