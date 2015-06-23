@@ -5,10 +5,13 @@ import os
 admin.autodiscover()
 
 urlpatterns = patterns('',
-                       url(r'^', include('app.urls')),
-                       url(r'^upload/', include('app.urls')),
-                       # url(r'^admin/', include(admin.site.urls)),
-                       )
+    url(r'^', include('app.urls')),
+    url(r'^upload/', include('app.urls')),
+    (r'^accounts/', include('allauth.urls')),
+    # Uncomment the admin/doc line below to enable admin documentation:
+    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^admin/', include(admin.site.urls)),
+)
 
 urlpatterns += patterns('',
                         (r'^media/(.*)$', 'django.views.static.serve',

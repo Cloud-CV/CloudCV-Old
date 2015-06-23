@@ -16,3 +16,7 @@ djangorestframework==3.1
 markdown==2.6.2
 django-filter==0.10.0
 jsonfield==1.0.3
+<<<<<<< HEAD
+=======
+django-allauth==0.20.0
+>>>>>>> allauth settings configured
