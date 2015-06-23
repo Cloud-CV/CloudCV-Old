@@ -21,7 +21,7 @@ def user_POST(self):
 	self.client.post(url, data, format='json')
 
 
-class SimpleTest(TestCase):
+# class SimpleTest(TestCase):
 # 	def test_basic_addition(self):
 # 		"""
 # 		Tests that 1 + 1 always equals 2.
