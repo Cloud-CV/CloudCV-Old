@@ -16,7 +16,7 @@ def decaf_features(ImagePath):
         PRETRAINED = '/share/code/caffe/models/caffe_reference_imagenet_model'
         IMAGE_FILE = ImagePath
         net = imagenet.ImageNetClassifier(MODEL_FILE, PRETRAINED)
-        net.caffenet.set_phase_test()
+        #net.caffenet.set_phase_test()
         net.caffenet.set_mode_cpu()
 
         # Compute the features

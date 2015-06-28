@@ -22,7 +22,7 @@ def caffe_classify_image(ImagePath):
     net = imagenet.ImageNetClassifier(MODEL_FILE, PRETRAINED, False, numoutputs)
 
     # Predict the image classes, then return the top 5 indicies
-    net.caffenet.set_phase_test()
+    #net.caffenet.set_phase_test()
     net.caffenet.set_mode_cpu()
 
     print('Making predictions...')

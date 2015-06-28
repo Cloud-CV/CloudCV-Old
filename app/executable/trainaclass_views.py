@@ -63,7 +63,7 @@ def classify_wrapper_local(jobPath, socketid, result_path):
         MODEL_FILE = os.path.join(modelPath,'newCaffeModel.prototxt')
         PRETRAINED = os.path.join(modelPath,'newCaffeModel.caffemodel')
 
-        caffe.set_phase_test()
+        #caffe.set_phase_test()
         caffe.set_mode_gpu()
 
         net = caffe.Classifier(MODEL_FILE, PRETRAINED,
