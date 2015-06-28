@@ -29,7 +29,7 @@ from app.executable.caffe_classify import caffe_classify, caffe_classify_image
 import app.conf as conf
 from app.celery.web_tasks.ClassifyTask import classifyImages
 
-redis_obj = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
 classify_channel_name = 'classify_queue'
 
 ### SET OF PATH CONSTANTS - SOME UNUSED

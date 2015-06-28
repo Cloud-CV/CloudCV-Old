@@ -19,7 +19,7 @@ import app.executable.caffe_classify as default_classify
 
 from app.celery.celery.celery import celery
 
-r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host='redis', port=6379, db=0)
 
 @celery.task
 def classifyImages(src_path, socketid, result_path):

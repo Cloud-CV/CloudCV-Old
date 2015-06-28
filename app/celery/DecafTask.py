@@ -20,8 +20,8 @@ from app.log import log, log_to_terminal, log_error_to_terminal, log_and_exit
 import operator
 from app.executable import decaf_cal_feature as decaf
 
-celery = Celery('DecafTask', backend = 'redis://0.0.0.0:6379/0', broker='redis://0.0.0.0:6379/0')
-r = redis.StrictRedis(host='cloudcv.org', port=6379, db=0)
+celery = Celery('DecafTask', backend = 'redis://redis:6379/0', broker='redis://redis:6379/0')
+r = redis.StrictRedis(host='redis', port=6379, db=0)
 
 
 @celery.task

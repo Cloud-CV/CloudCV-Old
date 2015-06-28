@@ -16,7 +16,7 @@ from app.core.run_executables import parseParameters
 import app.conf as conf
 import base64
 from io import BytesIO
-r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 
 ''' Not using getThumbnail code anymore
 def getThumbnail(image_url_prefix, name):

@@ -17,7 +17,7 @@ import app.executable.decaf_cal_feature as decaf
 import caffe
 import app.conf as conf
 
-r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host='redis', port=6379, db=0)
 
 from app.celery.celery.celery import celery
 

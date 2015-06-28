@@ -57,10 +57,10 @@ class Request:
         #         if(popen.stderr):
         #             errline = popen.stderr.readline()
         #             popen.stderr.flush()
-        #         # r = redis.StrictRedis(host = '127.0.0.1' , port=6379, db=0)
+        #         # r = redis.StrictRedis(host = 'redis' , port=6379, db=0)
         #
         #         if line:
-        #             # r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+        #             # r = redis.StrictRedis(host='redis', port=6379, db=0)
         #             self.log_to_terminal(line)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'
@@ -68,7 +68,7 @@ class Request:
         #             count += 1
         #                     # time.sleep(1)
         #         if errline:
-        #             # r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+        #             # r = redis.StrictRedis(host='redis', port=6379, db=0)
         #             self.log_to_terminal(errline)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'
@@ -95,7 +95,7 @@ def run_executable(list, session, socketid, ):
 
             popen=subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             count=1
-            r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
+            r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 
             while True:
                 popen.poll()
@@ -296,12 +296,12 @@ def log_every_request(job_obj):
                           function=job_obj.executable, dateTime=now)
         req_obj.save()
     except Exception as e:
-        r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
+        r = redis.StrictRedis(host = 'redis', port=6379, db=0)
         r.publish('chat', json.dumps({'error': str(traceback.format_exc()), 'socketid': job_obj.socketid}))
 
 @csrf_exempt
 def matlabReadRequest(request):
-    r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
+    r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 
 
     if request.method == 'POST':    # post request

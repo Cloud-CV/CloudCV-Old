@@ -2,7 +2,7 @@ __author__ = 'parallels'
 import os
 
 import sys
-path = '$project_path'
+path = '/CloudCV_Server'
 sys.path.append(path)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cloudcv17.settings")
@@ -10,7 +10,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cloudcv17.settings")
 from django.conf import settings
 
 # user
-USER = '$user'
+USER = 'user'
 # directory where all pictures reside
 PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'cloudcv')
 
@@ -34,11 +34,5 @@ EXEC_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'executable'
 
 # PIC_URL
 PIC_URL = '/media/pictures/cloudcv/'
-
-# CAFFE DIRECTORY
-CAFFE_DIR = '$caffe_path'
-import sys
-#Adding caffe to path
-sys.path.append("$caffe_path/python")
 
 LOG_DIR = os.path.join(settings.BASE_ABS_DIR, 'logs')

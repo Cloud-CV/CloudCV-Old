@@ -17,7 +17,7 @@ import redis
 from app.log import log, log_to_terminal, log_error_to_terminal, log_and_exit
 from app.celery.celery.celery import celery
 
-r = redis.StrictRedis(host='cloudcv.org', port=6379, db=0)
+r = redis.StrictRedis(host='redis', port=6379, db=0)
 
 @celery.task
 def runImageStitching(list, result_path, socketid):

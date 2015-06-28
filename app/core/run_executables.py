@@ -41,7 +41,7 @@ parser.add_argument("--dropbox_token", type=str, help="Source Type")
 args = parser.parse_args()
 #----------------xxx-------------Argument Parser Code Ends---------------------xxx----------------------
 '''
-r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 jobid = ''
 
 import sys

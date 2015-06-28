@@ -125,7 +125,7 @@ LOGGING = {
 
 """
 import redis
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+r = redis.StrictRedis(host='redis', port=6379, db=0)
 r.set('CLOUDCV_ABS_DIR', BASE_ABS_DIR)
 r.set('CLOUDCV_MEDIA_ROOT', MEDIA_ROOT)
 r.set('CLOUDCV_PIC_ROOT', os.path.join(MEDIA_ROOT, 'pictures', 'cloudcv'))
