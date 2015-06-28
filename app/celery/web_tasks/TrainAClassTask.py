@@ -25,7 +25,7 @@ from app.executable.LDA_files import train_fast
 from app.log import log, log_to_terminal, log_error_to_terminal, log_and_exit
 # from app.celery.celery.celery import celery
 
-r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host='redis', port=6379, db=0)
 
 @celery.task
 def classifyImagesWithNewModel(jobPath, socketid, result_path):

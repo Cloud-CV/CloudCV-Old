@@ -25,9 +25,9 @@ from app.executable.LDA_files.test import caffe_classify, caffe_classify_image
 from app.executable.LDA_files import train_fast
 from app.log import log, log_to_terminal, log_error_to_terminal, log_and_exit
 
-celery = Celery('TrainAClassTask', backend = 'redis://0.0.0.0:6379/0', broker='redis://0.0.0.0:6379/0')
+celery = Celery('TrainAClassTask', backend = 'redis://redis:6379/0', broker='redis://redis:6379/0')
 
-r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host='redis', port=6379, db=0)
 
 @celery.task
 def classifyImagesWithNewModel(jobPath, socketid, result_path):

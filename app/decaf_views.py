@@ -24,7 +24,7 @@ from .response import JSONResponse, response_mimetype
 
 from app.celery.web_tasks.DecafTask import decafImages
 
-redis_obj = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
 ps_obj = redis_obj.pubsub()
 decaf_channel_name = 'decaf_server_queue'
 IMAGEFOLDER = '/srv/share/cloudcv/jobs/'
