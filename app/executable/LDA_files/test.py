@@ -16,7 +16,7 @@ import caffe
 
 matWNID = sio.loadmat(os.path.join(conf.EXEC_DIR, 'WNID.mat'))
 WNID_cells = matWNID['wordsortWNID']
-caffe.set_phase_test()
+#caffe.set_phase_test()
 caffe.set_mode_gpu()
 
 
