@@ -4,7 +4,7 @@ function(req,res)
 {
     res.writeHead(200);
     res.end('Hello Http');
-}).listen($node_port);
+}).listen(5000);
 
 var io = require('socket.io').listen(server);
 var fs = require('fs');
@@ -14,8 +14,8 @@ var cookie_reader = require('cookie');
 var querystring = require('querystring');
 
 var redis = require('redis');
-var sub = redis.createClient();
-var cli = redis.createClient();
+var sub = redis.createClient('6379', 'redis');
+var cli = redis.createClient('6379', 'redis');
 //Subscribe to the Redis chat channel
 sub.subscribe('chat');
 var count = 0;
