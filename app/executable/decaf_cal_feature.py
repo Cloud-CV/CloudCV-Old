@@ -31,7 +31,7 @@ print "Started test script"
 # and the image you would like to classify.
 MODEL_FILE = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
 PRETRAINED = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
-caffe.set_phase_test()
+#caffe.set_phase_test()
 caffe.set_mode_cpu()
 net = caffe.Classifier(MODEL_FILE, PRETRAINED)
 
