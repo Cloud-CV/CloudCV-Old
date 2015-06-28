@@ -101,7 +101,7 @@ def modelUpdate(jobPath):
         #net.set_phase_test()
         #net.set_mode_gpu()
 	caffe.set_mode_gpu()
-	caffe.set_phase_test()
+	#caffe.set_phase_test()
         print '{} weights are {} dimensional and biases are {} dimensional'.format(pr_new, fc_params_new[0].shape, fc_params_new[1].shape)
         fc_params_new[1][:,:,:,:1000] = fc_params[1]
         fc_params_new[0][:,:,:1000,:] = fc_params[0]

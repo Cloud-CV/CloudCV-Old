@@ -27,7 +27,7 @@ def decafImages(src_path, output_path, socketid, result_path, single_file_name='
         lMODEL_FILE = str(os.path.join(conf.CAFFE_DIR, 'models',modelname,'deploy.prototxt'))
         lPRETRAINED = str(os.path.join(conf.CAFFE_DIR, 'models', modelname, modelname+'.caffemodel'))
         r.publish('chat', json.dumps({'error': lMODEL_FILE+'   '+lPRETRAINED, 'socketid': socketid}))
-        caffe.set_phase_test()
+        #caffe.set_phase_test()
         caffe.set_mode_cpu()
         modelnet = caffe.Classifier(lMODEL_FILE, lPRETRAINED)
         #r.publish('chat', json.dumps({'error': str(modelname), 'socketid': socketid}))
