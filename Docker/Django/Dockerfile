@@ -2,7 +2,7 @@ FROM tleyden5iwx/caffe-cpu-master:latest
 
 MAINTAINER Prashant Jalan
 
-COPY ./CloudCV_Server/requirements.txt /requirements.txt
+COPY ./requirements.txt /requirements.txt
 
 #Install dependencies for CloudCV Server
 RUN pip install -r /requirements.txt
