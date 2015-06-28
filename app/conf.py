@@ -35,4 +35,7 @@ EXEC_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'executable'
 # PIC_URL
 PIC_URL = '/media/pictures/cloudcv/'
 
+#CAFFE_DIR
+CAFFE_DIR = '/opt/caffe'
+
 LOG_DIR = os.path.join(settings.BASE_ABS_DIR, 'logs')
