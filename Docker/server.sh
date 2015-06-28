@@ -16,5 +16,9 @@ rm ./Node/chat.js
 echo "Pulling the image and starting nginx server"
 cp ../fileupload_nginx.conf ./Nginx/default.conf
 sudo docker build -t cloudcv/nginx ./Nginx/
-sudo docker run -d -p 80:80 -p 443:443 --name cloudcv_nginx --link cloudcv_node:node --link cloudcv_redis:redis cloudcv/nginx
+sudo docker run -d -p 80:80 -p 443:443 --name cloudcv_nginx --link cloudcv_node:node --link cloudcv_redis:redis --link cloudcv_django:django cloudcv/nginx
 rm Nginx/default.conf
+
+echo "Pulling the image and starting django server"
+sudo docker build -t cloudcv/django ./Django/
+sudo docker run -it -p 80:80 --link cloudcv_redis:redis --name cloudcv_django cloudcv/django /bin/bash
