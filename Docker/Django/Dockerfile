@@ -13,5 +13,5 @@ RUN apt-get -y install python-opencv
 
 EXPOSE 8000
 
-COPY ./CloudCV_Server /CloudCV_Server/
+RUN git clone https://github.com/batra-mlp-lab/CloudCV_Server.git --branch Docker
 COPY ./bvlc_reference_caffenet.caffemodel /opt/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
