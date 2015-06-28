@@ -20,5 +20,9 @@ sudo docker run -d -p 80:80 -p 443:443 --name cloudcv_nginx --link cloudcv_node:
 rm Nginx/default.conf
 
 echo "Pulling the image and starting django server"
+cp ../../requirements.txt ./
+wget -P ./Django/ http://dl.caffe.berkeleyvision.org/bvlc_reference_caffenet.caffemodel
 sudo docker build -t cloudcv/django ./Django/
 sudo docker run -it -p 80:80 --link cloudcv_redis:redis --name cloudcv_django cloudcv/django /bin/bash
+rm ./Django/requirements.txt
+rm ./Django/bvlc_reference_caffenet.caffemodel
