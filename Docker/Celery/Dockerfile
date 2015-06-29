@@ -8,6 +8,8 @@ COPY ./generic-init.d /etc/init.d/celeryd
 
 #Make the init.d script of celery executable
 RUN chmod 755 /etc/init.d/celeryd
+#Change permission of configuration script
+RUN chmod 640 /etc/default/celeryd
 
 ENV C_FORCE_ROOT TRUE
 
