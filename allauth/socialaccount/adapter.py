@@ -12,26 +12,36 @@ from ..account.models import EmailAddress
 from ..account.adapter import get_adapter as get_account_adapter
 from ..account import app_settings as account_settings
 from ..account.app_settings import EmailVerificationMethod
-
+from ..account.forms import *
 from . import app_settings
-
+from django.contrib.auth.models import User
 
 class DefaultSocialAccountAdapter(object):
 
-    def pre_social_login(self, request, sociallogin):
-        """
-        Invoked just after a user successfully authenticates via a
-        social provider, but before the login is actually processed
-        (and before the pre_social_login signal is emitted).
+    # def pre_social_login(self, request, sociallogin):
+    #     """
+    #     Invoked just after a user successfully authenticates via a
+    #     social provider, but before the login is actually processed
+    #     (and before the pre_social_login signal is emitted).
 
-        You can use this hook to intervene, e.g. abort the login by
-        raising an ImmediateHttpResponse
+    #     You can use this hook to intervene, e.g. abort the login by
+    #     raising an ImmediateHttpResponse
 
-        Why both an adapter hook and the signal? Intervening in
-        e.g. the flow from within a signal handler is bad -- multiple
-        handlers may be active and are executed in undetermined order.
-        """
-        pass
+    #     Why both an adapter hook and the signal? Intervening in
+    #     e.g. the flow from within a signal handler is bad -- multiple
+    #     handlers may be active and are executed in undetermined order.
+    #     """
+    #     pass
+    def pre_social_login(self, request, sociallogin): 
+        user = sociallogin.user
+        if user.id:  
+            return          
+        try:
+            user = User.objects.get(email=user.email)  # if user exists, connect the account to the existing account and login
+            sociallogin.state['process'] = 'connect'                
+            perform_login(request, user, 'none')
+        except User.DoesNotExist:
+            pass
 
     def authentication_error(self,
                              request,
