@@ -26,7 +26,6 @@ echo "Pulling the image and starting django server"
 wget -P ./Django/ http://dl.caffe.berkeleyvision.org/bvlc_reference_caffenet.caffemodel
 sudo docker build -t cloudcv/django ./Django/
 sudo docker run -d --volumes-from cloudcv_code --link cloudcv_redis:redis --name cloudcv_django cloudcv/django uwsgi --emperor /CloudCV_Server/ --uid www-data --gid www-data
-sudo docker run -it -p 80:80 --volumes-from cloudcv_code --link cloudcv_redis:redis --name cloudcv_django cloudcv/django /bin/bash
 rm ./Django/bvlc_reference_caffenet.caffemodel
 
 echo "Pulling the image and starting nginx server"
