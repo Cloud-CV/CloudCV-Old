@@ -6,39 +6,109 @@
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
 {% block content %}
+<style type="text/css">
+  #heading{
+    font-weight: 300;
+    text-align: center;
+  }
+  #div1{
+    border-right: 1px dashed #ccc;
+  }
+  #div2{
+    border-right: 1px dashed #ccc;
 
-<h1>{% trans "Sign In" %}</h1>
+  }
+  #login1{
+    background-color: #007EE5;
+    width: 80%;
+    text-align: center;
+  }
+  #login2{
+    background-color: #C33B2B;
+    width: 80%;
+    text-align: center;
+  }
+  .btn-large {
+    width:100%;
+  }
+  #nicebox{
+    border-top: 3px solid #4c9cdf;
+    margin-top:6%;
+    background-color: white;
+  }
+  .waves-effect.waves-blue .waves-ripple {
+      background-color: rgb(33,150,243);
+    }
+  .forgotpwd{
+    float: right !important;
+    /*position: absolute;*/
+    padding-top: 15px;
+    /*z-index: 3;*/
+  }
+  .errorlist{
+    list-style-type: none;
+    color: #b11616;
+    font-size: 12px;
+    margin: 5px 0 0 0;
+  }
+  #submitbtn{
+    border-top: 0.8px solid #ccc;
+    margin-top: 2%;
+    /*position: absolute;*/
+  }
 
-{% if socialaccount.providers %}
-<p>{% blocktrans with site.name as site_name %}Please sign in with one
-of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+</style>
+<div class="row" >
+  <div class="container z-depth-5" id="nicebox">  
+    <h3 id="heading">Sign In</h3>
+    <div class="row">
+      <div class="col s12 m12 l6 ">
+        <div class="row ">
+          <div class="col s12 m12" id="div1" align="center">
+          <p>Sign In with Social Account:</p>
+            <a class="btn-large waves-effect waves-red z-depth-2" id="login2" href="/google/login/?process=login"><img src="/static/material/gd.png" style="vertical-align: middle; padding-left: 8px;"> Google</a>
+          </div>
+        </div>
 
-<div class="socialaccount_ballot">
+        <div class="row">
+          <div class="col s12 m12" id="div2" align="center">
+            <a class="btn-large waves-effect waves-light z-depth-2"  id="login1" href="/dropbox/login/?process=login"><img src="/static/material/dropbox.png" style="vertical-align: middle; padding-left: 8px;"> Dropbbox</a>
+          </div>
+        </div>
+    </div>
+    <div class="col s12 m12 l6">
+      <form class="login" method="POST" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <a class="forgotpwd" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+        {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <button class="waves-effect waves-blue btn white black-text z-depth-2" id="submitbtn" type="submit">Sign In</button>
+    <script type="text/javascript">
+    $( document ).ready(function() {
+      $('form > p').each(function(){
+        $('form > p').replaceWith(function(){
+        return $("<div />", {html: $(this).html()});
+        });
+        $('input[type=text]').parent().addClass('input-field');
+        $('input[type=password]').parent().addClass('input-field');
+        $('input[type=password]').parent().attr('id','password-field');
 
-  <ul class="socialaccount_providers">
-    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-  </ul>
-
-  <div class="login-or">{% trans 'or' %}</div>
-
+      });
+      $( "label[for=id_remember]" ).remove();
+      $( "input[type=checkbox]" ).remove();
+      $('div[id=password-field]').after('<input type="checkbox" id="id_remember">');
+      $('#id_remember').after('<label for="id_remember">Remember Me</label>');
+      });
+    </script>
+      </form>
+        <p>Don't have an Account? <a href="/signup">Sign Up</a></p>
+      <br/>
+      <br/>
+      
+    </div>
+  </div>
 </div>
-
-{% include "socialaccount/snippets/login_extra.html" %}
-
-{% else %}
-<p>{% blocktrans %}If you have not created an account yet, then please
-<a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
-{% endif %}
-
-<form class="login" method="POST" action="{% url 'account_login' %}">
-  {% csrf_token %}
-  {{ form.as_p }}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-  <button class="primaryAction" type="submit">{% trans "Sign In" %}</button>
-</form>
-
+</div>
 {% endblock %}

@@ -1,40 +1,121 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>{% block head_title %}{% endblock %}</title>
-    {% block extra_head %}
-    {% endblock %}
-  </head>
-  <body>
-    {% block body %}
 
+ <!DOCTYPE html>
+<html>
+<head>
+  <title>{% block head_title %}{% endblock %}</title>
+   {% block extra_head %}
+    {% endblock %}
+  <script type="text/javascript"></script>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <link rel="stylesheet" href="/static/materialize/css/materialize.min.css">
+  <script src="/static/materialize/js/jquery-2.1.1.min.js"></script>
+  <script src="/static/materialize/js/materialize.min.js"></script>          
+</head>
+<style type="text/css">
+  body{
+    background: url('/static/material/texture.jpg') repeat;
+  }
+  #title{
+    color:rgb(2, 136, 209);
+  }
+  #black{
+    color:#0d47a1;
+  }
+  #dbwidth{
+    color:#0d47a1;
+    width:100%;
+    text-align: left; 
+    margin: 1px;
+  }
+  #dbwidthtitle{
+    width:100%;
+    text-align: left;
+    /*margin: 1px;*/
+      
+  }
+  .row{
+    margin-top: 2%;
+  }
+  .heading{
+    font-weight: 300;
+    color:#0d47a1;
+  }
+  #brandlogo{
+    font-weight: 300;
+  }
+  .nav-wrapper{
+    background-color: #860917 !important;
+  }
+  .errorlist{
+  list-style-type: none;
+  color: #b11616;
+  font-size: 12px;
+  margin: 5px 0 0 0;
+}
+</style>
+<body>
+<header>
+  
+  <nav>
+    <div class="nav-wrapper blue darken-3">
+      <a href="#!" class="brand-logo" id="brandlogo">CloudCV</a>
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="/">Home</a></li>
+        <li><a href="/image-stitch">Image Stitch</a></li>
+        <li><a href="http://objdetect.cloudcv.org">Object Detection</a></li>
+        <li><a href="/decaf-server">Decaf-Server</a></li>
+        <li><a href="/classify">Classification</a></li>
+        <li><a href="/vip">VIP</a></li>
+        <li><a href="/trainaclass">Train a new category</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="/">Hi, {{ user.username }}!</a></li>
+        <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+        {% else %}
+        <li><a href="{% url 'account_login' %}">Sign In</a></li>
+        <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+        {% endif %}
+      </ul>
+      <ul class="side-nav" id="mobile-demo">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Decaf</a></li>
+        <li><a href="#">Classify</a></li>
+        <li><a href="#">Image Stitching</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="/">Hi, {{ user.username }}!</a></li>
+          <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+        {% else %}
+          <li><a href="{% url 'account_login' %}">Sign In</a></li>
+          <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+</header>
+<script src="/static/materialize/js/init.js"></script>
+ {% block body %}
     {% if messages %}
     <div>
       <strong>Messages:</strong>
       <ul>
-	{% for message in messages %}
-	<li>{{message}}</li>
-	{% endfor %}
+  {% for message in messages %}
+  <li>{{message}}</li>
+  {% endfor %}
       </ul>
     </div>
     {% endif %}
-
-    <div>
-      <strong>Menu:</strong>
-      <ul>
-	{% if user.is_authenticated %}
-	<li><a href="{% url 'account_email' %}">Change E-mail</a></li>
-	<li><a href="{% url 'account_logout' %}">Sign Out</a></li>
-	{% else %}
-	<li><a href="{% url 'account_login' %}">Sign In</a></li>
-	<li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-	{% endif %}
-      </ul>
-    </div>
     {% block content %}
     {% endblock %}
     {% endblock %}
     {% block extra_body %}
     {% endblock %}
-  </body>
+</body>
+  <script type="text/javascript">
+   $(document).ready(function(){
+  $('.collapsible').collapsible({
+    accordion : true 
+  });
+  });
+  </script>
 </html>
