@@ -1,5 +1,4 @@
 # encoding: utf-8
-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DeleteView
 from django.views.decorators.csrf import csrf_exempt
@@ -210,7 +209,7 @@ def homepage(request):
     """
     View for home page
     """
-    return render(request, 'index.html')
+    return render(request, 'index.html',{'user':request.user})
 
 def ec2(request):
     """
