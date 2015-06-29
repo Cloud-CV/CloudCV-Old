@@ -5,6 +5,12 @@ a new machine. Just run this code and relax.
 This code is written for Linux based systems and tested on Ubuntu 14.04
 
 Author - Prashant Jalan
+
+TO DO (after code review by Ahmed) -
+1) Use logger to print statements
+2) Use os.path.join
+3) use if __name___==“__main__”
+4) May be pass some requirements as arguments 
 """
 
 #Module import
