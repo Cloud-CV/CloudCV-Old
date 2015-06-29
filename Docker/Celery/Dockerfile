@@ -7,4 +7,4 @@ COPY ./bvlc_reference_caffenet.caffemodel /opt/caffe/models/bvlc_reference_caffe
 ENV C_FORCE_ROOT TRUE
 
 WORKDIR /CloudCV_Server
-CMD ["celery","-A",app.celery.celery.celery","worker","--loglevel=info"]
+CMD ["celery","-A","app.celery.celery.celery","worker","--loglevel=info"]
