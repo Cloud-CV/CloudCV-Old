@@ -38,7 +38,7 @@ var count = 0;
  */
 
 sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(__dirname+'/../db.sqlite3');
+var db = new sqlite3.Database(__dirname+'/db.sqlite3');
 
 var socket_jobid_map = {};
 
