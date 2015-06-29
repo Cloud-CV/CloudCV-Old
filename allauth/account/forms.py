@@ -29,15 +29,13 @@ try:
 except ImportError:
     from django.utils.importlib import import_module
 
-
 class PasswordField(forms.CharField):
 
     def __init__(self, *args, **kwargs):
         render_value = kwargs.pop('render_value',
                                   app_settings.PASSWORD_INPUT_RENDER_VALUE)
         kwargs['widget'] = forms.PasswordInput(render_value=render_value,
-                                               attrs={'placeholder':
-                                                      _(kwargs.get("label"))})
+                                               attrs={})
         super(PasswordField, self).__init__(*args, **kwargs)
 
 
@@ -73,17 +71,12 @@ class LoginForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
         if app_settings.AUTHENTICATION_METHOD == AuthenticationMethod.EMAIL:
-            login_widget = forms.TextInput(attrs={'type': 'email',
-                                                  'placeholder':
-                                                  _('E-mail address'),
-                                                  'autofocus': 'autofocus'})
+            login_widget = forms.TextInput(attrs={'type': 'email'})
             login_field = forms.EmailField(label=_("E-mail"),
                                            widget=login_widget)
         elif app_settings.AUTHENTICATION_METHOD \
                 == AuthenticationMethod.USERNAME:
-            login_widget = forms.TextInput(attrs={'placeholder':
-                                                  _('Username'),
-                                                  'autofocus': 'autofocus'})
+            login_widget = forms.TextInput(attrs={})
             login_field = forms.CharField(
                 label=_("Username"),
                 widget=login_widget,
@@ -91,11 +84,9 @@ class LoginForm(forms.Form):
         else:
             assert app_settings.AUTHENTICATION_METHOD \
                 == AuthenticationMethod.USERNAME_EMAIL
-            login_widget = forms.TextInput(attrs={'placeholder':
-                                                  _('Username or e-mail'),
-                                                  'autofocus': 'autofocus'})
+            login_widget = forms.TextInput(attrs={})
             login_field = forms.CharField(label=pgettext("field label",
-                                                         "Login"),
+                                                         "Username or E-mail"),
                                           widget=login_widget)
         self.fields["login"] = login_field
         set_form_field_order(self,  ["login", "password", "remember"])
@@ -208,12 +199,9 @@ class BaseSignupForm(_base_signup_form_class()):
                                max_length=get_username_max_length(),
                                min_length=app_settings.USERNAME_MIN_LENGTH,
                                widget=forms.TextInput(
-                                   attrs={'placeholder':
-                                          _('Username'),
-                                          'autofocus': 'autofocus'}))
+                                   attrs={'autofocus': 'autofocus'}))
     email = forms.EmailField(widget=forms.TextInput(
-        attrs={'type': 'email',
-               'placeholder': _('E-mail address')}))
+        attrs={'type': 'email'}))
 
     def __init__(self, *args, **kwargs):
         email_required = kwargs.pop('email_required',
@@ -280,7 +268,7 @@ class BaseSignupForm(_base_signup_form_class()):
 class SignupForm(BaseSignupForm):
 
     password1 = SetPasswordField(label=_("Password"))
-    password2 = PasswordField(label=_("Password (again)"))
+    password2 = PasswordField(label=_("Retype Password"))
     confirmation_key = forms.CharField(max_length=40,
                                        required=False,
                                        widget=forms.HiddenInput())
