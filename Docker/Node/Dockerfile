@@ -14,13 +14,13 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 	&& tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
 	&& rm "node-v$NODE_VERSION-linux-x64.tar.gz" SHASUMS256.txt.asc \
 	&& npm install -g npm@"$NPM_VERSION" \
-	&& npm install socket.io@0.9.17 \
-	&& npm install archiver@0.13.1 \
-	&& npm install redis@0.12.1 \
-	&& npm install sqlite3@3.0.4 \
-	&& npm install node-fs@0.1.7 \
-	&& npm install cookie@0.1.2 \
-	&& npm install forever@0.13.0 \
+	&& npm install socket.io@0.9 \
+	&& npm install archiver@0.13 \
+	&& npm install redis@0.12 \
+	&& npm install sqlite3@3.0 \
+	&& npm install node-fs@0.1 \
+	&& npm install cookie@0.1 \
+	&& npm install forever@0.13 \
 	&& npm cache clear
 
 COPY chat.js /home/user/chat.js
