@@ -44,6 +44,14 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+<<<<<<< HEAD
+=======
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.dropbox_oauth2',
+>>>>>>> settings and urls configured for smtp adn allauth
 )
 
 
@@ -164,3 +172,26 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
+
+LOGIN_REDIRECT_URL = "/"
+
+LOGIN_URL = "/login"
+
+LOGOUT_URL = "/logout"
+
+ACCOUNT_EMAIL_REQUIRED = True
+
+# for authentication using both Username or Email
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+
+#Setting the SMTP Configuration for sending the mails to cloudcv users
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# # EMAIL_HOST_USER = 'youremail@gmail.com'
+# EMAIL_HOST_PASSWORD = 'password'
