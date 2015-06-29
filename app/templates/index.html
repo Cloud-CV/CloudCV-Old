@@ -40,8 +40,15 @@
                     <li class="divider"></li>
                     <li><a href="/classify">Classification</a></li>
                     <li class="divider"></li>
-                    <li><a href="/vip">VIP</a></li>
-                    <li><a href="/trainaclass">Train a new category</a></li>
+                    <!-- <li><a href="/vip">VIP</a></li> -->
+                    <!-- <li><a href="/trainaclass">Train a new category</a></li> -->
+                    {% if user.is_authenticated %}
+                    <li><a href="/logout">Hi {{ user.username }} !</a></li>
+                    <!-- <li><a href="#">{{ user.email }}</a></li> -->
+                    {% else %}
+                    <li><a href="/dropbox/login/?process=login">Login with Dropbox</a></li>
+                    <li><a href="/google/login/?process=login">Login with Google</a></li>
+                    {% endif %}
 
                 </ul>
                 </section>
