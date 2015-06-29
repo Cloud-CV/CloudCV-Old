@@ -3,6 +3,12 @@
 # Server setup script
 # Author: Prashant Jalan
 
+echo "Creating data container"
+cp ../../requirements.txt ./
+sudo docker build -t cloudcv/code ./Code/
+sudo docker create -v /CloudCV_Server --name cloudcv_code cloudcv/code /bin/true
+rm ./Code/requirements.txt
+
 echo "Pulling the image and starting redis server."
 sudo docker pull redis:3.0
 sudo docker run -d --name cloudcv_redis redis
@@ -23,6 +29,6 @@ echo "Pulling the image and starting django server"
 cp ../../requirements.txt ./
 wget -P ./Django/ http://dl.caffe.berkeleyvision.org/bvlc_reference_caffenet.caffemodel
 sudo docker build -t cloudcv/django ./Django/
-sudo docker run -it -p 80:80 --link cloudcv_redis:redis --name cloudcv_django cloudcv/django /bin/bash
+sudo docker run -it -p 80:80 --volumes-from cloudcv_code --link cloudcv_redis:redis --name cloudcv_django cloudcv/django /bin/bash
 rm ./Django/requirements.txt
 rm ./Django/bvlc_reference_caffenet.caffemodel

@@ -11,6 +11,4 @@ RUN pip install -r /requirements.txt
 RUN apt-get update
 RUN apt-get -y install python-opencv
 
-EXPOSE 8000
-
-COPY ./bvlc_reference_caffenet.caffemodel /opt/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
+RUN git clone https://github.com/batra-mlp-lab/CloudCV_Server.git --branch Docker
