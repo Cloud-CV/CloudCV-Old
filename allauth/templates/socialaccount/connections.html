@@ -30,11 +30,11 @@
 	@media screen and (min-width: 800px) {
 	form{
 		width: 60%;
-		padding-bottom: 8%;
+	} 
+	.connect{
+		width: 40% !important;
+		margin-left: 30% !important;
 	}
-	.container{
-	width: 50%;
-	}   
 }
 @media screen and (max-width: 800px) {   
 	#heading{
@@ -70,6 +70,7 @@
 </style>
 <body>
 	<main>
+	<div class="container" align="center">
 		<h4 id="heading">{% trans "Cloud Storages" %}</h4>
 		{% if form.accounts %}
 			<p align="center">{% blocktrans %}You can use CloudCV using any of the listed Cloud Sotrages: {% endblocktrans %}</p>
@@ -102,21 +103,16 @@
 			{% endif %}
 			<h4 id="heading">{% trans 'Add a Cloud Storage' %}</h4>
 			<div class="row" >
-			<div class="col s12 m12 l12">
-				<div class="row">
-					<div class="col s12 m12 l4" align="center">
-						<a class="btn-large waves-effect waves-red" id="login1" href="/google/login/?process=login"><img src="/static/material/gd.png" style="vertical-align: middle; padding-left: 8px;"> Google</a>
-					</div>
+				<div class="col s12 m12 l12 connect">
+							<a class="btn-large waves-effect waves-red" id="login1" href="/google/login/?process=login"><img src="/static/material/gd.png" style="vertical-align: middle; padding-left: 8px;"> Google</a>
 				</div>
-					
 			</div>
 			<div class="row">
-				<div class="col s12 m12 l4" id="div2" align="center">
+				<div class="col s12 m12 l12 connect" >
 					<a class="btn-large waves-effect waves-blue"  id="login2" href="/dropbox/login/?process=login"><img src="/static/material/dropbox.png" style="vertical-align: middle; padding-left: 8px;"> Dropbbox</a>
 				</div>
 			</div>
 			</div>
-		<!-- {% include "socialaccount/snippets/login_extra.html" %} -->	      
 	</main>
 	<footer class="page-footer light-blue darken-4" id="footer">
 		<div class="container">
