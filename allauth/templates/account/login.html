@@ -11,19 +11,17 @@
     font-weight: 300;
     text-align: center;
   }
-  #div1{
+  @media screen and (min-width: 800px) {   
+  .leftpart{
     border-right: 1px dashed #ccc;
   }
-  #div2{
-    border-right: 1px dashed #ccc;
-
-  }
-  #login1{
+}
+  #login2{
     background-color: #007EE5;
     width: 80%;
     text-align: center;
   }
-  #login2{
+  #login1{
     background-color: #C33B2B;
     width: 80%;
     text-align: center;
@@ -42,7 +40,7 @@
   .forgotpwd{
     float: right !important;
     /*position: absolute;*/
-    padding-top: 15px;
+    padding-top: 13px;
     /*z-index: 3;*/
   }
   .errorlist{
@@ -50,63 +48,57 @@
     color: #b11616;
     font-size: 12px;
     margin: 5px 0 0 0;
+    float: left;
   }
   #submitbtn{
     border-top: 0.8px solid #ccc;
-    margin-top: 2%;
-    /*position: absolute;*/
+    /*position: relative;*/
+    margin-top: 20px;
+    float: left;
   }
-
+  form{
+    width: 80%;
+  }
+  label[for="id_remember"]{
+    float: left !important;
+  }
 </style>
 <div class="row" >
-  <div class="container z-depth-5" id="nicebox">  
-    <h3 id="heading">Sign In</h3>
+  <div class="container z-depth-2" id="nicebox">  
+    <h4 id="heading">Log In to CloudCV</h4>
     <div class="row">
-      <div class="col s12 m12 l6 ">
+      <div class="col s12 m12 l6 leftpart">
         <div class="row ">
+          <p align="center">Log In with Social Account:</p>
           <div class="col s12 m12" id="div1" align="center">
-          <p>Sign In with Social Account:</p>
-            <a class="btn-large waves-effect waves-red z-depth-2" id="login2" href="/google/login/?process=login"><img src="/static/material/gd.png" style="vertical-align: middle; padding-left: 8px;"> Google</a>
+            <a class="btn-large waves-effect waves-red" id="login1" href="/google/login/?process=login"><img src="/static/material/gd.png" style="vertical-align: middle; padding-left: 8px;"> Google</a>
           </div>
         </div>
 
         <div class="row">
           <div class="col s12 m12" id="div2" align="center">
-            <a class="btn-large waves-effect waves-light z-depth-2"  id="login1" href="/dropbox/login/?process=login"><img src="/static/material/dropbox.png" style="vertical-align: middle; padding-left: 8px;"> Dropbbox</a>
+            <a class="btn-large waves-effect waves-blue"  id="login2" href="/dropbox/login/?process=login"><img src="/static/material/dropbox.png" style="vertical-align: middle; padding-left: 8px;"> Dropbbox</a>
           </div>
         </div>
     </div>
-    <div class="col s12 m12 l6">
+    <div class="col s12 m12 l6" align="center">
       <form class="login" method="POST" action="{% url 'account_login' %}">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div class="input-field">
+            {{ field }}{{ field.label_tag }}
+        {{ field.errors }}
+        </div>
+    {% endfor %}
         <a class="forgotpwd" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
         {% if redirect_field_value %}
           <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
         {% endif %}
-        <button class="waves-effect waves-blue btn white black-text z-depth-2" id="submitbtn" type="submit">Sign In</button>
-    <script type="text/javascript">
-    $( document ).ready(function() {
-      $('form > p').each(function(){
-        $('form > p').replaceWith(function(){
-        return $("<div />", {html: $(this).html()});
-        });
-        $('input[type=text]').parent().addClass('input-field');
-        $('input[type=password]').parent().addClass('input-field');
-        $('input[type=password]').parent().attr('id','password-field');
-
-      });
-      $( "label[for=id_remember]" ).remove();
-      $( "input[type=checkbox]" ).remove();
-      $('div[id=password-field]').after('<input type="checkbox" id="id_remember">');
-      $('#id_remember').after('<label for="id_remember">Remember Me</label>');
-      });
-    </script>
+        <button class="waves-effect waves-blue btn white black-text z-depth-1" id="submitbtn" type="submit">Sign In</button>
       </form>
-        <p>Don't have an Account? <a href="/signup">Sign Up</a></p>
-      <br/>
-      <br/>
-      
+      <br><br>
+<br><p align="center" style="float:right;">Don't have an Account? <a href="/signup">Sign Up</a></p>
     </div>
   </div>
 </div>
