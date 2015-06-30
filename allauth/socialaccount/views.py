@@ -79,7 +79,7 @@ login_error = LoginErrorView.as_view()
 class ConnectionsView(FormView):
     template_name = "socialaccount/connections.html"
     form_class = DisconnectForm
-    success_url = reverse_lazy("home")
+    success_url = reverse_lazy('socialaccount_connections')
 
     def get_form_class(self):
         return get_form_class(app_settings.FORMS,
