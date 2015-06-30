@@ -7,70 +7,70 @@
 {% block content %}
 <style type="text/css">
   #heading{
-	font-weight: 300;
-	text-align: center;
+  font-weight: 300;
+  text-align: center;
   }
   .btn-large {
-	width:100%;
+  width:100%;
   }
   #nicebox{
-	border-top: 4px solid #4c9cdf;
-	margin-top:6%;
-	background-color: white;
+  border-top: 4px solid #4c9cdf;
+  margin-top:6%;
+  background-color: white;
   }
   .waves-effect.waves-blue .waves-ripple {
-	  background-color: rgb(33,150,243);
-	}
+    background-color: rgb(33,150,243);
+  }
   .errorlist{
-	list-style-type: none;
-	color: #b11616;
-	font-size: 12px;
-	text-align: left;
+  list-style-type: none;
+  color: #b11616;
+  font-size: 12px;
+  text-align: left;
   }
   @media screen and (min-width: 800px) {
- 	form{
-  	width: 60%;
-  	padding-bottom: 8%;
+  form{
+    width: 60%;
+    padding-bottom: 8%;
   }
   .container{
-	width: 50%;
-	}   
+  width: 50%;
+  }   
 }
 @media screen and (max-width: 800px) {   
   #heading{
-  	font-size: 21px;
+    font-size: 21px;
   }
-	form > div:last-child{
-		padding-bottom: 10px;
-	}
+  form > div:last-child{
+    padding-bottom: 10px;
+  }
 }
 #buttondiv{
-	overflow: hidden;
+  overflow: hidden;
 }
 #submitbtn{
-	margin-top: 20px;
+  margin-top: 20px;
+  float: left;
 }
 </style>
 <div class="row" >
-  <div class="container z-depth-5" id="nicebox" >
+  <div class="container z-depth-2" id="nicebox" >
   <div align="center">
-  	
-    <h3 id="heading">Sign Up</h3>    	
-      	<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
-					{% csrf_token %}
-					{{ form.as_p }}
-					{% if redirect_field_value %}
-						<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-					{% endif %}
-					<div id="buttondiv">
-					<button type="submit" id="submitbtn" class="btn waves-effect blue white-text waves-blue left">{% trans "Sign Up" %} &raquo;</button>
-					</div >
-					<p id="signinpara">{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">Sign in</a>.{% endblocktrans %}</p>
-				</form>
-  			</div>  
+    
+    <h4 id="heading">Welcome to CloudCV</h4>      
+        <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+          {% csrf_token %}
+          {{ form.as_p }}
+          {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+          <div id="buttondiv">
+          <button type="submit" id="submitbtn" class="btn waves-effect blue white-text waves-blue left">{% trans "Sign Up" %} &raquo;</button>
+          </div >
+          <p id="signinpara">{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">Sign in</a>.{% endblocktrans %}</p>
+        </form>
+        </div>  
 </div>
 </div>
-
 <script type="text/javascript">
     $( document ).ready(function() {
       $('form > p').each(function(){
