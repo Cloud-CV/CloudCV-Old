@@ -2,53 +2,149 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Account Connections" %}{% endblock %}
+{% block head_title %}{% trans "Cloud Storages" %}{% endblock %}
 
 {% block content %}
-<h1>{% trans "Account Connections" %}</h1>
-
-{% if form.accounts %}
-<p>{% blocktrans %}You can sign in to your account using any of the following third party accounts:{% endblocktrans %}</p>
-
-
-<form method="post" action="{% url 'socialaccount_connections' %}">
-{% csrf_token %}
-
-<fieldset>
-{% if form.non_field_errors %}
-<div id="errorMsg">{{ form.non_field_errors }}</div>
-{% endif %}
-
-{% for base_account in form.accounts %}
-{% with base_account.get_provider_account as account %}
-<div>
-<label for="id_account_{{ base_account.id }}">
-<input id="id_account_{{ base_account.id }}" type="radio" name="account" value="{{ base_account.id }}"/>
-<span class="socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}">{{account.get_brand.name}}</span>
-{{ account }}
-</label>
-</div>
-{% endwith %}
-{% endfor %}
-
-<div>
-<button type="submit">{% trans 'Remove' %}</button>
-</div>
-
-</fieldset>
-
-</form>
-
-{% else %}
-<p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
-{% endif %}
-
-<h2>{% trans 'Add a 3rd Party Account' %}</h2>
-
-<ul class="socialaccount_providers">
-{% include "socialaccount/snippets/provider_list.html" with process="connect" %}
-</ul>
-
-{% include "socialaccount/snippets/login_extra.html" %}
-
+<style type="text/css">
+	#heading{
+	font-weight: 300;
+	text-align: center;
+	}
+	.btn-large {
+	width:100%;
+	}
+	#nicebox{
+	border-top: 4px solid #4c9cdf;
+	margin-top:6%;
+	background-color: white;
+	}
+	.waves-effect.waves-blue .waves-ripple {
+		background-color: rgb(33,150,243);
+	}
+	#errorMsg{
+	list-style-type: none;
+	color: #b11616;
+	font-size: 12px;
+	text-align: left;
+	}
+	@media screen and (min-width: 800px) {
+	form{
+		width: 60%;
+		padding-bottom: 8%;
+	}
+	.container{
+	width: 50%;
+	}   
+}
+@media screen and (max-width: 800px) {   
+	#heading{
+		font-size: 21px;
+	}
+	form > div:last-child{
+		padding-bottom: 10px;
+	}
+}
+#buttondiv{
+	overflow: hidden;
+}
+#submitbtn{
+	margin-top: 20px;
+}
+#footer{
+	margin: 0;
+	/*position:absolute;*/
+	bottom:0;
+	width: 100%;
+	/*left:0;*/
+	/*padding-bottom: 0;*/
+}
+	#login2{
+		background-color: #007EE5;
+		width: 80%;
+		text-align: center;
+	}
+	#login1{
+		background-color: #C33B2B;
+		width: 80%;
+}
+</style>
+<body>
+	<main>
+		<h4 id="heading">{% trans "Cloud Storages" %}</h4>
+		{% if form.accounts %}
+			<p align="center">{% blocktrans %}You can use CloudCV using any of the listed Cloud Sotrages: {% endblocktrans %}</p>
+			<form method="post" action="{% url 'socialaccount_connections' %}">
+			{% csrf_token %}
+			<fieldset>
+			{% if form.non_field_errors %}
+				<div id="errorMsg">{{ form.non_field_errors }}</div>
+			{% endif %}
+			{% for base_account in form.accounts %}
+				{% with base_account.get_provider_account as account %}
+					<div class="row">
+					<div class="col s12 m12 l8">		
+						<input class="with-gap" id="id_account_{{ base_account.id }}" type="radio" name="account" value="{{ base_account.id }}"/>
+						<label for="id_account_{{ base_account.id }}">
+						<span class="socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}">{{account.get_brand.name}}</span>
+						{{ account }}
+						</label>
+					</div>
+					</div>
+				{% endwith %}
+			{% endfor %}
+				<div>
+					<button class="btn btn-primary waves-effect waves-light light-blue darken-2" type="submit">{% trans 'Remove' %}</button>
+				</div>
+			</fieldset>
+			</form>
+				{% else %}
+				<p align="center">{% trans 'You currently have no Cloud Storage connected to this account.' %}</p>
+			{% endif %}
+			<h4 id="heading">{% trans 'Add a Cloud Storage' %}</h4>
+			<div class="row" >
+			<div class="col s12 m12 l12">
+				<div class="row">
+					<div class="col s12 m12 l4" align="center">
+						<a class="btn-large waves-effect waves-red" id="login1" href="/google/login/?process=login"><img src="/static/material/gd.png" style="vertical-align: middle; padding-left: 8px;"> Google</a>
+					</div>
+				</div>
+					
+			</div>
+			<div class="row">
+				<div class="col s12 m12 l4" id="div2" align="center">
+					<a class="btn-large waves-effect waves-blue"  id="login2" href="/dropbox/login/?process=login"><img src="/static/material/dropbox.png" style="vertical-align: middle; padding-left: 8px;"> Dropbbox</a>
+				</div>
+			</div>
+			</div>
+		<!-- {% include "socialaccount/snippets/login_extra.html" %} -->	      
+	</main>
+	<footer class="page-footer light-blue darken-4" id="footer">
+		<div class="container">
+			<div class="row">
+				<div class="col l6 s12">
+					<h5 class="white-text">Images on Cloud</h5>
+					<p class="grey-text text-lighten-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+				</div>
+				<div class="col l4 offset-l2 s12">
+					<h5 class="white-text">Links</h5>
+					<ul>
+						<li><a class="grey-text text-lighten-3" href="#!">About us</a></li>
+						<li><a class="grey-text text-lighten-3" href="#!">Our Team</a></li>
+						<li><a class="grey-text text-lighten-3" href="#!">Contact us</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="footer-copyright">
+			<div class="container">
+			© 2015 Copyright CloudCV
+			<a class="grey-text text-lighten-4 right" href="#!">CloudCV Home Page</a>
+			</div>
+		</div>
+	</footer>
+	<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="/static/material/js/materialize.js"></script>
+	<script src="/static/material/js/init.js"></script>
+</body>
+</html>
 {% endblock %}
