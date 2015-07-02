@@ -23,6 +23,8 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 	&& npm install forever@0.13 \
 	&& npm cache clear
 
+EXPOSE 5000
+
 COPY chat.js /home/user/chat.js
 COPY run.sh /home/user/run.sh
 CMD ["bash", "/home/user/run.sh"]
