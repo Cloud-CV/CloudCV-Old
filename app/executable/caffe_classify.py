@@ -26,7 +26,7 @@ PRETRAINED = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_r
 caffe.set_mode_cpu()
 
 net = caffe.Classifier(MODEL_FILE, PRETRAINED,
-                    mean=np.load(os.path.join(conf.CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy')),
+                    mean=np.load(os.path.join(conf.CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy').mean(1).mean(1)),
                     channel_swap=(2, 1, 0),
                     raw_scale=255,
                     image_dims=(256, 256))
