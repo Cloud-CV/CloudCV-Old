@@ -9,7 +9,7 @@ sudo docker build -t cloudcv/base ./Base/
 rm ./Base/requirements.txt
 
 echo "Creating data container"
-sudo docker build -t cloudcv/code ./Code/
+sudo docker build --no-cache -t cloudcv/code ./Code/
 sudo docker create -v /CloudCV_Server --name cloudcv_code cloudcv/code /bin/true
 
 echo "Pulling the image and starting redis server."
