@@ -25,7 +25,7 @@ rm ./Node/chat.js
 echo "Pulling the image and starting django server"
 wget -P ./Django/ http://dl.caffe.berkeleyvision.org/bvlc_reference_caffenet.caffemodel
 sudo docker build -t cloudcv/django ./Django/
-sudo docker run -d --volumes-from cloudcv_code --link cloudcv_redis:redis --name cloudcv_django cloudcv/django 
+sudo docker run -d --volumes-from cloudcv_code --link cloudcv_redis:redis --name cloudcv_django cloudcv/django uwsgi --emperor /CloudCV_Server/
 rm ./Django/bvlc_reference_caffenet.caffemodel
 
 echo "Pulling the image and starting nginx server"
