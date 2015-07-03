@@ -1,4 +1,4 @@
-FROM tleyden5iwx/caffe-cpu-master:latest
+FROM cloudcv/caffe-cpu:latest
 
 MAINTAINER Prashant Jalan
 
