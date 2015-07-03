@@ -7,4 +7,3 @@ EXPOSE 8000
 COPY ./bvlc_reference_caffenet.caffemodel /opt/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
 
 ENTRYPOINT python /CloudCV_Server/manage.py migrate
-CMD ["uwsgi", "--emperor", "/CloudCV_Server/"]
