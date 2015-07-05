@@ -296,6 +296,7 @@ def demoUpload(request, executable):
             return response
 
     except Exception as e:
+        r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(request.POST['socketid-hidden'])}))
         return HttpResponse(str(e))
 
     return HttpResponse('Not a post request')
