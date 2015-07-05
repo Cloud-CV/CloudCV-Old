@@ -125,7 +125,7 @@ def run_executable(list, session, socketid, ):
 
 
 class PictureCreateView(CreateView):
-    model = Images
+    model = Picture
 
     def form_valid(self, form):
         """
