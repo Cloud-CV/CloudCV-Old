@@ -27,7 +27,7 @@ import redis
 from app.models import Picture, RequestLog, Decaf, Classify
 from app.executable.caffe_classify import caffe_classify, caffe_classify_image
 import app.conf as conf
-from app.celery.web_tasks.ClassifyTask import classifyImages
+from celeryJobs.web_tasks import classifyImages
 
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
 classify_channel_name = 'classify_queue'
@@ -130,7 +130,7 @@ def classify_wrapper_local(src_path, socketid, result_path):
     # except Exception as e:
     #     log_to_terminal(str(traceback.format_exc()), socketid)
 
-    classifyImages.delay(src_path, socketid, result_path)
+    classifyImages.delay(src_path, socketid)
 
 
 class ClassifyThread(threading.Thread):
