@@ -1,8 +1,32 @@
 # encoding: utf-8
 
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import CreateView, DeleteView
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize
+from django.conf import settings
+from PIL import Image
+from io import BytesIO
 
+from rest_framework import permissions
+from app.celery.web_tasks.ImageStitchingTask import runImageStitching
+# from app.models import Picture, RequestLog, Decaf
+from app.models import *
+from app.core.job import Job
+from querystring_parser import parser
+from log import logger, log, log_to_terminal, log_and_exit
+from savefile import saveFilesAndProcess
+import app.thirdparty.dropbox_auth as dbauth
+import app.thirdparty.google_auth as gauth
+from app.serializers import *
+
+import app.conf as conf
+import base64
+import redis
+import decaf_views
+import StringIO
 import time
 import subprocess
 import os
@@ -13,37 +37,15 @@ import datetime
 import shortuuid
 import mimetypes
 
-from django.views.generic import CreateView, DeleteView
-
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
-from querystring_parser import parser
-import redis
-
-from app.models import Picture, RequestLog, Decaf
-from log import logger, log, log_to_terminal, log_and_exit
-from app.core.job import Job
-from savefile import saveFilesAndProcess
-import app.thirdparty.dropbox_auth as dbauth
-import app.thirdparty.google_auth as gauth
-import decaf_views
-import app.conf as conf
-from django.conf import settings
-from PIL import Image
-import StringIO
-import base64
-from io import BytesIO
-
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-from app.celery.web_tasks.ImageStitchingTask import runImageStitching
 
 class Request:
     socketid = None
 
     def run_executable(self, list, result_path):
-
+        """
+        Deprecated Image Stitching code. We dont want to loose it. So, it is commented.
+        """
         # try:
         #     popen = subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         #     count=1
@@ -57,10 +59,8 @@ class Request:
         #         if(popen.stderr):
         #             errline = popen.stderr.readline()
         #             popen.stderr.flush()
-        #         # r = redis.StrictRedis(host = 'redis' , port=6379, db=0)
         #
         #         if line:
-        #             # r = redis.StrictRedis(host='redis', port=6379, db=0)
         #             self.log_to_terminal(line)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'
@@ -68,7 +68,6 @@ class Request:
         #             count += 1
         #                     # time.sleep(1)
         #         if errline:
-        #             # r = redis.StrictRedis(host='redis', port=6379, db=0)
         #             self.log_to_terminal(errline)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'
@@ -95,7 +94,6 @@ def run_executable(list, session, socketid, ):
 
             popen=subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             count=1
-            r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 
             while True:
                 popen.poll()
@@ -128,9 +126,13 @@ def run_executable(list, session, socketid, ):
 
 
 class PictureCreateView(CreateView):
-    model = Picture
+    model = Images
 
     def form_valid(self, form):
+        """
+        Method for checking the django form validation and then saving 
+        the images after resizing them.  
+        """
         try:
             request_obj = Request()
 
@@ -156,7 +158,7 @@ class PictureCreateView(CreateView):
 
             for file in all_files:
                 log_to_terminal(str('Saving file:' + file.name), request_obj.socketid)
-                a = Picture()
+                a = Images()
                 tick = time.time()
                 strtick = str(tick).replace('.','_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -203,10 +205,17 @@ class PictureCreateView(CreateView):
 class BasicPlusVersionCreateView(PictureCreateView):
     template_name_suffix = '_basicplus_form'
 
+" All Views "
 def homepage(request):
+    """
+    View for home page
+    """
     return render(request, 'index.html')
 
 def ec2(request):
+    """
+    This functionality is deprecated. We need to remove it from the codebase. 
+    """
     token = request.GET['dropbox_token']
     emailid = request.GET['emailid']
 
@@ -253,6 +262,10 @@ def ec2(request):
 
 @csrf_exempt
 def demoUpload(request, executable):
+    """
+    Method called when the image stitching of demo images is done by 
+    clicking on the button 'Submit these' at /image-stitch url.   
+    """
     try:
         if request.method == 'POST':
 
@@ -289,6 +302,9 @@ def demoUpload(request, executable):
     return HttpResponse('Not a post request')
 
 def log_every_request(job_obj):
+    """
+    Method for logging. 
+    """
     try:
         now = datetime.datetime.utcnow()
         req_obj = RequestLog(cloudcvid=job_obj.userid, noOfImg=job_obj.count,
@@ -296,14 +312,13 @@ def log_every_request(job_obj):
                           function=job_obj.executable, dateTime=now)
         req_obj.save()
     except Exception as e:
-        r = redis.StrictRedis(host = 'redis', port=6379, db=0)
         r.publish('chat', json.dumps({'error': str(traceback.format_exc()), 'socketid': job_obj.socketid}))
 
 @csrf_exempt
 def matlabReadRequest(request):
-    r = redis.StrictRedis(host = 'redis', port=6379, db=0)
-
-
+    """
+    Method that makes request to the matlab api. 
+    """
     if request.method == 'POST':    # post request
         post_dict = parser.parse(request.POST.urlencode())
 
@@ -326,6 +341,9 @@ def matlabReadRequest(request):
         # return HttpResponse(str(request))
 
 def authenticate(request, auth_name):
+    """
+    Authentication method: Currently used for Python API.
+    """
     if auth_name == 'dropbox':
         is_API = 'type' in request.GET and request.GET['type']=='api'
         contains_UUID = 'userid' in request.GET
@@ -360,6 +378,9 @@ def authenticate(request, auth_name):
 
 @csrf_exempt
 def callback(request, auth_name):
+    """
+    Callback method associated with authentication part. 
+    """
     if auth_name == 'dropbox':
         post_dict = parser.parse(request.POST.urlencode())
         code = str(post_dict['code'])
@@ -374,3 +395,214 @@ def callback(request, auth_name):
         return HttpResponse(json_response)
 
     return HttpResponse('Invalid URL')
+
+####################################################################
+
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.http import Http404
+from rest_framework import generics
+from serializers import *
+
+class UserList(generics.ListCreateAPIView):
+    """
+    List all Users, or create a new user.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    model = User
+
+class RequestLogList(generics.ListCreateAPIView):
+    queryset = RequestLog.objects.all()
+    serializer_class = RequestLogSerializer
+    model = RequestLog
+
+class GroupList(generics.ListCreateAPIView):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    model = Group
+
+class CurrentRequestList(generics.ListCreateAPIView):
+    queryset = CurrentRequest.objects.all()
+    serializer_class = CurrentRequestSerializer
+    model = CurrentRequest
+
+class ImagesList(generics.ListCreateAPIView):
+    queryset = Images.objects.all()
+    serializer_class = ImagesSerializer
+    model = Images
+
+
+# class UserList(APIView):
+#     """
+#     List all Users, or create a new user.
+#     """
+#     queryset = User.objects.all()
+#     model = User
+#     def get(self, request, format=None):
+#         user = self.queryset
+#         serializer = UserSerializer(user, many=True)
+#         return Response(serializer.data)
+
+    # def post(self, request, format=None):
+    #     serializer = UserSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class UserDetail(APIView):
+#     """
+#     Retrieve, update or delete a User instance.
+#     """
+#     queryset = User.objects.all()
+#     def get_object(self, pk):
+#         try:
+#             return self.queryset.get(pk=pk)
+#         except User.DoesNotExist:
+#             raise Http404
+
+#     def get(self, request, pk, format=None):
+#         user = self.get_object(pk)
+#         serializer = UserSerializer(user)
+#         return Response(serializer.data)
+
+#     def put(self, request, pk, format=None):
+#         user = self.get_object(pk)
+#         serializer = UserSerializer(user, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def delete(self, request, pk, format=None):
+#         user = self.get_object(pk)
+#         user.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# class RequestLogList(APIView):
+#     """
+#     List all the requst jobs and their respective details. 
+#     """
+#     def get(self, request, format=None):
+#         jobs = RequestLog.objects.all()
+#         serializer = RequestLogSerializer(jobs, many=True)
+#         return Response(serializer.data)
+
+#     def post(self, request, format=None):
+#         serializer = RequestLogSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class GroupList(APIView):
+#     """
+#     List all the Groups, or create a new Group.
+#     """
+#     def get(self, request, format=None):
+#         groups = Group.objects.all()
+#         serializer = GroupSerializer(groups, many=True)
+#         return Response(serializer.data)
+
+#     def post(self, request, format=None):
+#         serializer = GroupSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class GroupDetail(APIView):
+#     """
+#     Retrieve, update or delete a Group instance.
+#     """
+#     def get_object(self, pk):
+#         try:
+#             return Group.objects.get(pk=pk)
+#         except Group.DoesNotExist:
+#             raise Http404
+
+#     def get(self, request, pk, format=None):
+#         group = self.get_object(pk)
+#         serializer = GroupSerializer(group)
+#         return Response(serializer.data)
+
+#     def put(self, request, pk, format=None):
+#         group = self.get_object(pk)
+#         serializer = GroupSerializer(group, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def delete(self, request, pk, format=None):
+#         group = self.get_object(pk)
+#         group.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# class CurrentRequestList(APIView):
+#     """
+#     List all the Curent Requests, or create a new Request.
+#     """
+#     def get(self, request, format=None):
+#         current_requset = CurrentRequest.objects.all()
+#         serializer = CurrentRequestSerializer(current_requset, many=True)
+#         return Response(serializer.data)
+
+#     def post(self, request, format=None):
+#         serializer = CurrentRequestSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class CurrentRequestDetail(APIView):
+#     """
+#     Retrieve, update or delete a CurrentRequest instance.
+#     """
+#     def get_object(self, pk):
+#         try:
+#             return CurrentRequest.objects.get(pk=pk)
+#         except CurrentRequest.DoesNotExist:
+#             raise Http404
+
+#     def get(self, request, pk, format=None):
+#         current_requset = self.get_object(pk)
+#         serializer = CurrentRequestSerializer(current_requset)
+#         return Response(serializer.data)
+
+#     def put(self, request, pk, format=None):
+#         current_requset = self.get_object(pk)
+#         serializer = CurrentRequestSerializer(current_requset, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def delete(self, request, pk, format=None):
+#         current_requset = self.get_object(pk)
+#         current_requset.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# class ImagesList(APIView):
+#     """
+#     List all the Image Details stored in the different locations.
+#     """
+#     def get(self, request, format=None):
+#         images = Image.objects.all()
+#         serializer = ImagesSerializer(images, many=True)
+#         return Response(serializer.data)
+
+#     def post(self, request, format=None):
+#         serializer = ImagesSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
