@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from celeryTasks.celery import app
 
 #Establishing connection to send results and write messages
-import redis
+import redis, json
 rs = redis.StrictRedis(host='redis', port=6379)
 
 """
