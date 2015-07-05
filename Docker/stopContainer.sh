@@ -1,7 +1,7 @@
-docker stop cloudcv_nginx
-docker stop cloudcv_redis
-docker stop cloudcv_node
-docker stop cloudcv_worker_cpu
-docker stop cloudcv_django
-docker stop cloudcv_rabbitmq
+docker kill cloudcv_nginx
+docker kill cloudcv_redis
+docker kill cloudcv_node
+docker kill cloudcv_worker_cpu
+docker kill cloudcv_django
+docker kill cloudcv_rabbitmq
 docker rm $(docker ps -a -q)
