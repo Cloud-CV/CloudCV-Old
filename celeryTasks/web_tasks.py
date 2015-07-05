@@ -48,9 +48,9 @@ def classifyImages(src_path, socketid, result_path):
 		mean=np.load(MEAN_FILE).mean(1).mean(1), raw_scale=RAW_SCALE,
 		channel_swap=CHANNEL_SWAP)
 
-		rs.publish('chat', json.dumps({'message': 'Getting input from '+input_file, 'socketid': str(socketid)}))
 		# Load numpy array (.npy), directory glob (*), or image file.
 		input_file = os.path.abspath(src_path)
+		rs.publish('chat', json.dumps({'message': 'Getting input from '+input_file, 'socketid': str(socketid)}))
 		if input_file.endswith('npy'):
 			inputs = np.load(args.input_file)
 		elif os.path.isdir(input_file):
