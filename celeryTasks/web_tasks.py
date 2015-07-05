@@ -108,7 +108,8 @@ def classifyImages(src_path, socketid, result_path):
 The function takes as input:
 1) src_path: Input image or directory.
 2) socketid: The socket id of the connection.
-3) result_path: Directory where the mat files are to be stored.
+3) output_path: Directory where the mat files are to be stored.
+4) result_path: Directory accessible by web.
 
 NOTE:
 1) Its job is to find the decaf features of images according to the pre-trained model.
@@ -118,7 +119,7 @@ NOTE:
 5) When running with new version of caffe do np.load(MEAN_FILE).mean(1).mean(1)
 """
 @app.task(ignore_result=True)
-def decafImages(src_path, result_path, socketid):
+def decafImages(src_path, socketid, output_path, result_path):
 	try:
 		import caffe, numpy as np, os, glob, time, operator, scipy.io as sio
 
@@ -158,9 +159,10 @@ def decafImages(src_path, result_path, socketid):
 					matfile = {}
 					matfile['decaf'] = features
 					matfile['decaf_center'] = features_center
-					out_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
+					out_file = os.path.join(output_path, os.path.basename(input_file)+'.mat')
+					publish_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
 					sio.savemat(out_file, matfile)
-					r.publish('chat', json.dumps({'web_result': out_file, 'socketid': str(socketid)}))
+					r.publish('chat', json.dumps({'web_result': publish_file, 'socketid': str(socketid)}))
 		else:
 			print "Here 5"
 			input_file = src_path
@@ -185,10 +187,13 @@ def decafImages(src_path, result_path, socketid):
 			matfile['decaf'] = features
 			matfile['decaf_center'] = features_center
 			out_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
+			out_file = os.path.join(output_path, os.path.basename(input_file)+'.mat')
+			publish_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
 			print out_file
+			print publish_file
 			sio.savemat(out_file, matfile)
 			print "Save succesful"
-			r.publish('chat', json.dumps({'web_result': out_file, 'socketid': str(socketid)}))
+			r.publish('chat', json.dumps({'web_result': publish_file, 'socketid': str(socketid)}))
 		print "Here 8"
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
 
