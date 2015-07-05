@@ -133,39 +133,43 @@ def decafImages(src_path, result_path, socketid):
 		# Make classifier.
 		classifier = caffe.Classifier(MODEL_FILE, PRETRAINED)
 
+		print "Made Classifer"
 		#Find decaf features and send Results
 		if os.path.isdir(src_path):
 			for input_file in glob.glob(src_path + '/*'):
-				rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
+				if os.path.isfile(input_file):
+					print "Here 1"
+					rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
 
-				#Loading Image
-				input_image = caffe.io.load_image(input_file)
-				
-				#Finding decaf features
-				start = time.time()
-				classifier.predict([input_image])
-				blobs = classifier.blobs.items()
-				features = blobs[-3][1].data[:,:,0,0]
-				features_center = blobs[-3][1].data[4,:,0,0]
-				features_center = np.resize(features_center, (1,4096))
-				timeMsg = "Completed in %.2f s." % (time.time() - start)
-				rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
-
-				#Saving decaf features
-				matfile = {}
-				matfile['decaf'] = features
-				matfile['decaf_center'] = features_center
-				out_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
-				sio.savemat(out_file, matfile)
-				r.publish('chat', json.dumps({'web_result': out_file, 'socketid': str(socketid)}))
+					#Loading Image
+					input_image = caffe.io.load_image(input_file)
+					print "Here 2"
+					#Finding decaf features
+					start = time.time()
+					classifier.predict([input_image])
+					blobs = classifier.blobs.items()
+					features = blobs[-3][1].data[:,:,0,0]
+					features_center = blobs[-3][1].data[4,:,0,0]
+					features_center = np.resize(features_center, (1,4096))
+					timeMsg = "Completed in %.2f s." % (time.time() - start)
+					rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
+					print "Here 3"
+					#Saving decaf features
+					matfile = {}
+					matfile['decaf'] = features
+					matfile['decaf_center'] = features_center
+					out_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
+					sio.savemat(out_file, matfile)
+					r.publish('chat', json.dumps({'web_result': out_file, 'socketid': str(socketid)}))
 		else:
+			print "Here 5"
 			input_file = src_path
 
 			rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
 			
 			#Loading Image
 			input_image = caffe.io.load_image(input_file)
-			
+			print "Here 6"
 			#Finding decaf features
 			start = time.time()
 			classifier.predict([input_image])
@@ -175,7 +179,7 @@ def decafImages(src_path, result_path, socketid):
 			features_center = np.resize(features_center, (1,4096))
 			timeMsg = "Completed in %.2f s." % (time.time() - start)
 			rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
-
+			print "Here 7"
 			#Saving decaf features
 			matfile = {}
 			matfile['decaf'] = features
@@ -183,7 +187,7 @@ def decafImages(src_path, result_path, socketid):
 			out_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
 			sio.savemat(out_file, matfile)
 			r.publish('chat', json.dumps({'web_result': out_file, 'socketid': str(socketid)}))
-
+		print "Here 8"
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
 
 	except Exception as e:
