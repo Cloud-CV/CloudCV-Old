@@ -16,6 +16,10 @@ echo "Pulling the image and starting redis server."
 sudo docker pull redis:3.0
 sudo docker run -d --name cloudcv_redis redis
 
+echo "Pulling the image and starting rabbitmq server."
+sudo docker pull rabbitmq
+sudo docker run -d --name cloudcv_rabbitmq rabbitmq
+
 echo "Pulling the image and starting the node.js server"
 cp ../nodejs/chat.js ./Node/
 sudo docker build -t cloudcv/node ./Node/
@@ -25,7 +29,7 @@ rm ./Node/chat.js
 echo "Pulling the image and starting django server"
 wget -P ./Django/ http://dl.caffe.berkeleyvision.org/bvlc_reference_caffenet.caffemodel
 sudo docker build -t cloudcv/django ./Django/
-sudo docker run -d --volumes-from cloudcv_code --link cloudcv_redis:redis --name cloudcv_django cloudcv/django uwsgi --emperor /CloudCV_Server/
+sudo docker run -d --volumes-from cloudcv_code --link cloudcv_rabbitmq:rabbitmq --link cloudcv_redis:redis --name cloudcv_django cloudcv/django uwsgi --emperor /CloudCV_Server/
 rm ./Django/bvlc_reference_caffenet.caffemodel
 
 echo "Pulling the image and starting nginx server"
