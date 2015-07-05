@@ -60,11 +60,7 @@ def classifyImages(src_path, socketid, result_path):
 		# Classify.
 		prediction = classifier.predict(inputs)
 
-		rs.publish('chat', json.dumps({'message': 'Input path '+input_file, 'socketid': str(socketid)}))
 		#Send Results
-		rs.publish('chat', json.dumps({'message': 'Result path '+result_path, 'socketid': str(socketid)}))
-		result_path = os.path.dirname(result_path)
-		rs.publish('chat', json.dumps({'message': 'After operation Result path '+result_path, 'socketid': str(socketid)}))
 		if os.path.isdir(input_file):
 			count = 0
 			for im_f in glob.glob(input_file + '/*'):
@@ -94,7 +90,7 @@ def classifyImages(src_path, socketid, result_path):
 				topresults.append([str(WNID_cells[item, 0][0][0]),str(item[1])])
 
 			web_result = {}
-			web_result[os.path.join(result_path, os.path.basename(input_file))] = topresults
+			web_result[result_path] = topresults
 			rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
 		
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
