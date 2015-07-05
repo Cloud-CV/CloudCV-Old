@@ -58,7 +58,10 @@ def classifyImages(src_path, socketid, result_path):
 			inputs = [caffe.io.load_image(input_file)]
 
 		# Classify.
+		start = time.time()
 		prediction = classifier.predict(inputs)
+		timeMsg = "Completed in %.2f s." % (time.time() - start)
+		rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
 
 		#Send Results
 		if os.path.isdir(input_file):
