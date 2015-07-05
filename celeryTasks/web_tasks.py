@@ -88,7 +88,7 @@ def classifyImages(src_path, socketid, result_path):
 				topresults.append([str(WNID_cells[item, 0][0][0]),str(item[1])])
 
 			web_result = {}
-			web_result[os.path.join(result_path, os.path.basename(im_f))] = topresults
+			web_result[os.path.join(result_path, os.path.basename(input_file))] = topresults
 			rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
 		
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
