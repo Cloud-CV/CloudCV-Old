@@ -11,17 +11,17 @@ from celeryTasks.celery import app
 import redis, json
 rs = redis.StrictRedis(host='redis', port=6379)
 
-"""
-The function takes as input:
-1) src_path: Input image, directory, or npy. 
-2) socketid: The socket id of the connection.
-3) result_path: The folder path where the result image will be stored.
-NOTE:
-1) Its job is to classify the images according to the pre-trained model.
-2) ignore_result=True signifies that celery won't pass any result to the backend.
-3) It is important to import all the modules only inside the function
-4) When running with new version of caffe do np.load(MEAN_FILE).mean(1).mean(1)
-"""
+
+# The function takes as input:
+# 1) src_path: Input image, directory, or npy. 
+# 2) socketid: The socket id of the connection.
+# 3) result_path: The folder path where the result image will be stored.
+#    It should be full path in case of a single file, else the directory path.
+# NOTE:
+# 1) Its job is to classify the images according to the pre-trained model.
+# 2) ignore_result=True signifies that celery won't pass any result to the backend.
+# 3) It is important to import all the modules only inside the function
+# 4) When running with new version of caffe do np.load(MEAN_FILE).mean(1).mean(1)
 @app.task(ignore_result=True)
 def classifyImages(src_path, socketid, result_path):
 	try:
