@@ -99,25 +99,23 @@ def classifyImages(src_path, socketid, result_path):
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
 
 	except Exception as e:
-		#In case of an error, print the whole error with traceback
+		#In case of an error, send the whole error with traceback
 		import traceback
 		rs.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
 
 
-"""
-The function takes as input:
-1) src_path: Input image or directory.
-2) socketid: The socket id of the connection.
-3) output_path: Directory where the mat files are to be stored.
-4) result_path: Directory accessible by web.
+# The function takes as input:
+# 1) src_path: Input image or directory.
+# 2) socketid: The socket id of the connection.
+# 3) output_path: Directory where the mat files are to be stored.
+# 4) result_path: Directory accessible by web.
 
-NOTE:
-1) Its job is to find the decaf features of images according to the pre-trained model.
-2) ignore_result=True signifies that celery won't pass any result to the backend.
-3) log_to_terminal is used to publish messages to the redis server.
-4) It is important to import all the modules only inside the function
-5) When running with new version of caffe do np.load(MEAN_FILE).mean(1).mean(1)
-"""
+# NOTE:
+# 1) Its job is to find the decaf features of images according to the pre-trained model.
+# 2) ignore_result=True signifies that celery won't pass any result to the backend.
+# 3) log_to_terminal is used to publish messages to the redis server.
+# 4) It is important to import all the modules only inside the function
+# 5) When running with new version of caffe do np.load(MEAN_FILE).mean(1).mean(1)
 @app.task(ignore_result=True)
 def decafImages(src_path, socketid, output_path, result_path):
 	try:
@@ -134,17 +132,15 @@ def decafImages(src_path, socketid, output_path, result_path):
 		# Make classifier.
 		classifier = caffe.Classifier(MODEL_FILE, PRETRAINED)
 
-		print "Made Classifer"
 		#Find decaf features and send Results
 		if os.path.isdir(src_path):
 			for input_file in glob.glob(src_path + '/*'):
 				if os.path.isfile(input_file):
-					print "Here 1"
 					rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
 
 					#Loading Image
 					input_image = caffe.io.load_image(input_file)
-					print "Here 2"
+					
 					#Finding decaf features
 					start = time.time()
 					classifier.predict([input_image])
@@ -154,7 +150,7 @@ def decafImages(src_path, socketid, output_path, result_path):
 					features_center = np.resize(features_center, (1,4096))
 					timeMsg = "Completed in %.2f s." % (time.time() - start)
 					rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
-					print "Here 3"
+					
 					#Saving decaf features
 					matfile = {}
 					matfile['decaf'] = features
@@ -164,14 +160,13 @@ def decafImages(src_path, socketid, output_path, result_path):
 					sio.savemat(out_file, matfile)
 					rs.publish('chat', json.dumps({'web_result': publish_file, 'socketid': str(socketid)}))
 		else:
-			print "Here 5"
 			input_file = src_path
 
 			rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
 			
 			#Loading Image
 			input_image = caffe.io.load_image(input_file)
-			print "Here 6"
+			
 			#Finding decaf features
 			start = time.time()
 			classifier.predict([input_image])
@@ -181,7 +176,7 @@ def decafImages(src_path, socketid, output_path, result_path):
 			features_center = np.resize(features_center, (1,4096))
 			timeMsg = "Completed in %.2f s." % (time.time() - start)
 			rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
-			print "Here 7"
+			
 			#Saving decaf features
 			matfile = {}
 			matfile['decaf'] = features
@@ -189,15 +184,12 @@ def decafImages(src_path, socketid, output_path, result_path):
 			out_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
 			out_file = os.path.join(output_path, os.path.basename(input_file)+'.mat')
 			publish_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
-			print out_file
-			print publish_file
 			sio.savemat(out_file, matfile)
-			print "Save succesful"
 			rs.publish('chat', json.dumps({'web_result': publish_file, 'socketid': str(socketid)}))
-		print "Here 8"
+
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
 
 	except Exception as e:
-		#In case of an error, print the whole error with traceback
+		#In case of an error, send the whole error with traceback
 		import traceback
 		rs.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
