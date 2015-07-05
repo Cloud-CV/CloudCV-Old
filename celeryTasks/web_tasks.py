@@ -50,7 +50,6 @@ def classifyImages(src_path, socketid, result_path):
 
 		# Load numpy array (.npy), directory glob (*), or image file.
 		input_file = os.path.abspath(src_path)
-		rs.publish('chat', json.dumps({'message': 'Getting input from '+input_file, 'socketid': str(socketid)}))
 		if input_file.endswith('npy'):
 			inputs = np.load(args.input_file)
 		elif os.path.isdir(input_file):
@@ -61,8 +60,11 @@ def classifyImages(src_path, socketid, result_path):
 		# Classify.
 		prediction = classifier.predict(inputs)
 
+		rs.publish('chat', json.dumps({'message': 'Input path '+input_path, 'socketid': str(socketid)}))
 		#Send Results
+		rs.publish('chat', json.dumps({'message': 'Result path '+result_path, 'socketid': str(socketid)}))
 		result_path = os.path.dirname(result_path)
+		rs.publish('chat', json.dumps({'message': 'After operation Result path '+result_path, 'socketid': str(socketid)}))
 		if os.path.isdir(input_file):
 			count = 0
 			for im_f in glob.glob(input_file + '/*'):
