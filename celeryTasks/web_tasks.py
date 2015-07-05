@@ -15,6 +15,7 @@ rs = redis.StrictRedis(host='redis', port=6379)
 The function takes as input:
 1) src_path: Input image, directory, or npy. 
 2) socketid: The socket id of the connection.
+3) result_path: The folder path where the result image will be stored.
 NOTE:
 1) Its job is to classify the images according to the pre-trained model.
 2) ignore_result=True signifies that celery won't pass any result to the backend.
@@ -22,7 +23,7 @@ NOTE:
 4) When running with new version of caffe do np.load(MEAN_FILE).mean(1).mean(1)
 """
 @app.task(ignore_result=True)
-def classifyImages(src_path, socketid):
+def classifyImages(src_path, socketid, result_path):
 	try:
 		import caffe, numpy as np, os, glob, time, operator, scipy.io as sio
 
@@ -60,6 +61,7 @@ def classifyImages(src_path, socketid):
 		prediction = classifier.predict(inputs)
 
 		#Send Results
+		result_path = os.path.dirname(result_path)
 		if os.path.isdir(input_file):
 			for im_f in glob.glob(input_file + '/*'):
 				dictionary = {}
@@ -72,7 +74,7 @@ def classifyImages(src_path, socketid):
 					topresults.append([str(WNID_cells[item, 0][0][0]),str(item[1])])
 
 				web_result = {}
-				web_result[str(im_f)] = topresults
+				web_result[os.path.join(result_path, os.path.basename(im_f))] = topresults
 				rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
 		
 		else:
@@ -86,7 +88,7 @@ def classifyImages(src_path, socketid):
 				topresults.append([str(WNID_cells[item, 0][0][0]),str(item[1])])
 
 			web_result = {}
-			web_result[str(input_file)] = topresults
+			web_result[os.path.join(result_path, os.path.basename(im_f))] = topresults
 			rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
 		
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
