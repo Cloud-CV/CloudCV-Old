@@ -185,7 +185,9 @@ def decafImages(src_path, result_path, socketid):
 			matfile['decaf'] = features
 			matfile['decaf_center'] = features_center
 			out_file = os.path.join(result_path, os.path.basename(input_file)+'.mat')
+			print out_file
 			sio.savemat(out_file, matfile)
+			print "Save succesful"
 			r.publish('chat', json.dumps({'web_result': out_file, 'socketid': str(socketid)}))
 		print "Here 8"
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
