@@ -64,6 +64,7 @@ def classifyImages(src_path, socketid, result_path):
 		#Send Results
 		result_path = os.path.dirname(result_path)
 		if os.path.isdir(input_file):
+			count = 0
 			for im_f in glob.glob(input_file + '/*'):
 				if os.path.isfile(im_f):
 					dictionary = {}
@@ -74,6 +75,7 @@ def classifyImages(src_path, socketid, result_path):
 					topresults = []
 					for item in top5:
 						topresults.append([str(WNID_cells[item, 0][0][0]),str(item[1])])
+					count += 1
 
 					web_result = {}
 					web_result[os.path.join(result_path, os.path.basename(im_f))] = topresults
