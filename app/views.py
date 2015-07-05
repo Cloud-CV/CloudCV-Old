@@ -133,6 +133,7 @@ class PictureCreateView(CreateView):
         the images after resizing them.  
         """
         try:
+            r.publish('chat', json.dumps({'error': str('Entering form-valid'), 'socketid': self.request.POST['socketid-hidden']}))
             request_obj = Request()
 
             request_obj.socketid = self.request.POST['socketid-hidden']
@@ -190,11 +191,13 @@ class PictureCreateView(CreateView):
                     os.path.join(save_dir, 'results/'), ]
 
             print list
+            r.publish('chat', json.dumps({'error': str('Calling run_executable in form_valid'), 'socketid': self.request.POST['socketid-hidden']}))
             request_obj.run_executable(list, os.path.join(conf.PIC_URL, folder_name, 'results/result_stitch.jpg'))
 
             response = JSONResponse(data, mimetype=response_mimetype(self.request))
             response['Content-Disposition'] = 'inline; filename=files.json'
 
+            r.publish('chat', json.dumps({'error': str('Exiting form-valid before calling response'), 'socketid': self.request.POST['socketid-hidden']}))
             return response
         except Exception as e:
             print traceback.format_exc()
@@ -268,6 +271,7 @@ def demoUpload(request, executable):
     try:
         if request.method == 'POST':
 
+            r.publish('chat', json.dumps({'error': str('Entered demoUpload'), 'socketid': self.request.POST['socketid-hidden']}))
             request_obj = Request()
 
             if 'socketid-hidden' in request.POST:
@@ -286,6 +290,7 @@ def demoUpload(request, executable):
             list.append('--ncpus')
             list.append(str(min(file_count, 20)))
 
+            r.publish('chat', json.dumps({'error': str('Calling run_executable in demo_upload'), 'socketid': self.request.POST['socketid-hidden']}))
             request_obj.log_to_terminal(str('Images Processed. Starting Executable'))
             request_obj.run_executable(list, '/app/media/pictures/demo1/results/result_stitch.jpg')
 
@@ -293,11 +298,12 @@ def demoUpload(request, executable):
             data.append({'result': '/app/media/pictures/demo/output/result_stitch.jpg'})
             response = JSONResponse(data, {}, response_mimetype(request))
             response['Content-Disposition'] = 'inline; filename=files.json'
+            r.publish('chat', json.dumps({'error': str('Exiting demoUpload'), 'socketid': self.request.POST['socketid-hidden']}))
             return response
 
     except Exception as e:
         r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(request.POST['socketid-hidden'])}))
-        return HttpResponse(str(e))
+        return HttpResponse(str(traceback.format_exc()))
 
     return HttpResponse('Not a post request')
 
