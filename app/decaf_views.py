@@ -97,11 +97,11 @@ def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_fil
         src_path = os.path.join(src_path, single_file_name)
         if os.path.isdir(src_path):
             result_url = urlparse(result_path).path
-            output_path = os.path.join(result_url, 'results')
+            result_path = os.path.join(result_url, 'results')
         else:
             result_url = os.path.dirname(urlparse(result_path).path)
-            output_path = os.path.join(result_url, 'results')
-        decafImages.delay(src_path, socketid, output_path)
+            result_path = os.path.join(result_url, 'results')
+        decafImages.delay(src_path, socketid, output_path, result_path)
     except Exception as e:
 	log_to_terminal(str(traceback.format_exc()),socketid);
 
