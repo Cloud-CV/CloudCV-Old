@@ -101,7 +101,7 @@ def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_fil
         else:
             result_url = os.path.dirname(urlparse(result_path).path)
             output_path = os.path.join(result_url, 'results')
-        decafImages.delay(src_path, output_path, socketid)
+        decafImages.delay(src_path, socketid, output_path)
     except Exception as e:
 	log_to_terminal(str(traceback.format_exc()),socketid);
 
