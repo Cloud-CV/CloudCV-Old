@@ -60,7 +60,7 @@ def classifyImages(src_path, socketid, result_path):
 		# Classify.
 		prediction = classifier.predict(inputs)
 
-		rs.publish('chat', json.dumps({'message': 'Input path '+input_path, 'socketid': str(socketid)}))
+		rs.publish('chat', json.dumps({'message': 'Input path '+input_file, 'socketid': str(socketid)}))
 		#Send Results
 		rs.publish('chat', json.dumps({'message': 'Result path '+result_path, 'socketid': str(socketid)}))
 		result_path = os.path.dirname(result_path)
