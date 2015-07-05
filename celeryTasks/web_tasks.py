@@ -54,7 +54,7 @@ def classifyImages(src_path, socketid, result_path):
 		if input_file.endswith('npy'):
 			inputs = np.load(args.input_file)
 		elif os.path.isdir(input_file):
-			inputs = [caffe.io.load_image(im_f) for im_f in glob.glob(input_file + '/*')]
+			inputs = [caffe.io.load_image(im_f) for im_f in glob.glob(input_file + '/*') if os.path.isfile(im_f)]
 		else:
 			inputs = [caffe.io.load_image(input_file)]
 
@@ -65,18 +65,19 @@ def classifyImages(src_path, socketid, result_path):
 		result_path = os.path.dirname(result_path)
 		if os.path.isdir(input_file):
 			for im_f in glob.glob(input_file + '/*'):
-				dictionary = {}
-				for i, j in enumerate(prediction[count]):
-					dictionary[i] = j
-				predsorted = sorted(dictionary.iteritems(), key=operator.itemgetter(1), reverse=True)
-				top5 = predsorted[0:5]
-				topresults = []
-				for item in top5:
-					topresults.append([str(WNID_cells[item, 0][0][0]),str(item[1])])
+				if os.path.isfile(im_f):
+					dictionary = {}
+					for i, j in enumerate(prediction[count]):
+						dictionary[i] = j
+					predsorted = sorted(dictionary.iteritems(), key=operator.itemgetter(1), reverse=True)
+					top5 = predsorted[0:5]
+					topresults = []
+					for item in top5:
+						topresults.append([str(WNID_cells[item, 0][0][0]),str(item[1])])
 
-				web_result = {}
-				web_result[os.path.join(result_path, os.path.basename(im_f))] = topresults
-				rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
+					web_result = {}
+					web_result[os.path.join(result_path, os.path.basename(im_f))] = topresults
+					rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
 		
 		else:
 			dictionary = {}
