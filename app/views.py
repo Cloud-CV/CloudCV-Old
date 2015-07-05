@@ -19,7 +19,7 @@ from log import logger, log, log_to_terminal, log_and_exit
 from savefile import saveFilesAndProcess
 import app.thirdparty.dropbox_auth as dbauth
 import app.thirdparty.google_auth as gauth
-from app.serializers import *
+# from app.serializers import *
 
 import app.conf as conf
 import base64
@@ -397,41 +397,41 @@ def callback(request, auth_name):
 
 ####################################################################
 
-from rest_framework.views import APIView
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.http import Http404
-from rest_framework import generics
-from serializers import *
+# from rest_framework.views import APIView
+# from rest_framework import status
+# from rest_framework.decorators import api_view
+# from rest_framework.response import Response
+# from django.http import Http404
+# from rest_framework import generics
+# from serializers import *
 
-class UserList(generics.ListCreateAPIView):
-    """
-    List all Users, or create a new user.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    model = User
+# class UserList(generics.ListCreateAPIView):
+#     """
+#     List all Users, or create a new user.
+#     """
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     model = User
 
-class RequestLogList(generics.ListCreateAPIView):
-    queryset = RequestLog.objects.all()
-    serializer_class = RequestLogSerializer
-    model = RequestLog
+# class RequestLogList(generics.ListCreateAPIView):
+#     queryset = RequestLog.objects.all()
+#     serializer_class = RequestLogSerializer
+#     model = RequestLog
 
-class GroupList(generics.ListCreateAPIView):
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-    model = Group
+# class GroupList(generics.ListCreateAPIView):
+#     queryset = Group.objects.all()
+#     serializer_class = GroupSerializer
+#     model = Group
 
-class CurrentRequestList(generics.ListCreateAPIView):
-    queryset = CurrentRequest.objects.all()
-    serializer_class = CurrentRequestSerializer
-    model = CurrentRequest
+# class CurrentRequestList(generics.ListCreateAPIView):
+#     queryset = CurrentRequest.objects.all()
+#     serializer_class = CurrentRequestSerializer
+#     model = CurrentRequest
 
-class ImagesList(generics.ListCreateAPIView):
-    queryset = Images.objects.all()
-    serializer_class = ImagesSerializer
-    model = Images
+# class ImagesList(generics.ListCreateAPIView):
+#     queryset = Images.objects.all()
+#     serializer_class = ImagesSerializer
+#     model = Images
 
 
 # class UserList(APIView):
