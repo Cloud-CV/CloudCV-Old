@@ -117,11 +117,10 @@ NOTE:
 5) When running with new version of caffe do np.load(MEAN_FILE).mean(1).mean(1)
 """
 @app.task(ignore_result=True)
-def decafImages(src_path, output_path, socketid, result_path):
+def decafImages(src_path, output_path, socketid):
 	try:
 		rs.publish('chat', json.dumps({'message': src_path, 'socketid': str(socketid)}))
 		rs.publish('chat', json.dumps({'message': output_path, 'socketid': str(socketid)}))
-		rs.publish('chat', json.dumps({'message': result_path, 'socketid': str(socketid)}))
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
 	except Exception as e:
 		#In case of an error, print the whole error with traceback
