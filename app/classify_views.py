@@ -130,7 +130,7 @@ def classify_wrapper_local(src_path, socketid, result_path):
     # except Exception as e:
     #     log_to_terminal(str(traceback.format_exc()), socketid)
 
-    classifyImages.delay(src_path, socketid)
+    classifyImages.delay(src_path, socketid, result_path)
 
 
 class ClassifyThread(threading.Thread):
