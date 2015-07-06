@@ -4,7 +4,10 @@ from celery import Celery
 app = Celery('cloudcv',
              broker='amqp://guest:guest@rabbitmq:5672//',
              backend='redis://redis:6379',
-             include=['celeryTasks.web_tasks'])
+             include=[
+             'celeryTasks.webTasks.classifyTask',
+             'celeryTasks.webTasks.decafTask'
+             ])
 
 # Optional configuration, see the application user guide.
 app.conf.update(
