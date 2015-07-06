@@ -13,6 +13,11 @@ svmModel = svm_load_model(modelFolder+'poi_linear.model')
 minSVR = -1.4
 maxSVR = 1.4
 
+redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
+
+def log_to_terminal(message, socketid):
+    redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
+
 def show_faces(imagePath, modelPath):
     face_cascade = cv2.CascadeClassifier(modelPath)
     img = cv2.imread(imagePath)
@@ -170,6 +175,7 @@ def rankPeopleLinear(face_features):
     return input_list
 
 def findRelativeImportance(imagePath, model_path = modelFolder+'haarcascade_frontalface_alt.xml' ):
+    log_to_terminal("Coming here "+str(model_path), socketid)
     [faces, face_features] = extract_features(imagePath, model_path)
     scores = rankPeopleLinear(numpy.array(face_features))
     normScores = []
