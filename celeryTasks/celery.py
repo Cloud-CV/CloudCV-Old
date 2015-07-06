@@ -6,7 +6,8 @@ app = Celery('cloudcv',
              backend='redis://redis:6379',
              include=[
              'celeryTasks.webTasks.classifyTask',
-             'celeryTasks.webTasks.decafTask'
+             'celeryTasks.webTasks.decafTask',
+             'celeryTasks.webTasks.poiTask'
              ])
 
 # Optional configuration, see the application user guide.
