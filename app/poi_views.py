@@ -86,7 +86,7 @@ def classify_wrapper_local(src_path, socketid, result_path):
                     sys.stdout = myPrint
                     """
                     print 'Running caffe classify...'
-                    tags = findRelativeImportance(image_path)
+                    tags = findRelativeImportance(image_path, socketid)
 
                     """ Part 2/2
                     sys.stdout=old_stdout
@@ -110,7 +110,7 @@ def classify_wrapper_local(src_path, socketid, result_path):
             sys.stdout = myPrint
             """
 
-            tags = findRelativeImportance(src_path)
+            tags = findRelativeImportance(src_path, socketid)
             """ Part 4/4
             sys.stdout=old_stdout
             """
