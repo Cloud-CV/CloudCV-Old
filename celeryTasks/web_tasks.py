@@ -96,6 +96,8 @@ def classifyImages(src_path, socketid, result_path):
 			web_result[result_path] = topresults
 			rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
 		
+		print CAFFE_DIR
+		print os.path.join(os.path.dirname(os.path.abspath(__file__)),'WNID.mat')
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
 
 	except Exception as e:
