@@ -175,7 +175,7 @@ def rankPeopleLinear(face_features):
         input_list[i] = performLinearRegression(face_features[i])
     return input_list
 
-def findRelativeImportance(imagePath, model_path = modelFolder+'haarcascade_frontalface_alt.xml' ):
+def findRelativeImportance(imagePath, socketid, model_path = modelFolder+'haarcascade_frontalface_alt.xml' ):
     log_to_terminal("Coming here "+str(model_path), socketid)
     [faces, face_features] = extract_features(imagePath, model_path)
     scores = rankPeopleLinear(numpy.array(face_features))
