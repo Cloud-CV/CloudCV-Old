@@ -27,7 +27,7 @@ import redis
 from app.models import Picture, RequestLog, Decaf, Classify
 from app.executable.caffe_classify import caffe_classify, caffe_classify_image
 import app.conf as conf
-from celeryTasks.web_tasks import classifyImages
+from celeryTasks.webTasks.classifyTask import classifyImages
 
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
 classify_channel_name = 'classify_queue'

@@ -22,7 +22,7 @@ from app.models import Picture, RequestLog, Decaf, Decafmodel
 import app.conf as conf
 from .response import JSONResponse, response_mimetype
 
-from celeryTasks.web_tasks import decafImages
+from celeryTasks.webTasks.decafTask import decafImages
 
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
 ps_obj = redis_obj.pubsub()
