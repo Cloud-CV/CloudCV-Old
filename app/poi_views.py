@@ -28,7 +28,7 @@ from app.models import Picture, RequestLog, Poi
 #from app.executable.caffe_classify import caffe_classify, caffe_classify_image
 #from app.executable.poi_demo import findImportantPeople
 #from app.executable.poi_demo import findRelativeImportance
-from celeryTasks.web_tasks import poiImages
+from celeryTasks.webTasks.poiTask import poiImages
 import app.conf as conf
 
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
