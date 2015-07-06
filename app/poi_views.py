@@ -25,9 +25,10 @@ from os.path import splitext, basename
 import redis
 
 from app.models import Picture, RequestLog, Poi
-from app.executable.caffe_classify import caffe_classify, caffe_classify_image
+#from app.executable.caffe_classify import caffe_classify, caffe_classify_image
 #from app.executable.poi_demo import findImportantPeople
-from app.executable.poi_demo import findRelativeImportance
+#from app.executable.poi_demo import findRelativeImportance
+from celeryTasks.web_tasks import poiImages
 import app.conf as conf
 
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
@@ -86,7 +87,7 @@ def classify_wrapper_local(src_path, socketid, result_path):
                     sys.stdout = myPrint
                     """
                     print 'Running caffe classify...'
-                    tags = findRelativeImportance(image_path, socketid)
+                    tags = poiImages(image_path, socketid)
 
                     """ Part 2/2
                     sys.stdout=old_stdout
@@ -110,7 +111,7 @@ def classify_wrapper_local(src_path, socketid, result_path):
             sys.stdout = myPrint
             """
 
-            tags = findRelativeImportance(src_path, socketid)
+            tags = poiImages(src_path, socketid)
             """ Part 4/4
             sys.stdout=old_stdout
             """
