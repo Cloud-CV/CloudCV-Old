@@ -6,7 +6,7 @@ import numpy
 from poi_files.svmutil import svm_load_model
 from poi_files.svmutil import svm_predict
 import os
-modelFolder = os.path.abspath('./poi_files/')
+modelFolder = './poi_files'
 # modelFolder = 'poi_files/'
 #svmModel = svm_load_model(modelFolder+'poi_Demo.model')
 svmModel = svm_load_model(modelFolder+'/poi_linear.model')
