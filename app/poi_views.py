@@ -87,20 +87,20 @@ def classify_wrapper_local(src_path, socketid, result_path):
                     sys.stdout = myPrint
                     """
                     print 'Running caffe classify...'
-                    tags = poiImages(image_path, socketid)
+                    poiImages.delay(image_path, socketid, result_path)
 
                     """ Part 2/2
                     sys.stdout=old_stdout
                     """
 
-                    log_to_terminal("Results: "+str(tags), socketid)
+                    #log_to_terminal("Results: "+str(tags), socketid)
 
                     #tags = sorted(tags.iteritems(), key=operator.itemgetter(1),reverse=True)
-                    webResult = {}
-                    webResult[str(os.path.join(result_path, file_name))] = tags
+                    #webResult = {}
+                    #webResult[str(os.path.join(result_path, file_name))] = tags
 
-                    redis_obj.publish('chat',
-                                   json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
+                    #redis_obj.publish('chat',
+                    #               json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
 
             log_to_terminal('Thank you for using CloudCV', socketid)
         # Single File
@@ -111,18 +111,18 @@ def classify_wrapper_local(src_path, socketid, result_path):
             sys.stdout = myPrint
             """
 
-            tags = poiImages(src_path, socketid)
+            poiImages.delay(src_path, socketid, result_path)
             """ Part 4/4
             sys.stdout=old_stdout
             """
 
-            log_to_terminal("Results: "+str(tags), socketid)
+            #log_to_terminal("Results: "+str(tags), socketid)
 
             # tags = sorted(tags.iteritems(), key=operator.itemgetter(1), reverse=True)
-            web_result = {}
-            web_result[str(result_path)] = tags
+            #web_result = {}
+            #web_result[str(result_path)] = tags
 
-            redis_obj.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
+            #redis_obj.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
 
             log_to_terminal('Thank you for using CloudCV', socketid)
 
