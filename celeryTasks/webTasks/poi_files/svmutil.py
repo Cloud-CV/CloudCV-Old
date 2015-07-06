@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os, sys
 sys.path = [os.path.dirname(os.path.abspath(__file__))] + sys.path 
 from svm import *
