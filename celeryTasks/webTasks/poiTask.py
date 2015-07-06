@@ -100,15 +100,15 @@ def poiImages(src_path, socketid, result_path):
 			normScores.append(x)
 		sorted_tuple = sorted(enumerate(normScores), key=lambda x:x[1], reverse=True)
 		ranked_faces = []
-        for r in sorted_tuple:
-        	faces[r[0]].append(r[1])
-        	ranked_faces.append(faces[r[0]])
+		for r in sorted_tuple:
+			faces[r[0]].append(r[1])
+			ranked_faces.append(faces[r[0]])
 
-        # Return top 5 faces
-        ranked_faces = ranked_faces[:5]
-        web_result = {}
-        web_result[result_path] = ranked_faces
-        rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
+		# Return top 5 faces
+		ranked_faces = ranked_faces[:5]
+		web_result = {}
+		web_result[result_path] = ranked_faces
+		rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
 
 	except Exception as e:
 		#In case of an error, send the whole error with traceback
