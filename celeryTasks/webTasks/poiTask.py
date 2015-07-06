@@ -93,13 +93,13 @@ def poiImages(src_path, socketid, result_path):
 		normScores = []
 		for x in scores:
 			x = round((x-minSVR)/maxSVR, 2)*100
-        if x < 0:
-            x = 0.0
-        if x > 100:
-            x = 100.0
-        normScores.append(x)
-        sorted_tuple = sorted(enumerate(normScores), key=lambda x:x[1], reverse=True)
-        ranked_faces = []
+			if x < 0:
+				x = 0.0
+			if x > 100:
+				x = 100.0
+			normScores.append(x)
+		sorted_tuple = sorted(enumerate(normScores), key=lambda x:x[1], reverse=True)
+		ranked_faces = []
         for r in sorted_tuple:
         	faces[r[0]].append(r[1])
         	ranked_faces.append(faces[r[0]])
