@@ -9,7 +9,7 @@ import os
 modelFolder = os.path.abspath('./poi_files/')
 # modelFolder = 'poi_files/'
 #svmModel = svm_load_model(modelFolder+'poi_Demo.model')
-svmModel = svm_load_model(modelFolder+'poi_linear.model')
+svmModel = svm_load_model(modelFolder+'/poi_linear.model')
 minSVR = -1.4
 maxSVR = 1.4
 
@@ -30,7 +30,7 @@ def show_faces(imagePath, modelPath):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def extract_features(imagePath, model_path=modelFolder+'haarcascade_frontalface_alt.xml'):
+def extract_features(imagePath, model_path=modelFolder+'/haarcascade_frontalface_alt.xml'):
     # Do all file checks here
     img = cv2.imread(imagePath, cv2.CV_LOAD_IMAGE_GRAYSCALE)
     sobelx = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
@@ -153,7 +153,7 @@ def rankPeople(face_features):
         siftDownPeople(input_list, 0, end, face_features)
     return input_list
 
-def findImportantPeople(imagePath, model_path = modelFolder+'haarcascade_frontalface_alt.xml' ):
+def findImportantPeople(imagePath, model_path = modelFolder+'/haarcascade_frontalface_alt.xml' ):
     [faces, face_features] = extract_features(imagePath, model_path)
     rank = rankPeople(numpy.array(face_features))
     ranked_faces = []
@@ -175,7 +175,7 @@ def rankPeopleLinear(face_features):
         input_list[i] = performLinearRegression(face_features[i])
     return input_list
 
-def findRelativeImportance(imagePath, socketid, model_path = modelFolder+'haarcascade_frontalface_alt.xml' ):
+def findRelativeImportance(imagePath, socketid, model_path = modelFolder+'/haarcascade_frontalface_alt.xml' ):
     log_to_terminal("Coming here "+str(model_path), socketid)
     [faces, face_features] = extract_features(imagePath, model_path)
     scores = rankPeopleLinear(numpy.array(face_features))
@@ -203,7 +203,7 @@ if __name__ == '__main__':
         exit(1)
     else:
         if (len(sys.argv) == 2):
-            modelPath = modelFolder+'haarcascade_frontalface_alt.xml'
+            modelPath = modelFolder+'/haarcascade_frontalface_alt.xml'
         else:
             modelPath = sys.argv[2]
     imagePath = sys.argv[1]
