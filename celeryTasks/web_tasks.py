@@ -28,7 +28,7 @@ def classifyImages(src_path, socketid, result_path):
 		import caffe, numpy as np, os, glob, time, operator, scipy.io as sio
 
 		#Used to assign labels to the results
-		matWNID = sio.loadmat(os.path.join(os.path.dirname(__file__),'WNID.mat'))
+		matWNID = sio.loadmat(os.path.join(os.path.dirname(os.path.abspath(__file__)),'WNID.mat'))
 		WNID_cells = matWNID['wordsortWNID']
 
 		#Caffe Initialisations
