@@ -176,7 +176,6 @@ def rankPeopleLinear(face_features):
     return input_list
 
 def findRelativeImportance(imagePath, socketid, model_path = modelFolder+'/haarcascade_frontalface_alt.xml' ):
-    log_to_terminal("Coming here "+str(model_path), socketid)
     [faces, face_features] = extract_features(imagePath, model_path)
     scores = rankPeopleLinear(numpy.array(face_features))
     normScores = []
