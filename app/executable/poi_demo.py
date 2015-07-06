@@ -19,17 +19,6 @@ redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
 def log_to_terminal(message, socketid):
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
 
-def show_faces(imagePath, modelPath):
-    face_cascade = cv2.CascadeClassifier(modelPath)
-    img = cv2.imread(imagePath)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=2, minSize=(0, 0), flags = CV_HAAR_SCALE_IMAGE)
-    for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
-    cv2.imshow('img', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
 def extract_features(imagePath, model_path=modelFolder+'/haarcascade_frontalface_alt.xml'):
     # Do all file checks here
     img = cv2.imread(imagePath, cv2.CV_LOAD_IMAGE_GRAYSCALE)
@@ -72,97 +61,6 @@ def extract_features(imagePath, model_path=modelFolder+'/haarcascade_frontalface
         face_features[i][2] = face_features[i][2] / total_gradient
 
     return scaled_faces, face_features
-
-def sortDebug(input_list):
-    heapify(input_list, len(input_list))
-    end = len(input_list) - 1
-    while end > 0:
-        tmp = input_list[end]
-        input_list[end] = input_list[0]
-        input_list[0] = tmp
-        end -= 1
-        siftDown(input_list, 0, end)
-    return input_list
-
-
-def heapify(a, count):
-    start = (count-2)/2
-    while start >= 0:
-        siftDown(a, start, count-1)
-        start -= 1
-
-
-def siftDown(a, start, end):
-    root = start
-    while root * 2 + 1 <= end:
-        child = root * 2 + 1
-        swap = root
-        if a[swap] > a[child]:
-            swap = child
-        if child+1 <= end and a[swap] > a[child+1]:
-            swap = child + 1
-        if swap == root:
-            return
-        else:
-            tmp = a[root]
-            a[root] = a[swap]
-            a[swap] = tmp
-            root = swap
-
-
-def heapifyPeople(input_list, count, face_features):
-    start = (count-2)/2
-    while start >= 0:
-        siftDownPeople(input_list, start, count-1, face_features)
-        start -= 1
-
-def siftDownPeople(a, start, end, face_features):
-    root = start
-    while root * 2 + 1 <= end:
-        child = root * 2 + 1
-        swap = root
-        if performRegression(face_features[a[swap]], face_features[a[child]]):
-            swap = child
-        if child+1 <= end and performRegression(face_features[a[swap]], face_features[a[child+1]]):
-            swap = child + 1
-        if swap == root:
-            return
-        else:
-            tmp = a[root]
-            a[root] = a[swap]
-            a[swap] = tmp
-            root = swap
-
-def performRegression(test_feature1, test_feature2):
-    test_feature = test_feature1 - test_feature2
-    (val, x, y) = svm_predict([1], [test_feature.tolist()], svmModel, '-q')
-    return val[0] > 0
-
-
-def rankPeople(face_features):
-    numPeople = len(face_features)
-    input_list = range(0, numPeople)
-
-    heapifyPeople(input_list, numPeople, face_features)
-    end = numPeople - 1
-    while end > 0:
-        tmp = input_list[end]
-        input_list[end] = input_list[0]
-        input_list[0] = tmp
-        end -= 1
-        siftDownPeople(input_list, 0, end, face_features)
-    return input_list
-
-def findImportantPeople(imagePath, model_path = modelFolder+'/haarcascade_frontalface_alt.xml' ):
-    [faces, face_features] = extract_features(imagePath, model_path)
-    rank = rankPeople(numpy.array(face_features))
-    ranked_faces = []
-    if len(faces) != 0 and len(faces) != 1:
-        for r in rank:
-            ranked_faces.append(faces[r])
-    # Return top 5 faces
-    ranked_faces = ranked_faces[:5]
-    return ranked_faces
 
 def performLinearRegression(test_feature):
     (val, x, y) = svm_predict([1], [test_feature.tolist()], svmModel, '-q')
