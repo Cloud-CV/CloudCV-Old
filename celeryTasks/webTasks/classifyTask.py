@@ -44,7 +44,7 @@ def classifyImages(src_path, socketid, result_path):
 		
 		#Classify and Send Results
 		if os.path.isdir(src_path):
-			for input_file in glob.glob(input_file + '/*'):
+			for input_file in glob.glob(src_file + '/*'):
 				if os.path.isfile(input_file):
 					#Load file
 					rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
@@ -71,7 +71,7 @@ def classifyImages(src_path, socketid, result_path):
 		
 		else:
 			input_file = src_path
-			
+
 			#Load file
 			rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
 			inputs = [caffe.io.load_image(input_file)]
