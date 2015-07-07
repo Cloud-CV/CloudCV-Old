@@ -4,7 +4,8 @@ from celeryTasks.celery import app
 # The function takes as input:
 # 1) src_path: Input image or directory.
 # 2) socketid: The socket id of the connection.
-# 3) result_path: Directory accessible by web.
+# 4) result_path: Directory accessible by web.
+#    It should be full path in case of a single file, else the directory path.
 # NOTE:
 # 1) Its job is to find the person of importance in a given image.
 # 2) ignore_result=True signifies that celery won't pass any result to the backend.
@@ -112,7 +113,7 @@ def poiImages(src_path, socketid, result_path):
 
 	try:
 		if os.path.isdir(src_path):
-			for input_file in glob.glob(src_path + '/*'):
+			for input_file in glob.glob(os.path.join(src_path, '*')):
 				if os.path.isfile(input_file):
 					#Processing file message
 					rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
