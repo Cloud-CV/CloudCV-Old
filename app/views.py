@@ -268,6 +268,7 @@ def demoUpload(request, executable):
     Method called when the image stitching of demo images is done by 
     clicking on the button 'Submit these' at /image-stitch url.   
     """
+    r.publish('chat', json.dumps({'message': "Entered demo upload", 'socketid': str(socketid)}))
     try:
         if request.method == 'POST':
 
