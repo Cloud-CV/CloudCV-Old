@@ -13,8 +13,7 @@ RUN apt-get update
 RUN apt-get install -y gcc g++ build-essential libopenmpi-dev default-jdk cmake zlib1g-dev git
 RUN git clone https://github.com/batra-mlp-lab/mlp-graphlab.git
 RUN mv mlp-graphlab graphlab
-RUN cd graphlab
-RUN ./configure
+RUN /graphlab/configure
 RUN cd /graphlab/release/toolkits/computer_vision
 RUN make
 
