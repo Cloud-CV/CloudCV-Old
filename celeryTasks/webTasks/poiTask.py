@@ -126,7 +126,7 @@ def poiImages(src_path, socketid, result_path):
 					#Publish result
 					webResult = {}
 					webResult[os.path.join(result_path, os.path.basename(input_file))] = tags
-					rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
+					rs.publish('chat', json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
 
 		else:
 			input_file = src_path
@@ -143,7 +143,7 @@ def poiImages(src_path, socketid, result_path):
 			#Publish result
 			webResult = {}
 			webResult[result_path] = tags
-			rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
+			rs.publish('chat', json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
 
 		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
 
