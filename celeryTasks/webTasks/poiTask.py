@@ -8,7 +8,7 @@ from celeryTasks.celery import app
 # NOTE:
 # 1) Its job is to find the person of importance in a given image.
 # 2) ignore_result=True signifies that celery won't pass any result to the backend.
-# 3) It is important to import all the modules only inside the function
+# 3) It is important to import all the modules only inside the function.
 @app.task(ignore_result=True)
 def poiImages(src_path, socketid, result_path):
 	#General import
