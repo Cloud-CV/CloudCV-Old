@@ -87,6 +87,8 @@ def poiImages(src_path, socketid, result_path):
 
 	try:
 		#The defaul haarcascade used for face detection
+		print src_path
+		print result_path
 		model_path = os.path.join(modelFolder, 'haarcascade_frontalface_alt.xml')
 		imagePath = src_path
 		[faces, face_features] = extract_features(imagePath, model_path)
