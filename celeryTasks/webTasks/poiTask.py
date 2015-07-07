@@ -11,6 +11,9 @@ from celeryTasks.celery import app
 # 3) It is important to import all the modules only inside the function
 @app.task(ignore_result=True)
 def poiImages(src_path, socketid, result_path):
+	#General import
+	import glob, time, numpy, os
+
 	#Establishing connection to send results and write messages
 	import redis, json
 	rs = redis.StrictRedis(host='redis', port=6379)
@@ -21,11 +24,7 @@ def poiImages(src_path, socketid, result_path):
 	svmModel = svm_load_model(os.path.join(modelFolder, 'poi_linear.model'))
 
 	#Get the absolute path to poi_files directory
-	import os
 	modelFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'poi_files')
-
-	#General import
-	import glob, time, numpy
 
 	#Some initialisations
 	minSVR = -1.4
