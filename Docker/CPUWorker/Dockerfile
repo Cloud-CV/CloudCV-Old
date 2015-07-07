@@ -21,7 +21,7 @@ RUN wget -O OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/file
 # Graphlab installation
 
 # Graphlab dependencies
-RUN apt-get install -y gcc g++ build-essential libopenmpi-dev openmpi-bin default-jdk cmake zlib1g-dev
+RUN apt-get install -y gcc g++ build-essential libopenmpi-dev openmpi-bin default-jdk cmake zlib1g-dev gfortran openmpi-checkpoint openmpi-bin
 
 RUN cd /graphlab && ./configure
 RUN cd /graphlab/release/toolkits/computer_vision && make
