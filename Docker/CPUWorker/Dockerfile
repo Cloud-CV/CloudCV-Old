@@ -36,7 +36,7 @@ RUN cd /opencv && \
     mkdir release && \
     cd release && \
     cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
-    make && \
+    make -j 4 && \
     make install
 
 # Caffe installation
@@ -52,7 +52,7 @@ RUN cd /caffe && \
     mkdir build && \
     cd build && \
     cmake .. && \
-    make all && \
+    make -j 4 all && \
     make runtest 
 
 #COPY ./bvlc_reference_caffenet.caffemodel /opt/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
