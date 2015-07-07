@@ -1,9 +1,5 @@
 from __future__ import absolute_import
 from celeryTasks.celery import app
-
-#Pre-req for performLinearRegression function
-from celeryTasks.webTasks.poi_files.svmutil import svm_load_model
-from celeryTasks.webTasks.poi_files.svmutil import svm_predict
 	
 # The function takes as input:
 # 1) src_path: Input image or directory.
@@ -19,6 +15,10 @@ def poiImages(src_path, socketid, result_path):
 	import redis, json
 	rs = redis.StrictRedis(host='redis', port=6379)
 
+	#Pre-req for performLinearRegression function
+	from celeryTasks.webTasks.poi_files.svmutil import svm_load_model
+	from celeryTasks.webTasks.poi_files.svmutil import svm_predict
+
 	#Get the absolute path to poi_files directory
 	import os
 	modelFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'poi_files')
@@ -26,6 +26,7 @@ def poiImages(src_path, socketid, result_path):
 	svmModel = svm_load_model(os.path.join(modelFolder, 'poi_linear.model'))
 
 	#Pre-req for main function
+	import numpy
 	minSVR = -1.4
 	maxSVR = 1.4
 
@@ -33,7 +34,7 @@ def poiImages(src_path, socketid, result_path):
 		return float(x)
 
 	def extract_features(imagePath, model_path):
-		import cv2, numpy
+		import cv2
 		from cv import CV_HAAR_SCALE_IMAGE
 		from math import sqrt
 
