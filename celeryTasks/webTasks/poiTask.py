@@ -18,13 +18,13 @@ def poiImages(src_path, socketid, result_path):
 	import redis, json
 	rs = redis.StrictRedis(host='redis', port=6379)
 
+	#Get the absolute path to poi_files directory
+	modelFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'poi_files')
+
 	#Pre-req for performLinearRegression function
 	from celeryTasks.webTasks.poi_files.svmutil import svm_load_model
 	from celeryTasks.webTasks.poi_files.svmutil import svm_predict
 	svmModel = svm_load_model(os.path.join(modelFolder, 'poi_linear.model'))
-
-	#Get the absolute path to poi_files directory
-	modelFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'poi_files')
 
 	#Some initialisations
 	minSVR = -1.4
