@@ -1,7 +1,10 @@
 from __future__ import absolute_import
 from celeryTasks.celery import app
 
-
+#Pre-req for performLinearRegression function
+from poi_files.svmutil import svm_load_model
+from poi_files.svmutil import svm_predict
+	
 # The function takes as input:
 # 1) src_path: Input image or directory.
 # 2) socketid: The socket id of the connection.
@@ -20,9 +23,6 @@ def poiImages(src_path, socketid, result_path):
 	import os
 	modelFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'poi_files')
 
-	#Pre-req for performLinearRegression function
-	from poi_files.svmutil import svm_load_model
-	from poi_files.svmutil import svm_predict
 	svmModel = svm_load_model(os.path.join(modelFolder, 'poi_linear.model'))
 
 	#Pre-req for main function
