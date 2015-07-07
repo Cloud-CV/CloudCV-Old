@@ -53,9 +53,12 @@ RUN cd /caffe && \
     cd build && \
     cmake .. && \
     make -j 4 all && \
-    make runtest 
 
-#COPY ./bvlc_reference_caffenet.caffemodel /opt/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
+# In order to import caffe in python
+ENV PYTHONPATH /caffe/python
+
+# Copying the required caffe model
+COPY ./bvlc_reference_caffenet.caffemodel /caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
 
 #ENV C_FORCE_ROOT TRUE
 
