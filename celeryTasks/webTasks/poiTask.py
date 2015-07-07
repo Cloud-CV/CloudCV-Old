@@ -18,15 +18,16 @@ def poiImages(src_path, socketid, result_path):
 	#Pre-req for performLinearRegression function
 	from celeryTasks.webTasks.poi_files.svmutil import svm_load_model
 	from celeryTasks.webTasks.poi_files.svmutil import svm_predict
+	svmModel = svm_load_model(os.path.join(modelFolder, 'poi_linear.model'))
 
 	#Get the absolute path to poi_files directory
 	import os
 	modelFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'poi_files')
 
-	svmModel = svm_load_model(os.path.join(modelFolder, 'poi_linear.model'))
+	#General import
+	import glob, time, numpy
 
-	#Pre-req for main function
-	import numpy
+	#Some initialisations
 	minSVR = -1.4
 	maxSVR = 1.4
 
@@ -85,12 +86,11 @@ def poiImages(src_path, socketid, result_path):
 			input_list[i] = performLinearRegression(face_features[i])
 		return input_list
 
-	try:
+	def findRelativeImportance(imagePath):
 		#The defaul haarcascade used for face detection
-		print src_path
-		print result_path
 		model_path = os.path.join(modelFolder, 'haarcascade_frontalface_alt.xml')
-		imagePath = src_path
+
+		#Processing
 		[faces, face_features] = extract_features(imagePath, model_path)
 		scores = rankPeopleLinear(numpy.array(face_features))
 		normScores = []
@@ -109,9 +109,44 @@ def poiImages(src_path, socketid, result_path):
 
 		# Return top 5 faces
 		ranked_faces = ranked_faces[:5]
-		web_result = {}
-		web_result[result_path] = ranked_faces
-		rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
+		return ranked_faces
+
+	try:
+		if os.path.isdir(src_path):
+			for input_file in glob.glob(src_path + '/*'):
+				if os.path.isfile(input_file):
+					#Processing file message
+					rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
+
+					#Send for processing
+					start = time.time()
+					tags = findRelativeImportance(input_file)
+					timeMsg = "Completed in %.2f s." % (time.time() - start)
+					rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
+					
+					#Publish result
+					webResult = {}
+					webResult[os.path.join(result_path, os.path.basename(input_file))] = tags
+					rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
+
+		else:
+			input_file = src_path
+
+			#Processing file message
+			rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
+
+			#Send for processing
+			start = time.time()
+			tags = findRelativeImportance(input_file)
+			timeMsg = "Completed in %.2f s." % (time.time() - start)
+			rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
+
+			#Publish result
+			webResult = {}
+			webResult[result_path] = tags
+			rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
+
+		rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
 
 	except Exception as e:
 		#In case of an error, send the whole error with traceback
