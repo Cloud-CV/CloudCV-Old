@@ -2,8 +2,8 @@ from __future__ import absolute_import
 from celeryTasks.celery import app
 
 #Pre-req for performLinearRegression function
-from poi_files.svmutil import svm_load_model
-from poi_files.svmutil import svm_predict
+from celeryTasks.webTasks.poi_files.svmutil import svm_load_model
+from celeryTasks.webTasks.poi_files.svmutil import svm_predict
 	
 # The function takes as input:
 # 1) src_path: Input image or directory.
