@@ -41,48 +41,53 @@ def classifyImages(src_path, socketid, result_path):
 		classifier = caffe.Classifier(MODEL_FILE, PRETRAINED, image_dims=IMAGE_DIMS, 
 		mean=np.load(MEAN_FILE).mean(1).mean(1), raw_scale=RAW_SCALE,
 		channel_swap=CHANNEL_SWAP)
+		
+		#Classify and Send Results
+		if os.path.isdir(src_path):
+			for input_file in glob.glob(input_file + '/*'):
+				if os.path.isfile(input_file):
+					#Load file
+					rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
+					inputs = [caffe.io.load_image(input_file)]
+					
+					# Classify.
+					start = time.time()
+					prediction = classifier.predict(inputs)
+					timeMsg = "Completed in %.2f s." % (time.time() - start)
+					rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
 
-		# Load numpy array (.npy), directory glob (*), or image file.
-		input_file = os.path.abspath(src_path)
-		if input_file.endswith('npy'):
-			inputs = np.load(args.input_file)
-		elif os.path.isdir(input_file):
-			inputs = [caffe.io.load_image(im_f) for im_f in glob.glob(input_file + '/*') if os.path.isfile(im_f)]
-		else:
-			inputs = [caffe.io.load_image(input_file)]
-
-		# Classify.
-		start = time.time()
-		prediction = classifier.predict(inputs)
-		timeMsg = "Completed in %.2f s." % (time.time() - start)
-		rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
-
-		#Send Results
-		if os.path.isdir(input_file):
-			count = 0
-			for im_f in glob.glob(input_file + '/*'):
-				if os.path.isfile(im_f):
 					dictionary = {}
-					for i, j in enumerate(prediction[count]):
+					for i, j in enumerate(prediction[0]):
 						dictionary[i] = j
 					predsorted = sorted(dictionary.iteritems(), key=operator.itemgetter(1), reverse=True)
 					top5 = predsorted[0:5]
 					topresults = []
 					for item in top5:
 						topresults.append([str(WNID_cells[item, 0][0][0]),str(item[1])])
-					count += 1
 
 					web_result = {}
-					web_result[os.path.join(result_path, os.path.basename(im_f))] = topresults
+					web_result[os.path.join(result_path, os.path.basename(input_file))] = topresults
 					rs.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
 		
 		else:
+			input_file = src_path
+			
+			#Load file
+			rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
+			inputs = [caffe.io.load_image(input_file)]
+			
+			# Classify.
+			start = time.time()
+			prediction = classifier.predict(inputs)
+			timeMsg = "Completed in %.2f s." % (time.time() - start)
+			rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
+
 			dictionary = {}
 			for i, j in enumerate(prediction[0]):
 				dictionary[i] = j
 			predsorted = sorted(dictionary.iteritems(), key=operator.itemgetter(1), reverse=True)
 			top5 = predsorted[0:5]
-			topresults = [] 
+			topresults = []
 			for item in top5:
 				topresults.append([str(WNID_cells[item, 0][0][0]),str(item[1])])
 
