@@ -7,6 +7,7 @@ from celeryTasks.celery import app
 # 2) socketid: The socket id of the connection.
 # 3) result_path: The folder path where the result image will be stored.
 #    It should be full path in case of a single file, else the directory path.
+#	 It should be web accessible.
 # NOTE:
 # 1) Its job is to classify the images according to the pre-trained model.
 # 2) ignore_result=True signifies that celery won't pass any result to the backend.
@@ -44,7 +45,7 @@ def classifyImages(src_path, socketid, result_path):
 		
 		#Classify and Send Results
 		if os.path.isdir(src_path):
-			for input_file in glob.glob(src_path + '/*'):
+			for input_file in glob.glob(os.path.join(src_path, '*')):
 				if os.path.isfile(input_file):
 					#Load file
 					rs.publish('chat', json.dumps({'message': 'Processing '+os.path.basename(input_file), 'socketid': str(socketid)}))
