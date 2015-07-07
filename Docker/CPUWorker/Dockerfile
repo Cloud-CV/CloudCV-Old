@@ -52,8 +52,8 @@ RUN cd /caffe && \
     mkdir build && \
     cd build && \
     cmake .. && \
-    make -j 4 all && \
-
+    make -j 4 all 
+    
 # In order to import caffe in python
 ENV PYTHONPATH /caffe/python
 
