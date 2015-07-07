@@ -13,9 +13,8 @@ RUN apt-get update
 RUN apt-get install -y gcc g++ build-essential libopenmpi-dev default-jdk cmake zlib1g-dev git
 RUN git clone https://github.com/batra-mlp-lab/mlp-graphlab.git
 RUN mv mlp-graphlab graphlab
-RUN /graphlab/configure
-RUN cd /graphlab/release/toolkits/computer_vision
-RUN make
+RUN cd /graphlab && ./configure
+RUN cd /graphlab/release/toolkits/computer_vision && make
 
 
 #COPY ./bvlc_reference_caffenet.caffemodel /opt/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
