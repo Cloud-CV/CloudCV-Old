@@ -53,14 +53,17 @@ RUN cd /caffe && \
     cd build && \
     cmake .. && \
     make -j 4 all 
-    
+
 # In order to import caffe in python
 ENV PYTHONPATH /caffe/python
 
 # Copying the required caffe model
 COPY ./bvlc_reference_caffenet.caffemodel /caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
 
-#ENV C_FORCE_ROOT TRUE
+# Requirements for celery
+RUN pip install celery redis
 
-#WORKDIR /CloudCV_Server
-#CMD ["celery","-A","celeryTasks","worker","--loglevel=info"]
+# Starting celery worker
+ENV C_FORCE_ROOT TRUE
+WORKDIR /CloudCV_Server
+CMD ["celery","-A","celeryTasks","worker","--loglevel=info"]
