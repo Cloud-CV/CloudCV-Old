@@ -1,3 +1,13 @@
+"""
+This file is copied from app.executable master branch
+It is required by the tasks.py file.
+
+While editing please make sure:
+1) Not to import unnecessary modules.
+2) Import only within the function where it is necessary.
+3) Any new import will require you to install it in the worker container.
+   (See Docker/CPUWorker/Dockerfile)
+"""
 
 def caffe_classify_image(single_image):
     import operator
