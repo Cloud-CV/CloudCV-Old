@@ -4,10 +4,7 @@ from celery import Celery
 
 # instantiate Celery object
 celery = Celery(include=[
-                         'app.celery.api_tasks.tasks',
-                         'app.celery.web_tasks.ClassifyTask',
-                         'app.celery.web_tasks.DecafTask',
-                         'app.celery.web_tasks.ImageStitchingTask',
+                         'app.celery.api_tasks.tasks'
                         ])
 
 # import celery config file
