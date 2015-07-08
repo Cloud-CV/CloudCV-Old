@@ -1,6 +1,6 @@
-__author__ = 'dexter'
-from cloudcvMaster import MasterScheduler
+# __author__ = 'dexter'
+# from cloudcvMaster import MasterScheduler
 
-ms = MasterScheduler()
-ms.start()
-ms.join()
+# ms = MasterScheduler()
+# ms.start()
+# ms.join()
