@@ -1,3 +1,14 @@
+"""
+This file is copied from app.celery.api_tasks.tasks master branch
+It handles the API request to the server.
+
+While editing please make sure:
+1) Not to import unnecessary modules.
+2) Import only within the function where it is necessary.
+3) Any new import will require you to install it in the worker container.
+   (See Docker/CPUWorker/Dockerfile)
+"""
+
 from __future__ import absolute_import
 from celeryTasks.celery import app
 
