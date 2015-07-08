@@ -8,7 +8,7 @@ import sys
 import app.core.execute as core_execute
 from app.models import Picture
 import app.thirdparty.ccv_dropbox as ccvdb
-from app.celery.api_tasks.tasks import saveDropboxFiles
+from celeryTasks.apiTasks.tasks import saveDropboxFiles
 
 from app.log import logger, log_to_terminal, log_error_to_terminal
 import redis
