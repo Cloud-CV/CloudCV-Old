@@ -1,6 +1,6 @@
 
 
-def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results, modelname = '', modelnet=net):
+def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results, modelname = '', modelnet=None):
 
     import os
     import app.conf as conf
@@ -28,6 +28,9 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
     #caffe.set_phase_test()
     caffe.set_mode_cpu()
     net = caffe.Classifier(MODEL_FILE, PRETRAINED)
+
+    if modelnet==None:
+        modelnet = net
 
     def decaf_features(single_image, modelnet=net):
         print str(modelnet)
