@@ -37,7 +37,7 @@ from io import BytesIO
 
 r = redis.StrictRedis(host='redis', port=6379, db=0)
 
-from app.celery.web_tasks.ImageStitchingTask import runImageStitching
+from celeryTasks.webTasks.stitchTask import stitchImages
 
 class Request:
     socketid = None
@@ -85,7 +85,7 @@ class Request:
         #
         # return '\n', '\n'
         self.log_to_terminal("Coming here")
-        runImageStitching.delay(list, result_path, self.socketid)
+        stitchImages.delay(list, self.socketid, result_path)
         self.log_to_terminal("Image stitching job submitted")
 
     def log_to_terminal(self, message):
