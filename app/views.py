@@ -84,9 +84,7 @@ class Request:
         #     print str(traceback.format_exc())
         #
         # return '\n', '\n'
-        self.log_to_terminal("Coming here")
         stitchImages.delay(src_path, self.socketid, output_path, result_path)
-        self.log_to_terminal("Image stitching job submitted")
 
     def log_to_terminal(self, message):
         r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
