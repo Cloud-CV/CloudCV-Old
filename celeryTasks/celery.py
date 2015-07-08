@@ -7,7 +7,8 @@ app = Celery('cloudcv',
              include=[
              'celeryTasks.webTasks.classifyTask',
              'celeryTasks.webTasks.decafTask',
-             'celeryTasks.webTasks.poiTask'
+             'celeryTasks.webTasks.poiTask',
+             'celeryTasks.webTasks.stitchTask'
              ])
 
 # Optional configuration, see the application user guide.
