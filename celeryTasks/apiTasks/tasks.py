@@ -8,10 +8,10 @@ import re
 import traceback
 import os.path
 import redis
-from app.log import log, log_to_terminal, log_error_to_terminal, log_and_exit
+#from app.log import log, log_to_terminal, log_error_to_terminal, log_and_exit
 from celeryTasks.apiTasks import caffe_classify, decaf_cal_feature
 from app.thirdparty import dropbox_upload as dbu
-import app.conf as conf
+#import app.conf as conf
 import time
 import envoy
 
@@ -123,7 +123,7 @@ def run_executable(list, live=True, socketid=None):
 def parseParameters(params):
     params = str(params)
 
-    log(params, parseParameters.__name__)
+    #log(params, parseParameters.__name__)
 
     pat = re.compile('u\'[\w\s,]*\'')
 
@@ -136,7 +136,7 @@ def parseParameters(params):
 
     decoded_params += params[end:]
 
-    log(decoded_params, parseParameters.__name__)
+    #log(decoded_params, parseParameters.__name__)
 
     dict = json.loads(decoded_params)
     return dict
@@ -150,7 +150,8 @@ def createList(directory, parsed_dict):
                 os.chmod(os.path.join(str(parsed_dict['result_path']), 'results'), 0775)
 
         if parsed_dict['exec'] == 'ImageStitch':
-            list_for_exec = [os.path.join(conf.EXEC_DIR,'stitch_full'), '--img',
+            exec_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','webTasks','stitch_full')
+            list_for_exec = [exec_path, '--img',
                              os.path.join(str(parsed_dict['image_path'])), '--verbose', '1',
                              '--output', os.path.join(str(parsed_dict['result_path']),'results/')]
 
@@ -279,7 +280,7 @@ def run(parsed_dict):
         if 'server' in dict_of_param:
             server = dict_of_param['server']
 
-        log(list, "__main__")
+        #log(list, "__main__")
 
         token = parsed_dict['token']
 
@@ -318,4 +319,5 @@ def run(parsed_dict):
                                           'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
     except Exception as e:
-        log_and_exit(str(traceback.format_exc()), socketid)
+        pass
+        #log_and_exit(str(traceback.format_exc()), socketid)
