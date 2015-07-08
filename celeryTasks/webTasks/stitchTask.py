@@ -24,8 +24,9 @@ def stitchImages(src_path, socketid, output_path, result_path):
         #Execute the stitch_full executable
         src_path = os.path.join(src_path, '')
         output_path = os.path.join(output_path, '')
+        exec_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'stitch_full')
         start = time.time()
-        cmd = './stitch_full '+'--img '+src_path+'--verbose 1 --output '+output_path
+        cmd = exec_path+' --img '+src_path+'--verbose 1 --output '+output_path
         os.system(cmd)
         timeMsg = "Completed in %.2f s." % (time.time() - start)
         rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
