@@ -25,7 +25,6 @@ from os.path import splitext, basename
 import redis
 
 from app.models import Picture, RequestLog, Decaf, Classify
-from app.executable.caffe_classify import caffe_classify, caffe_classify_image
 import app.conf as conf
 from celeryTasks.webTasks.classifyTask import classifyImages
 
@@ -133,29 +132,29 @@ def classify_wrapper_local(src_path, socketid, result_path):
     classifyImages.delay(src_path, socketid, result_path)
 
 
-class ClassifyThread(threading.Thread):
-    def __init__(self, image_path, result_path, socketid):
-        threading.Thread.__init__(self)
-        self.r = redis_obj
-        self.image_path = image_path
-        self.result_path = result_path
-        self.socketid = socketid
-        self.log_to_terminal("inside thread")
+# class ClassifyThread(threading.Thread):
+#     def __init__(self, image_path, result_path, socketid):
+#         threading.Thread.__init__(self)
+#         self.r = redis_obj
+#         self.image_path = image_path
+#         self.result_path = result_path
+#         self.socketid = socketid
+#         self.log_to_terminal("inside thread")
 
-    def run(self):
-        try:
-            result = caffe_classify(self.image_path)
-            self.log_to_terminal(result)
+#     def run(self):
+#         try:
+#             result = caffe_classify(self.image_path)
+#             self.log_to_terminal(result)
 
-            image, tags = result.popitem()
-            web_result = {}
-            web_result[self.result_path] = tags
-            self.r.publish('chat',json.dumps({'web_result': json.dumps(web_result), 'socketid': str(self.socketid)}))
-        except Exception as e:
-            self.log_to_terminal(str(traceback.format_exc()))
+#             image, tags = result.popitem()
+#             web_result = {}
+#             web_result[self.result_path] = tags
+#             self.r.publish('chat',json.dumps({'web_result': json.dumps(web_result), 'socketid': str(self.socketid)}))
+#         except Exception as e:
+#             self.log_to_terminal(str(traceback.format_exc()))
 
-    def log_to_terminal(self, message):
-        self.r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
+#     def log_to_terminal(self, message):
+#         self.r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
 
 
 def response_mimetype(request):
