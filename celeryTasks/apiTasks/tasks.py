@@ -10,10 +10,9 @@ import os.path
 import redis
 #from app.log import log, log_to_terminal, log_error_to_terminal, log_and_exit
 from celeryTasks.apiTasks import caffe_classify, decaf_cal_feature
-from app.thirdparty import dropbox_upload as dbu
 #import app.conf as conf
 import time
-import envoy
+#import envoy
 
 @app.task(ignore_result=True)
 def saveDropboxFiles(job_dict):
@@ -37,6 +36,7 @@ class CustomPrint():
 def sendsMessageToRedis(userid, jobid, source_type, socketid, complete_output,
                         result_path=None, result_url=None, result_text=None, dropbox_token=None):
     #logger.write('P', 'Inside send message to redis')
+    from app.thirdparty import dropbox_upload as dbu
     try:
 
         r.hset(jobid, 'output', str(complete_output))
