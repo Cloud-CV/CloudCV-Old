@@ -22,6 +22,9 @@ def decafImages(src_path, socketid, output_path, result_path):
 	try:
 		import caffe, numpy as np, os, glob, time, operator, scipy.io as sio
 
+		#Needed to fix error https://github.com/BVLC/caffe/issues/438
+		from skimage import io; io.use_plugin('matplotlib')
+
 		#Caffe Initialisations
 		CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__),"..",".."))
 		MODEL_FILE = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
