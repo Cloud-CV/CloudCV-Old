@@ -19,14 +19,20 @@ def stitchImages(src_path, socketid, output_path, result_path):
     rs = redis.StrictRedis(host='redis', port=6379)
 
     try:
-        import os
+        import os, time
 
         #Execute the stitch_full executable
-        rs.publish('chat', json.dumps({'message': src_path, 'socketid': str(socketid)}))
-        rs.publish('chat', json.dumps({'message': output_path, 'socketid': str(socketid)}))
-        rs.publish('chat', json.dumps({'message': result_path, 'socketid': str(socketid)}))
+        src_path = os.path.join(src_path, '')
+        output_path = os.path.join(output_path, '')
+        start = time.time()
+        cmd = './stitch_full '+'--img '+src_path+'--verbose 1 --output '+output_path
+        os.system(cmd)
+        timeMsg = "Completed in %.2f s." % (time.time() - start)
+        rs.publish('chat', json.dumps({'message': timeMsg, 'socketid': str(socketid)}))
 
 
+        #Publish result and say thank you
+        rs.publish('chat', json.dumps({'web_result': result_path, 'socketid': str(socketid)}))
         rs.publish('chat', json.dumps({'message': 'Thank you for using CloudCV', 'socketid': str(socketid)}))
 
     except Exception as e:
