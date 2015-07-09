@@ -7,10 +7,9 @@ MAINTAINER Prashant Jalan
 # Basics
 
 RUN apt-get update
-RUN apt-get install -y build-essential g++ gcc gfortran wget python-dev git
+RUN apt-get install -y build-essential g++ gcc gfortran wget python-dev git libjpeg-dev
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 
-RUN apt-get install -y libjpeg-dev
 # Install dependencies for CloudCV Server
 
 COPY ./requirements.txt /requirements.txt
