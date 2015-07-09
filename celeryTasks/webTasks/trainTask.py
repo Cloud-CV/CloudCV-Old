@@ -3,7 +3,6 @@ from celeryTasks.celery import app
 
 
 # The functions are mostly copied from app.executable.LDA_files.train_fast
-# and app.executable.LDA_files.test; master branch.
 @app.task(ignore_result=True)
 def trainImages(jobPath, socketid):
     #Establishing connection to send results and write messages
@@ -121,5 +120,60 @@ def trainImages(jobPath, socketid):
         #In case of an error, send the whole error with traceback
         import traceback
         rs.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
+
+
+# The functions are mostly copied from app.executable.test
+# and classify_wrapper_local in trainaclass_views
+@app.task(ignore_result=True)
+def customClassifyImages(jobPath, socketid, result_path):
+    #Establishing connection to send results and write messages
+    import redis, json
+    rs = redis.StrictRedis(host='redis', port=6379)
+
+    try:
+        #Module import
+        import caffe, numpy as np, os, glob, time, operator, scipy.io as sio
+
+        ImagePath = os.path.join(jobPath,'test')
+        modelPath = os.path.join(jobPath,'util')
+
+        new_labels = sio.loadmat(os.path.join(modelPath,'new_labels.mat'))
+        new_labels_cells = new_labels['WNID']
+
+        # Set the right path to your model file, pretrained model,
+        # and the image you would like to classify.
+        MODEL_FILE = os.path.join(modelPath,'newCaffeModel.prototxt')
+        PRETRAINED = os.path.join(modelPath,'newCaffeModel.caffemodel')
+
+        #caffe.set_phase_test()
+        caffe.set_mode_cpu()
+
+        CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__),"..",".."))
+        net = caffe.Classifier(MODEL_FILE, PRETRAINED,
+                        mean=np.load(os.path.join(CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy')).mean(1).mean(1),
+                        channel_swap=(2, 1, 0),
+                        raw_scale=255,
+                        image_dims=(256, 256))
+
+        results = {}
+
+        if os.path.isdir(ImagePath):
+            for file_name in os.listdir(ImagePath):
+                image_path = os.path.join(ImagePath, file_name)
+                if os.path.isfile(image_path):
+                    tags = caffe_classify_image(net, image_path, new_labels_cells)
+                    webResult = {}
+                    webResult[os.path.join(result_path,file_name)] = tags
+                    rs.publish('chat',
+                                   json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
+
+        rs.publish('chat', json.dumps({'message': 'Classification completed. Thank you for using CloudCV', 'socketid': str(socketid)}))
+
+    except Exception as e:
+        #In case of an error, send the whole error with traceback
+        import traceback
+        rs.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
+
+
 
 
