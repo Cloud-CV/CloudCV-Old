@@ -25,12 +25,12 @@ def trainImages(jobPath, socketid):
         # Extract features from input training images using feature extraction tool
         # Input: images in the directory Imagepath
         train_files = (glob(os.path.join(Imagepath, '*')))
-        shutil.copy2(caffe_root + 'examples/feature_extraction/imagenet_val.prototxt', Imagepath)
-        os.system('cp ' + caffe_root + 'examples/feature_extraction/imagenet_val.prototxt ' + Imagepath)
+        shutil.copy2(os.path.join(caffe_root, 'examples/feature_extraction/imagenet_val.prototxt'), Imagepath)
+        os.system('cp ' + os.path.join(caffe_root, 'examples/feature_extraction/imagenet_val.prototxt') + ' ' + Imagepath)
         s = open(os.path.join(Imagepath, 'imagenet_val.prototxt')).read()
         s = s.replace(
             'layers {\n  name: "data"\n  type: IMAGE_DATA\n  top: "data"\n  top: "label"\n  image_data_param {\n    source: "examples/_temp/file_list.txt"\n    batch_size: 50\n    new_height: 256\n    new_width: 256\n  }\n  transform_param {\n    crop_size: 227\n    mean_file: "data/ilsvrc12/imagenet_mean.binaryproto"\n    mirror: false\n  }\n}',
-            'layers {\n  name: "data"\n  type: IMAGE_DATA\n  top: "data"\n  top: "label"\n  image_data_param {\n    source: "' + Imagepath + '/file_list.txt"\n    batch_size: 1\n    new_height: 256\n    new_width: 256\n  }\n  transform_param {\n    crop_size: 227\n    mean_file: "' + caffe_root + 'data/ilsvrc12/imagenet_mean.binaryproto"\n    mirror: false\n  }\n}')
+            'layers {\n  name: "data"\n  type: IMAGE_DATA\n  top: "data"\n  top: "label"\n  image_data_param {\n    source: "' + Imagepath + '/file_list.txt"\n    batch_size: 1\n    new_height: 256\n    new_width: 256\n  }\n  transform_param {\n    crop_size: 227\n    mean_file: "' + caffe_root + '/data/ilsvrc12/imagenet_mean.binaryproto"\n    mirror: false\n  }\n}')
         f = open(os.path.join(Imagepath, 'imagenet_val.prototxt'), 'w')
         f.write(s)
         f.close()
@@ -41,8 +41,8 @@ def trainImages(jobPath, socketid):
         f.close()
 
         train_size = len(train_files)
-        p1 = caffe_root + 'build/tools/extract_features.bin '
-        p2 = caffe_root + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel '
+        p1 = os.path.join(caffe_root, 'build/tools/extract_features.bin ')
+        p2 = os.path.join(caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel ')
         p3 = os.path.join(Imagepath, 'imagenet_val.prototxt fc7') + ' ' + os.path.join(Imagepath,
                                                                                        'features') + ' %d GPU' % (train_size)
         os.system(p1 + p2 + p3)
@@ -89,11 +89,11 @@ def trainImages(jobPath, socketid):
         f.write(s)
         f.close()
         
-        net = caffe.Classifier(caffe_root + 'models/bvlc_reference_caffenet/deploy.prototxt',
-                               caffe_root + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
+        net = caffe.Classifier(os.path.join( caffe_root, 'models/bvlc_reference_caffenet/deploy.prototxt'),
+                               os.path.join( caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'))
 
         net_new = caffe.Classifier(os.path.join(model_path, 'newCaffeModel.prototxt'),
-                                   caffe_root + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
+                                   os.path.join(caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'))
 
         pr = 'fc8'
         pr_new = 'fc8-new'
