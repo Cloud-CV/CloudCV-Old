@@ -120,11 +120,11 @@ def classify_wrapper_local(jobPath, socketid, result_path):
 #         self.r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
 
 
-# def response_mimetype(request):
-#     if "application/json" in request.META['HTTP_ACCEPT']:
-#         return "application/json"
-#     else:
-#         return "text/plain"
+def response_mimetype(request):
+    if "application/json" in request.META['HTTP_ACCEPT']:
+        return "application/json"
+    else:
+        return "text/plain"
 
 
 class TrainaclassCreateView(CreateView):
