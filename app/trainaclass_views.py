@@ -1,7 +1,6 @@
 __author__ = 'clint'
 
 import time
-import subprocess
 import os
 import json
 import traceback
@@ -9,12 +8,7 @@ import uuid
 import shortuuid
 import datetime
 import json
-import threading
-import operator
 import sys
-import scipy.io as sio
-import caffe
-import numpy as np
 
 from urlparse import urlparse
 from django.views.generic import CreateView, DeleteView
