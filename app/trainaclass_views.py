@@ -29,7 +29,7 @@ import redis
 
 from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
 from app.executable.LDA_files.test import caffe_classify_image
-from app.executable.LDA_files import train_fast
+from celeryTasks.webTasks.trainTask import trainImages
 # from app.classify_views import  classify_wrapper_local as default_classify
 import app.conf as conf
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
@@ -269,41 +269,29 @@ class JSONResponse(HttpResponse):
         content = json.dumps(obj, **json_opts)
         super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)
 
-def trainModel(save_dir, socketid):
-    train_fast.modelUpdate(save_dir+'/')
 
 @csrf_exempt
 def trainamodel(request):
     data = {}
-    try:
-        post_dict = parser.parse(request.POST.urlencode())
 
-        socketid = post_dict['socketid']
-        log_to_terminal('Beginning training a new model', post_dict['socketid'])
+    post_dict = parser.parse(request.POST.urlencode())
 
-        old_save_dir = conf.PIC_DIR
-        folder_name = str(socketid)
-        save_dir = os.path.join(conf.PIC_DIR, folder_name)
-        train_dir = os.path.join(save_dir, 'train')
-        test_dir = os.path.join(save_dir, 'test')
-        util_dir = os.path.join(save_dir, 'util')
+    socketid = post_dict['socketid']
+    log_to_terminal('Beginning training a new model', post_dict['socketid'])
 
-        if not os.path.exists(os.path.join(old_save_dir, folder_name)):
-            raise Exception('No training images has been provided for this job.')
+    old_save_dir = conf.PIC_DIR
+    folder_name = str(socketid)
+    save_dir = os.path.join(conf.PIC_DIR, folder_name)
+    train_dir = os.path.join(save_dir, 'train')
+    test_dir = os.path.join(save_dir, 'test')
+    util_dir = os.path.join(save_dir, 'util')
 
-        trainModel(save_dir, post_dict['socketid'])
+    trainImages.delay(os.path.join(save_dir, ''), socketid)
 
-        data['info'] = 'completed'
-        response = JSONResponse(data, {}, response_mimetype(request))
-        response['Content-Disposition'] = 'inline; filename=files.json'
-        log_to_terminal('Finished training your model with the new categories. Now, upload some test images to test this model. ', socketid)
-        return response
-    except Exception as e:
-        data['error'] = str(traceback.format_exc())
-        log_to_terminal(str(traceback.format_exc()), socketid)
-        response = JSONResponse(data, {}, response_mimetype(request))
-        response['Content-Disposition'] = 'inline; filename=files.json'
-        return response
+    data['info'] = 'completed'
+    response = JSONResponse(data, {}, response_mimetype(request))
+    response['Content-Disposition'] = 'inline; filename=files.json'
+    return response
 
 @csrf_exempt
 def testmodel(request):
