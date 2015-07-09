@@ -14,7 +14,7 @@ import shutil
 #import subprocess
 import app.conf as conf
 
-caffe_root = '/home/ubuntu/caffe/'
+caffe_root = '/caffe/'
 
 def trainaclass(Imagepath):
 
