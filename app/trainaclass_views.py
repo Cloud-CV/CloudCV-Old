@@ -45,6 +45,8 @@ demo_log_file = physical_job_root + 'classify_demo.log'
 ##
 ###
 
+import redis, json
+rs = redis.StrictRedis(host='redis', port=6379)
 
 def log_to_terminal(message, socketid):
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
@@ -148,6 +150,7 @@ class TrainaclassCreateView(CreateView):
             client_address = self.request.META['REMOTE_ADDR']
             #client_address = self.request.environ.get('HTTP_X_FORWARDED_FOR')
             #log_to_terminal(client_address, self.socketid)
+            rs.publish('chat', json.dumps({'message': 'Coming here', 'socketid': str(socketid)}))
 
             self.object = form.save()
 
@@ -173,7 +176,7 @@ class TrainaclassCreateView(CreateView):
                 os.makedirs(util_dir)
                 os.makedirs(test_dir)
 
-
+            rs.publish('chat', json.dumps({'message': 'save_dir '+save_dir, 'socketid': str(socketid)}))
 
             try:
                 all_files = self.request.FILES.getlist('file')
