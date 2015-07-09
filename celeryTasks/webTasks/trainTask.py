@@ -44,6 +44,8 @@ def trainImages(jobPath, socketid):
         p2 = os.path.join(caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel ')
         p3 = os.path.join(Imagepath, 'imagenet_val.prototxt fc7') + ' ' + os.path.join(Imagepath,
                                                                                        'features') + ' %d GPU' % (train_size)
+               
+        rs.publish('chat', json.dumps({'message': "COMMAND: "+p1+p2+p3, 'socketid': str(socketid)}))
         os.system(p1 + p2 + p3)
 
         # Convert the train_features leveldb to numpy array
