@@ -18,3 +18,7 @@ RUN pip install mysqlclient psycopg2 django=="$DJANGO_VERSION"
 # Install other dependencies 
 
 RUN apt-get update && apt-get install -y git
+
+#Install dependencies for CloudCV Server
+COPY ./requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
