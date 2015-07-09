@@ -274,7 +274,6 @@ def trainModel(save_dir, socketid):
 
 @csrf_exempt
 def trainamodel(request):
-    rs.publish('chat', json.dumps({'message': 'Coming in train a model', 'socketid': str(socketid)}))
     data = {}
     try:
         post_dict = parser.parse(request.POST.urlencode())
@@ -308,7 +307,6 @@ def trainamodel(request):
 
 @csrf_exempt
 def testmodel(request):
-    rs.publish('chat', json.dumps({'message': 'Coming in test a model', 'socketid': str(socketid)}))
     data = {}
     try:
         post_dict = parser.parse(request.POST.urlencode())
@@ -352,7 +350,6 @@ def testmodel(request):
 
 @csrf_exempt
 def demoTrainaclass(request):
-    rs.publish('chat', json.dumps({'message': 'Coming in demo train a class', 'socketid': str(socketid)}))
     post_dict = parser.parse(request.POST.urlencode())
     try:
         if not os.path.exists(demo_log_file):
