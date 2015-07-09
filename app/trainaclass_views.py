@@ -145,7 +145,7 @@ class TrainaclassCreateView(CreateView):
         session = self.request.session.session_key
         socketid = self.request.POST['socketid']
         labelnames = self.request.POST['labelnames'].replace(' ', '_')
-        log_to_terminal("Label: "str(self.request.POST['labelnames']), socketid)
+        log_to_terminal("Label: "+str(self.request.POST['labelnames']), socketid)
 
         self.socketid = socketid
 
