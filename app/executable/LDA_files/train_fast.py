@@ -109,7 +109,7 @@ def modelUpdate(jobPath):
     fc_params_new[0][:, :, :1000, :] = fc_params[0]
 
     num_cores = multiprocessing.cpu_count()
-    results = Parallel(n_jobs=num_cores)(delayed(trainaclass)(dirs[label]) for label in range(num_labels))
+    results = [trainaclass(dirs[label]) for label in range(num_labels)]
 
     for label in range(num_labels):
         fc_params_new[1][0, 0, 0, 1000 + label] = results[label][0] - math.log(1000+num_labels)
