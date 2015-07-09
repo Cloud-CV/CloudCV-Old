@@ -69,7 +69,7 @@ def trainImages(jobPath, socketid):
         return (w0, weight_new)
 
     try:
-        if not os.path.exists(os.path.join(old_save_dir, folder_name)):
+        if not os.path.exists(save_dir):
             raise Exception('No training images has been provided for this job.')
 
         start = time.time()
