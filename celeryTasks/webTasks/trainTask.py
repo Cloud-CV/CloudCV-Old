@@ -40,7 +40,7 @@ def trainImages(jobPath, socketid):
         f.close()
 
         train_size = len(train_files)
-        p1 = os.path.join(caffe_root, 'build/tools/extract_features.bin ')
+        p1 = os.path.join(caffe_root, 'build/tools/extract_features ')
         p2 = os.path.join(caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel ')
         p3 = os.path.join(Imagepath, 'imagenet_val.prototxt fc7') + ' ' + os.path.join(Imagepath,
                                                                                        'features') + ' %d GPU' % (train_size)
