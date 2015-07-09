@@ -17,4 +17,4 @@ RUN pip install mysqlclient psycopg2 django=="$DJANGO_VERSION"
 
 # Install other dependencies 
 
-RUN apt-get install -y git
+RUN apt-get update && apt-get install -y git
