@@ -4,7 +4,6 @@ MAINTAINER Prashant Jalan
 
 EXPOSE 8000
 
-COPY ./bvlc_reference_caffenet.caffemodel /opt/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
 COPY ./run.sh /home/user/run.sh
 
 ENTRYPOINT bash /home/user/run.sh
