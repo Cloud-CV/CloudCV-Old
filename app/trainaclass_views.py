@@ -135,13 +135,17 @@ class TrainaclassCreateView(CreateView):
     count_hits = 0
 
     def form_valid(self, form):
+        """
+        This function created the view and validates the form.
+        It adds images to a new label. Makes directory and save them.
+        """
 
         redis_obj.lpush('trainaclass', str(self.request))
         self.r = redis_obj
         session = self.request.session.session_key
         socketid = self.request.POST['socketid']
         labelnames = self.request.POST['labelnames'].replace(' ', '_')
-        log_to_terminal(str(self.request.POST['labelnames']), socketid)
+        log_to_terminal("Label: "str(self.request.POST['labelnames']), socketid)
 
         self.socketid = socketid
 
@@ -150,7 +154,6 @@ class TrainaclassCreateView(CreateView):
             client_address = self.request.META['REMOTE_ADDR']
             #client_address = self.request.environ.get('HTTP_X_FORWARDED_FOR')
             #log_to_terminal(client_address, self.socketid)
-            rs.publish('chat', json.dumps({'message': 'Coming here', 'socketid': str(socketid)}))
 
             self.object = form.save()
 
@@ -271,6 +274,7 @@ def trainModel(save_dir, socketid):
 
 @csrf_exempt
 def trainamodel(request):
+    rs.publish('chat', json.dumps({'message': 'Coming in train a model', 'socketid': str(socketid)}))
     data = {}
     try:
         post_dict = parser.parse(request.POST.urlencode())
@@ -304,6 +308,7 @@ def trainamodel(request):
 
 @csrf_exempt
 def testmodel(request):
+    rs.publish('chat', json.dumps({'message': 'Coming in test a model', 'socketid': str(socketid)}))
     data = {}
     try:
         post_dict = parser.parse(request.POST.urlencode())
@@ -347,6 +352,7 @@ def testmodel(request):
 
 @csrf_exempt
 def demoTrainaclass(request):
+    rs.publish('chat', json.dumps({'message': 'Coming in demo train a class', 'socketid': str(socketid)}))
     post_dict = parser.parse(request.POST.urlencode())
     try:
         if not os.path.exists(demo_log_file):
