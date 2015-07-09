@@ -186,7 +186,7 @@ class TrainaclassCreateView(CreateView):
                 data = {'files':[]}
 
                 if len(all_files) == 1:
-                    log_to_terminal(str('Downloading Image for label:' + labelnames), self.socketid)
+                    log_to_terminal(str('Downloading Image for label: ' + labelnames), self.socketid)
                 else:
                     log_to_terminal(str('Downloading Images for label: ' + labelnames), self.socketid)
 
