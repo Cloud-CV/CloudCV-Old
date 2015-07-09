@@ -7,7 +7,7 @@ MAINTAINER Prashant Jalan
 # Basics
 
 RUN apt-get update
-RUN apt-get install -y build-essential g++ gcc gfortran wget python-dev
+RUN apt-get install -y build-essential g++ gcc gfortran wget python-dev git
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 
 # Install dependencies for CloudCV Server
