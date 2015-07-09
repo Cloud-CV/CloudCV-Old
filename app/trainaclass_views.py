@@ -28,8 +28,8 @@ from os.path import splitext, basename
 import redis
 
 from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
-from app.executable.LDA_files.test import caffe_classify_image
 from celeryTasks.webTasks.trainTask import trainImages
+from celeryTasks.webTasks.trainTask import customClassifyImages
 # from app.classify_views import  classify_wrapper_local as default_classify
 import app.conf as conf
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
@@ -53,46 +53,47 @@ def log_to_terminal(message, socketid):
 
 
 def classify_wrapper_local(jobPath, socketid, result_path):
-    try:
-        ImagePath = os.path.join(jobPath,'test')
-        modelPath = os.path.join(jobPath,'util')
+    customClassifyImages.delay(jobPath, socketid, result_path)
+    # try:
+    #     ImagePath = os.path.join(jobPath,'test')
+    #     modelPath = os.path.join(jobPath,'util')
 
-        new_labels = sio.loadmat(os.path.join(modelPath,'new_labels.mat'))
-        new_labels_cells = new_labels['WNID']
+    #     new_labels = sio.loadmat(os.path.join(modelPath,'new_labels.mat'))
+    #     new_labels_cells = new_labels['WNID']
 
-        # Set the right path to your model file, pretrained model,
-        # and the image you would like to classify.
-        MODEL_FILE = os.path.join(modelPath,'newCaffeModel.prototxt')
-        PRETRAINED = os.path.join(modelPath,'newCaffeModel.caffemodel')
+    #     # Set the right path to your model file, pretrained model,
+    #     # and the image you would like to classify.
+    #     MODEL_FILE = os.path.join(modelPath,'newCaffeModel.prototxt')
+    #     PRETRAINED = os.path.join(modelPath,'newCaffeModel.caffemodel')
 
-        #caffe.set_phase_test()
-        caffe.set_mode_gpu()
+    #     #caffe.set_phase_test()
+    #     caffe.set_mode_gpu()
 
-        net = caffe.Classifier(MODEL_FILE, PRETRAINED,
-                        mean=np.load(os.path.join(conf.CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy')),
-                        channel_swap=(2, 1, 0),
-                        raw_scale=255,
-                        image_dims=(256, 256))
+    #     net = caffe.Classifier(MODEL_FILE, PRETRAINED,
+    #                     mean=np.load(os.path.join(conf.CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy')),
+    #                     channel_swap=(2, 1, 0),
+    #                     raw_scale=255,
+    #                     image_dims=(256, 256))
 
-        results = {}
+    #     results = {}
 
-        if os.path.isdir(ImagePath):
-            for file_name in os.listdir(ImagePath):
-                image_path = os.path.join(ImagePath, file_name)
-                if os.path.isfile(image_path):
+    #     if os.path.isdir(ImagePath):
+    #         for file_name in os.listdir(ImagePath):
+    #             image_path = os.path.join(ImagePath, file_name)
+    #             if os.path.isfile(image_path):
 
-                    tags = caffe_classify_image(net, image_path, new_labels_cells)
-                    log_to_terminal("Results: "+str(tags), socketid)
-                    webResult = {}
-                    webResult[os.path.join(result_path,file_name)] = tags
+    #                 tags = caffe_classify_image(net, image_path, new_labels_cells)
+    #                 log_to_terminal("Results: "+str(tags), socketid)
+    #                 webResult = {}
+    #                 webResult[os.path.join(result_path,file_name)] = tags
 
-                    redis_obj.publish('chat',
-                                   json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
+    #                 redis_obj.publish('chat',
+    #                                json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
 
-            log_to_terminal('Thank you for using CloudCV', socketid)
+    #         log_to_terminal('Thank you for using CloudCV', socketid)
 
-    except Exception as e:
-        log_to_terminal(str(traceback.format_exc()), socketid)
+    # except Exception as e:
+    #     log_to_terminal(str(traceback.format_exc()), socketid)
 
 
 # class ClassifyThread(threading.Thread):
@@ -320,14 +321,13 @@ def testmodel(request):
             raise Exception('No model has been trained for this job.')
 
 
-        classify_wrapper_local(save_dir, socketid,os.path.join(conf.PIC_URL, folder_name, 'test'))
+        classify_wrapper_local(save_dir, socketid, os.path.join(conf.PIC_URL, folder_name, 'test'))
 
         data['info'] = 'completed'
         data['prototxt'] = os.path.join(conf.PIC_URL, folder_name, 'util', 'newCaffeModel.prototxt')
         data['caffemodel'] = os.path.join(conf.PIC_URL, folder_name, 'util', 'newCaffeModel.caffemodel')
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
-        log_to_terminal('Classification completed', post_dict['socketid'])
         return response
     except Exception as e:
         data['error'] = str(traceback.format_exc())
