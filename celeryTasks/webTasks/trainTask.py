@@ -47,6 +47,7 @@ def trainImages(jobPath, socketid):
         os.system(p1 + p2 + p3)
 
         # Convert the train_features leveldb to numpy array
+        rs.publish('chat', json.dumps({'message': os.path.join(Imagepath, 'features'), 'socketid': str(socketid)}))
         db = leveldb.LevelDB(os.path.join(Imagepath, 'features'))
         for k in range(len(train_files)):
             datum = caffe_pb2.Datum.FromString(db.Get(str(k)))
