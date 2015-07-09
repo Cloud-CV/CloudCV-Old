@@ -1,24 +1,16 @@
-FROM python:2.7-slim
+FROM ubuntu:14.04
 
 MAINTAINER Prashant Jalan
 
-# Install django; code from official django library on hub.docker.com
+# We will install the bare minimum required to run the django server
 
-RUN apt-get update && apt-get install -y \
-        mysql-client libmysqlclient-dev \
-        postgresql-client libpq-dev \
-        sqlite3 \
-        gcc \
-    --no-install-recommends && rm -rf /var/lib/apt/lists/*
+# Basics
 
-ENV DJANGO_VERSION 1.8.2
+RUN apt-get update
+RUN apt-get install -y build-essential g++ gcc gfortran wget python-dev
+RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 
-RUN pip install mysqlclient psycopg2 django=="$DJANGO_VERSION"
+# Install dependencies for CloudCV Server
 
-# Install other dependencies 
-
-RUN apt-get update && apt-get install -y git
-
-#Install dependencies for CloudCV Server
 COPY ./requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
