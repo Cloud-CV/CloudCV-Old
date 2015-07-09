@@ -28,9 +28,9 @@ from os.path import splitext, basename
 import redis
 
 from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
-from app.executable.LDA_files.test import caffe_classify, caffe_classify_image
+from app.executable.LDA_files.test import caffe_classify_image
 from app.executable.LDA_files import train_fast
-from app.classify_views import  classify_wrapper_local as default_classify
+# from app.classify_views import  classify_wrapper_local as default_classify
 import app.conf as conf
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
 classify_channel_name = 'classify_queue'
@@ -95,36 +95,36 @@ def classify_wrapper_local(jobPath, socketid, result_path):
         log_to_terminal(str(traceback.format_exc()), socketid)
 
 
-class ClassifyThread(threading.Thread):
-    def __init__(self, image_path, result_path, socketid):
-        threading.Thread.__init__(self)
-        self.r = redis_obj
-        self.image_path = image_path
-        self.result_path = result_path
-        self.socketid = socketid
-        self.log_to_terminal("inside thread")
+# class ClassifyThread(threading.Thread):
+#     def __init__(self, image_path, result_path, socketid):
+#         threading.Thread.__init__(self)
+#         self.r = redis_obj
+#         self.image_path = image_path
+#         self.result_path = result_path
+#         self.socketid = socketid
+#         self.log_to_terminal("inside thread")
 
-    def run(self):
-        try:
-            result = caffe_classify(self.image_path)
-            self.log_to_terminal(result)
+#     def run(self):
+#         try:
+#             result = caffe_classify(self.image_path)
+#             self.log_to_terminal(result)
 
-            image, tags = result.popitem()
-            web_result = {}
-            web_result[self.result_path] = tags
-            self.r.publish('chat',json.dumps({'web_result': json.dumps(web_result), 'socketid': str(self.socketid)}))
-        except Exception as e:
-            self.log_to_terminal(str(traceback.format_exc()))
+#             image, tags = result.popitem()
+#             web_result = {}
+#             web_result[self.result_path] = tags
+#             self.r.publish('chat',json.dumps({'web_result': json.dumps(web_result), 'socketid': str(self.socketid)}))
+#         except Exception as e:
+#             self.log_to_terminal(str(traceback.format_exc()))
 
-    def log_to_terminal(self, message):
-        self.r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
+#     def log_to_terminal(self, message):
+#         self.r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
 
 
-def response_mimetype(request):
-    if "application/json" in request.META['HTTP_ACCEPT']:
-        return "application/json"
-    else:
-        return "text/plain"
+# def response_mimetype(request):
+#     if "application/json" in request.META['HTTP_ACCEPT']:
+#         return "application/json"
+#     else:
+#         return "text/plain"
 
 
 class TrainaclassCreateView(CreateView):
@@ -328,7 +328,7 @@ def testmodel(request):
 
 
         if not os.path.isfile(os.path.join(util_dir,'newCaffeModel.prototxt')):
-            default_classify(test_dir, socketid, os.path.join(conf.PIC_URL, folder_name, 'test'))
+            #default_classify(test_dir, socketid, os.path.join(conf.PIC_URL, folder_name, 'test'))
             raise Exception('No model has been trained for this job.')
 
 
@@ -348,50 +348,50 @@ def testmodel(request):
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
-@csrf_exempt
-def demoTrainaclass(request):
-    post_dict = parser.parse(request.POST.urlencode())
-    try:
-        if not os.path.exists(demo_log_file):
-            log_file = open(demo_log_file, 'w')
-        else:
-            log_file = open(demo_log_file, 'a')
+# @csrf_exempt
+# def demoTrainaclass(request):
+#     post_dict = parser.parse(request.POST.urlencode())
+#     try:
+#         if not os.path.exists(demo_log_file):
+#             log_file = open(demo_log_file, 'w')
+#         else:
+#             log_file = open(demo_log_file, 'a')
 
-        if 'src' not in post_dict:
-            data = {'error': 'NoImageSelected'}
-        else:
-            data = {'info': 'Processing'}
-            result_path = post_dict['src']
-            imgname = basename(urlparse(result_path).path)
+#         if 'src' not in post_dict:
+#             data = {'error': 'NoImageSelected'}
+#         else:
+#             data = {'info': 'Processing'}
+#             result_path = post_dict['src']
+#             imgname = basename(urlparse(result_path).path)
 
-            image_path = os.path.join(conf.LOCAL_DEMO_PIC_DIR, imgname)
-            print image_path
-            print result_path
-            log_to_terminal('Processing image...', post_dict['socketid'])
+#             image_path = os.path.join(conf.LOCAL_DEMO_PIC_DIR, imgname)
+#             print image_path
+#             print result_path
+#             log_to_terminal('Processing image...', post_dict['socketid'])
 
-            # This is for running it locally ie on Godel
-            classify_wrapper_local(image_path, post_dict['socketid'], result_path)
+#             # This is for running it locally ie on Godel
+#             classify_wrapper_local(image_path, post_dict['socketid'], result_path)
 
-            # This is for posting it on Redis - ie to Rosenblatt
-            #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
+#             # This is for posting it on Redis - ie to Rosenblatt
+#             #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
 
-            data = {'info': 'Finished training a new Model. Upload some test images to test the model'}
+#             data = {'info': 'Finished training a new Model. Upload some test images to test the model'}
 
-        try:
-            client_address = request.META['REMOTE_ADDR']
-            log_file.write('Demo classify request from IP:'+client_address)
-            log_file.close();
+#         try:
+#             client_address = request.META['REMOTE_ADDR']
+#             log_file.write('Demo classify request from IP:'+client_address)
+#             log_file.close();
 
-        except Exception as e:
-            log_file.write('Exception when finding client ip:'+str(traceback.format_exc())+'\n');
-            log_file.close();
+#         except Exception as e:
+#             log_file.write('Exception when finding client ip:'+str(traceback.format_exc())+'\n');
+#             log_file.close();
 
-        response = JSONResponse(data, {}, response_mimetype(request))
-        response['Content-Disposition'] = 'inline; filename=files.json'
-        return response
+#         response = JSONResponse(data, {}, response_mimetype(request))
+#         response['Content-Disposition'] = 'inline; filename=files.json'
+#         return response
 
-    except Exception as e:
-        data = {'result': str(traceback.format_exc())}
-        response = JSONResponse(data, {}, response_mimetype(request))
-        response['Content-Disposition'] = 'inline; filename=files.json'
-        return response
+#     except Exception as e:
+#         data = {'result': str(traceback.format_exc())}
+#         response = JSONResponse(data, {}, response_mimetype(request))
+#         response['Content-Disposition'] = 'inline; filename=files.json'
+#         return response
