@@ -717,6 +717,56 @@ def get_data_from_dropbox(request,source_path, dest_path, access_token):
         result['error'] = "Check if the directory exists or not and then try again."
     return result   
 
+"BELOW METHOD NOT WORKING FOR NOW"
+def createDriveService():
+    """
+        Builds and returns a Drive service object authorized with the
+        application's service account.
+        Returns:
+           Drive service object.
+    """
+    from oauth2client.appengine import AppAssertionCredentials
+    from apiclient.discovery import build
+    credentials = AppAssertionCredentials(scope='https://www.googleapis.com/auth/drive')
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+    return build('drive', 'v2', http=http, developerKey=API_KEY)
+
+"BELOW METHOD NOT WORKING FOR NOW"
+def insert_file(service, title, parent_id, filename):
+  """Insert new file.
+
+  Args:
+    service: Drive API service instance.
+    title: Title of the file to insert, including the extension.
+    description: Description of the file to insert.
+    parent_id: Parent folder's ID.
+    mime_type: MIME type of the file to insert.
+    filename: Filename of the file to insert.
+  Returns:
+    Inserted file metadata if successful, None otherwise.
+  """
+ #  media_body = MediaFileUpload(filename,resumable=True)
+ #  body = {
+    # 'title': title,
+ #  }
+ #  # Set the parent folder.
+ #  if parent_id:
+    # body['parents'] = [{'id': parent_id}]
+
+ #  try:
+    # file = service.files().insert(
+    #   body=body,
+    #   media_body=media_body).execute()
+
+    # # Uncomment the following line to print the File ID
+    # print 'File ID: %s' % file['id']
+
+    # return file
+ #  except errors.HttpError, error:
+    # print 'An error occured: %s' % error
+    # return None
+
 
 up_storage_api = login_required(UploadApiTest.as_view())
 down_storage_api = login_required(DownloadApiTest.as_view())
