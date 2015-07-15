@@ -122,3 +122,7 @@ class Images(models.Model):
     category = models.CharField(max_length = 100)
     url = models.TextField(validators=[URLValidator()])
 
+class StorageCredentials(models.Model):
+    user  = models.ForeignKey(User)
+    aws_access_key = models.CharField(max_length = 100)
+    aws_access_secret = models.CharField(max_length = 100)
