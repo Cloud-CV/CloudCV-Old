@@ -7,23 +7,23 @@ class UserSerializer(serializers.ModelSerializer):
 	Serializer Class for User Model
 	'''
 	class Meta:
-		model = User
-		fields = ('first_name','last_name','username','email_id','institution','last_login','date_joined','purpose')
+		model = UserDetails
+		fields = ('institution','purpose')
 
 	def create(self, validated_data):
 		"""
-		Create and return a new `User` instance, given the validated data.
+		Create and return a new `UserDetails` instance, given the validated data.
 		"""
-		return User.objects.create(**validated_data)
+		return UserDetails.objects.create(**validated_data)
 
 	def update(self, instance, validated_data):
-		instance.first_name = validated_data.get('first_name',instance.first_name)
-		instance.last_name = validated_data.get('last_name',instance.last_name)
-		instance.username = validated_data.get('username',instance.username)
-		instance.email_id = validated_data.get('email_id',instance.email_id)
+		# instance.last_name = validated_data.get('last_name',instance.last_name)
+		# instance.username = validated_data.get('username',instance.username)
+		# instance.email_id = validated_data.get('email_id',instance.email_id)
+		# instance.last_login = validated_data.get('last_login',instance.last_login)
+		# instance.date_joined = validated_data.get('date_joined',instance.date_joined)
+		# instance.user = validated_data.get('user',instance.user)
 		instance.institution = validated_data.get('institution',instance.institution)
-		instance.last_login = validated_data.get('last_login',instance.last_login)
-		instance.date_joined = validated_data.get('date_joined',instance.date_joined)
 		instance.purpose = validated_data.get('purpose',instance.purpose)
 		instance.save()
 		return instance
