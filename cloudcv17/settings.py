@@ -208,3 +208,22 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_PORT = 587
 # # EMAIL_HOST_USER = 'youremail@gmail.com'
 # EMAIL_HOST_PASSWORD = 'password'
+
+
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+
+DROPBOX_APP_KEY = "random string"
+DROPBOX_APP_SECRET = "random string"
+
+GOOGLE_APP_CREDENTIALS = {"web":
+    {"client_id":"89054035800-j4v3r4l2nfmqjipd5grmv5b4jo0.apps.googleusercontent.com",
+    "auth_uri":"https://accounts.google.com/o/oauth/auth",
+    "token_uri":"https://accounts.google.com/o/oauth2/token",
+    "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+    "client_email":"",
+    "client_x509_cert_url":"",
+    "client_secret":"e7gyq39-K7iraVO4ZovpfjP",
+    "redirect_uris":["http://localhost:8000/googlelogin/callback/"],
+    "javascript_origins":["http://localhost:8080"]
+    }
+}
