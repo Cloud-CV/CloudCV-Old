@@ -564,3 +564,107 @@ class CloudCV_UserDetail(APIView):
 #     queryset = ModelStorage.objects.all()
 #     serializer_class = ModelStorageSerializer
 #     model = ModelStorage
+# class ImagesDetail(generics.RetrieveUpdateDestroyAPIView):
+#     """
+#     Retrieve, update or delete an Image instance
+#     """
+#     queryset = Images.objects.all()
+#     serializer_class = ImagesSerializer
+#     model = Images
+
+# class ModelStorageList(generics.ListCreateAPIView):
+#     """
+#     List all the Models or add Models 
+#     """
+#     queryset = ModelStorage.objects.all()
+#     serializer_class = ModelStorageSerializer
+#     model = ModelStorage
+#     filter_fields = ('file_location','parameters', 'neural_network','database_used')
+
+# class ModelStorageDetail(generics.RetrieveUpdateDestroyAPIView):
+#     """
+#     Retrieve, update or delete an ModelStorage instance.
+#     """
+#     queryset = ModelStorage.objects.all()
+#     serializer_class = ModelStorageSerializer
+#     model = ModelStorage
+
+#############################################################
+
+from django.contrib.auth.models import User
+from allauth.socialaccount.models import * 
+from cloudcv17 import *
+from app.models import *
+from dropbox.client import DropboxClient
+from dropbox.session import DropboxSession
+from boto.s3.connection import * 
+from apiclient import errors
+from apiclient.http import MediaFileUpload
+from cloudcv17.settings import *
+from os import path
+import httplib2
+import json
+import traceback
+import glob
+import os
+import dropbox
+
+class UploadApiTest(TemplateView):
+    def get(self, request, *args, **kwargs):
+        providers = []
+        tokens = SocialToken.objects.filter(account__user__id = request.user.id)
+        for i in tokens:
+            providers.append(str(i.app))
+        s3 = StorageCredentials.objects.filter(user__id = request.user.id).count()
+        if s3:
+            providers.append("Amazon S3")
+        return render_to_response("app/upload_to_storage.html",{'p':providers},context_instance = RequestContext(request))
+    
+    @csrf_exempt
+    def post(self,request):
+        print "POST Request to API "
+        source_path = request.POST['source_path']
+        path = request.POST['dest_path']
+        if path.split("//")[0][:-1]=="s3":
+            print "S3 is working "
+            bucket = path.split("//")[1]
+            dest_path = "/"+str(path.split("//")[2])
+            result = put_data_on_s3(request,dest_path,bucket)
+        else:
+            if path.split("//")[0][:-1]=="dropbox":
+                dest_path = path.split("//")[1]
+                access_token = SocialToken.objects.get(account__user__id = request.user.id, app__name = "Dropbox")
+                # print "ACCESS TOKEN: ",access_token
+                session = DropboxSession(settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET)
+                access_key, access_secret = access_token.token, access_token.token_secret  # Previously obtained OAuth 1 credentials
+                session.set_token(access_key, access_secret)
+                client = DropboxClient(session)
+                token = client.create_oauth2_access_token()
+                result = put_data_on_dropbox(request, source_path, dest_path, token)
+            elif str(storage)=="Google Drive":
+                # try:
+                print "############## GOOGLE DRIVE ##############   "
+                storage = Storage(SocialToken, 'id', request.user.id, 'token')
+                print storage
+                credential = storage.get()
+                # credentials = SocialToken.objects.get(account__user__id = request.user.id, app__name = storage)
+                # credentials = credentials.token
+                http = credential.authorize(httplib2.Http())
+                service = discovery.build('drive', 'v2', http=http)
+                results = service.files().list(maxResults=10).execute()
+                items = results.get('items', [])
+                if not items:
+                    print 'No files found.'
+                else:
+                    print 'Files:'
+                    for item in items:
+                        print '{0} ({1})'.format(item['title'], item['id'])
+                result = put_data_on_google_drive(request,path,access_token.token)
+                # except:
+                #   pass
+        return HttpResponse(json.dumps(result), content_type="application/json")
+
+
+up_storage_api = login_required(UploadApiTest.as_view())
+down_storage_api = login_required(DownloadApiTest.as_view())
+
