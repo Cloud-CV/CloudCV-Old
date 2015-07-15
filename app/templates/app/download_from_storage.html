@@ -1,0 +1,51 @@
+{% extends 'app/dashboard_base.html' %}
+{% load i18n %}
+{% load account %}
+{% block head_title %}{% trans "Add S3  Buckets" %}{% endblock %}
+{% block content %}
+<main>
+<div class="row dashboardControls">
+	<div class="container">
+		<h3>Download API</h3>
+	 <form action="/api/download" method="post" enctype="multipart/form-data">
+   {% csrf_token %}
+	 <div class="row">
+      <div class="input-field col s12 m12 l8">
+        <input id="source_path" placeholder="For eg. s3://cloudcv/home/deshraj/" name="source_path" type="text" class="validate"/>
+        <label for="source_path">Source Path</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12 m12 l8">
+        <input id="dest_path" placeholder="For eg. /home/pydev/Desktop/" name="dest_path" type="text" class="validate"/>
+        <label for="dest_path">Destination Path</label>
+      </div>
+    </div>
+    <div class="row">
+    <div class="col s12">
+    <button class="btn waves-effect waves-light blue darken-1 white-text" type="submit">Submit</button>
+    <p>If you want to add Cloud Storages, then <a href="/addstorage" class="blue-text">click here!</a></p>
+    </div>
+    </div>
+  </form>
+	</div>
+</div>
+</main>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.modal-trigger').leanModal({
+			dismissible: true,
+			opacity: .5, 
+			in_duration: 300,
+			out_duration: 200,
+		});
+    $(".bucketClass").hide();
+      $("input[name='storageName']").click(function(){
+         if($('[id="Amazon S3"]').is(':checked'))
+          $(".bucketClass").show();
+        else
+          $(".bucketClass").hide();
+      });
+	});
+</script>
+{% endblock %}
