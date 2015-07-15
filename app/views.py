@@ -695,6 +695,29 @@ def get_data_from_s3(request,source_path, dest_path, bucket):
     return result
 
 
+
+def get_data_from_dropbox(request,source_path, dest_path, access_token):
+    result = {}
+    try:
+        client = dropbox.client.DropboxClient(str(access_token))
+        images_metadata = client.metadata(source_path)
+        result['user'] = request.user.email
+        result['storage'] = request.POST['storageName']
+        result['location']= []
+        result['downloadTo'] = []
+        for i in images_metadata['contents']:
+            if i['is_dir'] == False:
+                result['location'].append(i['path'])
+                f, metadata = client.get_file_and_metadata(i['path'])
+                out = open(dest_path + str(i.name), 'wb')
+                result['downloadTo'].append(dest_path + str(i.name))
+                out.write(f.read())
+                out.close()
+    except:
+        result['error'] = "Check if the directory exists or not and then try again."
+    return result   
+
+
 up_storage_api = login_required(UploadApiTest.as_view())
 down_storage_api = login_required(DownloadApiTest.as_view())
 
