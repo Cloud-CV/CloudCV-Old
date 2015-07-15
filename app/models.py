@@ -6,8 +6,10 @@ Author: Deshraj
 from django.db import models
 from django.core.validators import URLValidator
 from jsonfield import JSONField
+from django.contrib.auth.models import User
 
-class User(models.Model):
+
+class UserDetails(models.Model):
     '''
     It stores the information about the cloudcv users who sign up on CloudCV.
     '''
@@ -22,19 +24,20 @@ class User(models.Model):
         (BUSINESS,'Business'),
         (OTHERS,'Others'),
         )
-    email_id = models.EmailField(max_length = 254, unique = True)
-    first_name = models.CharField(max_length =100)
-    last_name = models.CharField(max_length = 100)
-    username = models.CharField(max_length = 50, unique = True)
+    # email_id = models.EmailField(max_length = 254, unique = True)
+    # first_name = models.CharField(max_length =100)
+    # last_name = models.CharField(max_length = 100)
+    # username = models.CharField(max_length = 50, unique = True)
+    # last_login = models.DateTimeField()
+    # date_joined = models.DateTimeField()
+    user = models.OneToOneField(User)
     institution = models.CharField(max_length = 500) # Represents the institution/company where the user belongs to.
-    last_login = models.DateTimeField()
-    date_joined = models.DateTimeField()
     purpose = models.CharField(max_length = 2,
         choices = PURPOSE,
         default = EDUCATION)
 
     def __str__(self):
-        return "%s %s %s %s %s" % (self.first_name, self.last_name, self.username, self.institution, self.purpose)
+        return "%s %s" % ( self.institution, self.purpose)
 
 class ModelStorage(models.Model):
     """
@@ -118,4 +121,4 @@ class Images(models.Model):
     user = models.ForeignKey(User)
     category = models.CharField(max_length = 100)
     url = models.TextField(validators=[URLValidator()])
-    
+
