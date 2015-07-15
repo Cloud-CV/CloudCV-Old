@@ -671,6 +671,30 @@ class DownloadApiTest(TemplateView):
         return HttpResponse(json.dumps(result), content_type="application/json")
 
 
+def get_data_from_s3(request,source_path, dest_path, bucket):
+    result = {}
+    try:
+        s3 = StorageCredentials.objects.get(user__id = request.user.id)
+        conn = S3Connection(s3.aws_access_key,s3.aws_access_secret)
+        b = conn.get_bucket(bucket)
+        result['user'] = request.user.email
+        result['bucket'] = bucket
+        result['location']= []
+        result['downloadTo'] = []
+    except:
+        result['error'] = "Check if the S3 bucket exists or not."
+        return result
+    bucket_entries = b.list(source_path[1:])
+    if dest_path[-1]!="/":
+        dast_path+="/"
+    for i in bucket_entries:
+        result['location'].append(i.key)
+        file_name = str(i.key).split("/")[-1]
+        result['downloadTo'].append(dest_path+file_name)
+        i.get_contents_to_filename(dest_path+file_name)
+    return result
+
+
 up_storage_api = login_required(UploadApiTest.as_view())
 down_storage_api = login_required(DownloadApiTest.as_view())
 
