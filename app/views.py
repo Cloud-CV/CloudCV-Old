@@ -709,6 +709,43 @@ def put_data_on_dropbox(request, source_path, dest_path,access_token):
     return result
 
 
+
+class DownloadApiTest(TemplateView):
+    def get(self, request, *args, **kwargs):
+        providers = []
+        tokens = SocialToken.objects.filter(account__user__id = request.user.id)
+        for i in tokens:
+            providers.append(str(i.app))
+        s3 = StorageCredentials.objects.filter(user__id = request.user.id).count()
+        if s3:
+            providers.append("Amazon S3")
+        return render_to_response("app/download_from_storage.html",{'p':providers},context_instance = RequestContext(request))
+    
+    def post(self,request):
+        path = request.POST['source_path']
+        dest_path = request.POST['dest_path']
+        print "POST Request to Download API "
+        path = request.POST['source_path']
+        if path.split("//")[0][:-1]=="s3":
+            print "S3 is working "
+            bucket = path.split("//")[1]
+            source_path = "/"+str(path.split("//")[2])
+            result = get_data_from_s3(request, source_path, dest_path, bucket)
+        else:
+            if path.split("//")[0][:-1]=="dropbox":
+                access_token = SocialToken.objects.get(account__user__id = request.user.id, app__name = "Dropbox")
+                # print "ACCESS TOKEN: ",access_token
+                session = DropboxSession(settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET)
+                access_key, access_secret = access_token.token, access_token.token_secret  # Previously obtained OAuth 1 credentials
+                session.set_token(access_key, access_secret)
+                client = DropboxClient(session)
+                token = client.create_oauth2_access_token()
+                result = get_data_from_dropbox(request, source_path, dest_path, token)
+            elif storage=="Google Drive":
+                get_data_from_google(request,path,access_token)
+        return HttpResponse(json.dumps(result), content_type="application/json")
+
+
 up_storage_api = login_required(UploadApiTest.as_view())
 down_storage_api = login_required(DownloadApiTest.as_view())
 
