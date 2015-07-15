@@ -589,6 +589,35 @@ class UploadApiTest(TemplateView):
                 #   pass
         return HttpResponse(json.dumps(result), content_type="application/json")
 
+def put_data_on_s3(request, source_path, dest_path,bucket):
+    result = {}
+    # source_path = request.POST['source_path']
+    print "the source path is ", source_path
+    # files = [ os.path.abspath(f) for f in os.listdir(source_path) if path.isfile(f)]
+    files = [name for name in glob.glob(os.path.join(source_path,'*.*')) if os.path.isfile(os.path.join(source_path,name))]
+    print files
+    result['sourcePath'] = source_path
+    result['dest_path'] = request.POST['dest_path']
+    result['bucket'] = bucket
+    # result['storage'] = request.POST['storageName']
+    result['uplaodedTo']= []
+    result['user'] = request.user.email
+    s3 = StorageCredentials.objects.get(user__id = request.user.id)
+    conn = S3Connection(s3.aws_access_key,s3.aws_access_secret)
+    try:
+        b = conn.get_bucket(bucket)
+        print "TRY "
+    except:
+        print "CATCH"
+        b = conn.create_bucket(bucket)
+    for i in files:
+        # upload_file_on_cloudcv_server(i)
+        k = Key(b)
+        k.key = dest_path+i.split("/")[-1]
+        result['uplaodedTo'].append(k.key)
+        k.set_contents_from_filename(i)
+        print i
+    return result
 
 up_storage_api = login_required(UploadApiTest.as_view())
 down_storage_api = login_required(DownloadApiTest.as_view())
