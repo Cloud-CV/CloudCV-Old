@@ -694,6 +694,21 @@ def put_data_on_s3(request, source_path, dest_path,bucket):
         print i
     return result
 
+
+def put_data_on_dropbox(request, source_path, dest_path,access_token):
+    result = {}
+    client = dropbox.client.DropboxClient(access_token)
+    result['pathProvided'] = dest_path
+    result['user'] = request.user.email
+    result['uplaodedTo'] = []
+    files = [name for name in glob.glob(os.path.join(source_path,'*.*')) if os.path.isfile(os.path.join(source_path,name))]
+    for i in files:
+        f = open(i,'rb')
+        response = client.put_file(dest_path+i.split("/")[-1], f)
+        result['uplaodedTo'].append(response)
+    return result
+
+
 up_storage_api = login_required(UploadApiTest.as_view())
 down_storage_api = login_required(DownloadApiTest.as_view())
 
