@@ -407,198 +407,23 @@ from serializers import *
 from rest_framework import filters
 import django_filters
 
-# class UserList(APIView):
-#     """
-#     List all Users, or create a new user.
-#     """
-#     queryset = User.objects.all()
-#     model = User
-#     def get(self, request, format=None):
-#         user = self.queryset
-#         serializer = UserSerializer(user, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request, format=None):
-#         serializer = UserSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class UserDetail(APIView):
-#     """
-#     Retrieve, update or delete a User instance.
-#     """
-#     queryset = User.objects.all()
-#     def get_object(self, pk):
-#         try:
-#             return self.queryset.get(pk=pk)
-#         except User.DoesNotExist:
-#             raise Http404
-
-#     def get(self, request, pk, format=None):
-#         user = self.get_object(pk)
-#         serializer = UserSerializer(user)
-#         return Response(serializer.data)
-
-#     def put(self, request, pk, format=None):
-#         user = self.get_object(pk)
-#         serializer = UserSerializer(user, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     def delete(self, request, pk, format=None):
-#         user = self.get_object(pk)
-#         user.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# class RequestLogList(APIView):
-#     """
-#     List all the requst jobs and their respective details. 
-#     """
-#     def get(self, request, format=None):
-#         jobs = RequestLog.objects.all()
-#         serializer = RequestLogSerializer(jobs, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request, format=None):
-#         serializer = RequestLogSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# class GroupList(APIView):
-#     """
-#     List all the Groups, or create a new Group.
-#     """
-#     def get(self, request, format=None):
-#         groups = Group.objects.all()
-#         serializer = GroupSerializer(groups, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request, format=None):
-#         serializer = GroupSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class GroupDetail(APIView):
-#     """
-#     Retrieve, update or delete a Group instance.
-#     """
-#     def get_object(self, pk):
-#         try:
-#             return Group.objects.get(pk=pk)
-#         except Group.DoesNotExist:
-#             raise Http404
-
-#     def get(self, request, pk, format=None):
-#         group = self.get_object(pk)
-#         serializer = GroupSerializer(group)
-#         return Response(serializer.data)
-
-#     def put(self, request, pk, format=None):
-#         group = self.get_object(pk)
-#         serializer = GroupSerializer(group, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     def delete(self, request, pk, format=None):
-#         group = self.get_object(pk)
-#         group.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-# class CurrentRequestList(APIView):
-#     """
-#     List all the Curent Requests, or create a new Request.
-#     """
-#     def get(self, request, format=None):
-#         current_requset = CurrentRequest.objects.all()
-#         serializer = CurrentRequestSerializer(current_requset, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request, format=None):
-#         serializer = CurrentRequestSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class CurrentRequestDetail(APIView):
-#     """
-#     Retrieve, update or delete a CurrentRequest instance.
-#     """
-#     def get_object(self, pk):
-#         try:
-#             return CurrentRequest.objects.get(pk=pk)
-#         except CurrentRequest.DoesNotExist:
-#             raise Http404
-
-#     def get(self, request, pk, format=None):
-#         current_requset = self.get_object(pk)
-#         serializer = CurrentRequestSerializer(current_requset)
-#         return Response(serializer.data)
-
-#     def put(self, request, pk, format=None):
-#         current_requset = self.get_object(pk)
-#         serializer = CurrentRequestSerializer(current_requset, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     def delete(self, request, pk, format=None):
-#         current_requset = self.get_object(pk)
-#         current_requset.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# class ImagesList(APIView):
-#     """
-#     List all the Image Details stored in the different locations.
-#     """
-#     def get(self, request, format=None):
-#         images = Image.objects.all()
-#         serializer = ImagesSerializer(images, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request, format=None):
-#         serializer = ImagesSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class UserList(generics.ListCreateAPIView):
     """
     List all Users, or Create a new User
     """
-    queryset = User.objects.all()
+    queryset = UserDetails.objects.all()
     serializer_class = UserSerializer
-    model = User
-    filter_fields = ('first_name','last_name','username','email_id','institution','last_login','date_joined','purpose')
+    model = UserDetails
+    filter_fields = ('institution', 'purpose')
 
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, Update or Delete a User instance
     """
-    queryset = User.objects.all()
+    queryset = UserDetails.objects.all()
     serializer_class = UserSerializer
-    model = User
+    model = UserDetails
 
 class RequestLogList(generics.ListCreateAPIView):
     """
