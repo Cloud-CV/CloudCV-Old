@@ -26,8 +26,7 @@ class Parameters:
         if 'dropbox_path' in dict:
             self.dropbox_path = dict['dropbox_path']
             self.dropbox_token = dict['dropbox_token']
-        if 'jobid' in dict:
-            self.jobid = dict['jobid']
+
         if 'userid' in dict:
             self.userid = dict['userid']
         if 'token' in dict:
@@ -57,13 +56,19 @@ class Job(Parameters):
         if self.userid is None:
             self.userid = 'anonymous'
 
+        self.createUniqueJobID()
+
         self.storage_path = os.path.join(IMAGE_PARENT_PATH, str(self.userid))
         if not os.path.exists(self.storage_path):
             os.makedirs(self.storage_path)
 
 
+    def createUniqueJobID(self):
+        self.jobid = shortuuid.uuid()
+
     def getJobID(self):
-        
+        if self.jobid is None:
+            self.createUniqueJobID()
         return self.jobid
 
     def getUserPath(self):
