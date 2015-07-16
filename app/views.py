@@ -516,6 +516,7 @@ class ModelStorageDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 
+from django.views.generic import *
 from django.contrib.auth.models import User
 from allauth.socialaccount.models import * 
 from cloudcv17 import *
