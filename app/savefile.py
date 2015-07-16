@@ -28,8 +28,6 @@ def getThumbnail(image_url_prefix, name):
     return file
 '''
 
-<<<<<<< HEAD
-=======
 def parseParameters(params):
     params = str(params)
 
@@ -53,7 +51,6 @@ def parseParameters(params):
 
 
 
->>>>>>> origin/Docker
 def resizeImageAndTransfer(path, directory, size, file):
 
     try:
