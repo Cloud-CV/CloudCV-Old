@@ -267,6 +267,7 @@ def run_voc_release(list, token, result_url, socketid, result_path, source_type)
 @app.task(ignore_result=True)
 def run(parsed_dict):
     socketid = str(parsed_dict['socketid'])
+    r.publish('chat', json.dumps({'message': 'Coming in run', 'socketid': str(socketid)}))
     try:
         if 'dropbox_token' not in parsed_dict or parsed_dict['dropbox_token']=='None':
             parsed_dict['dropbox_token'] = None
