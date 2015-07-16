@@ -6,6 +6,7 @@ from django.shortcuts import render
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import CreateView, DeleteView
+from django.template import Context,RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, render_to_response
 from .response import JSONResponse, response_mimetype
