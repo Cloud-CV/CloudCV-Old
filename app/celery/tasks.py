@@ -21,7 +21,7 @@
 # import time
 # import envoy
 #
-# celery = Celery('app.celery.tasks', backend = 'redis://0.0.0.0:6379/0', broker='redis://0.0.0.0:6379/0')
+# celery = Celery('app.celery.tasks', backend = 'redis://redis:6379/0', broker='redis://redis:6379/0')
 #
 # @celery.task
 # def add(x, y):

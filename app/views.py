@@ -59,8 +59,10 @@ class Request:
         #         if(popen.stderr):
         #             errline = popen.stderr.readline()
         #             popen.stderr.flush()
+        #         # r = redis.StrictRedis(host = 'redis' , port=6379, db=0)
         #
         #         if line:
+        #             # r = redis.StrictRedis(host='redis', port=6379, db=0)
         #             self.log_to_terminal(line)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'
@@ -68,6 +70,7 @@ class Request:
         #             count += 1
         #                     # time.sleep(1)
         #         if errline:
+        #             # r = redis.StrictRedis(host='redis', port=6379, db=0)
         #             self.log_to_terminal(errline)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'
@@ -83,46 +86,45 @@ class Request:
         #     print str(traceback.format_exc())
         #
         # return '\n', '\n'
-
-        runImageStitching.delay(list, result_path, self.socketid)
+        stitchImages.delay(src_path, self.socketid, output_path, result_path)
 
     def log_to_terminal(self, message):
         r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
 
-def run_executable(list, session, socketid, ):
-        try:
+# def run_executable(list, session, socketid, ):
+#         try:
 
-            popen=subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            count=1
+#             popen=subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#             count=1
+#             r = redis.StrictRedis(host = 'redis', port=6379, db=0)
+#             while True:
+#                 popen.poll()
+#                 if(popen.stdout):
+#                     line=popen.stdout.readline()
+#                     popen.stdout.flush()
 
-            while True:
-                popen.poll()
-                if(popen.stdout):
-                    line=popen.stdout.readline()
-                    popen.stdout.flush()
-
-                if(popen.stderr):
-                   errline=popen.stdout.readline()
-                   popen.stderr.flush()
+#                 if(popen.stderr):
+#                    errline=popen.stdout.readline()
+#                    popen.stderr.flush()
 
 
-                if line:
-                    r.publish('chat', json.dumps({'message': str(line), 'socketid': str(socketid)}))
-                    print count,line, '\n'
-                    count += 1
+#                 if line:
+#                     r.publish('chat', json.dumps({'message': str(line), 'socketid': str(socketid)}))
+#                     print count,line, '\n'
+#                     count += 1
 
-                if errline:
-                    r.publish('chat', json.dumps({'message': str(errline), 'socketid': str(socketid)}))
-                    print count,line, '\n'
-                    count += 1
+#                 if errline:
+#                     r.publish('chat', json.dumps({'message': str(errline), 'socketid': str(socketid)}))
+#                     print count,line, '\n'
+#                     count += 1
 
-                if line == '':
-                    break
-            r.publish('chat', json.dumps({'message': str('Thank you for using CloudCV'), 'socketid': str(socketid)}))
+#                 if line == '':
+#                     break
+#             r.publish('chat', json.dumps({'message': str('Thank you for using CloudCV'), 'socketid': str(socketid)}))
 
-        except Exception as e:
-            r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
-        return '\n', '\n'
+#         except Exception as e:
+#             r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
+#         return '\n', '\n'
 
 
 class PictureCreateView(CreateView):
@@ -184,14 +186,14 @@ class PictureCreateView(CreateView):
                     'thumbnailUrl': conf.PIC_URL+thumbPath,
                     'size': 0,
                 })
-            path, dirs, files = os.walk(save_dir).next()
-            file_count = len(files)
+            # path, dirs, files = os.walk(save_dir).next()
+            # file_count = len(files)
 
-            list = [os.path.join(conf.EXEC_DIR, 'stitch_full'), '--img', save_dir, '--verbose', '1', '--output',
-                    os.path.join(save_dir, 'results/'), ]
+            # list = [os.path.join(conf.EXEC_DIR, 'stitch_full'), '--img', save_dir, '--verbose', '1', '--output',
+            #         os.path.join(save_dir, 'results/'), ]
 
-            print list
-            request_obj.run_executable(list, os.path.join(conf.PIC_URL, folder_name, 'results/result_stitch.jpg'))
+            # print list
+            request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'), os.path.join(conf.PIC_URL, folder_name, 'results/result_stitch.jpg'))
 
             response = JSONResponse(data, mimetype=response_mimetype(self.request))
             response['Content-Disposition'] = 'inline; filename=files.json'
@@ -278,17 +280,17 @@ def demoUpload(request, executable):
             data = []
             save_dir = os.path.join(conf.LOCAL_DEMO1_PIC_DIR)
 
-            list = [os.path.join(conf.EXEC_DIR, 'stitch_full'), '--img', save_dir, '--verbose', '1', '--output',
-                    save_dir + '/results/']
+            # list = [os.path.join(conf.EXEC_DIR, 'stitch_full'), '--img', save_dir, '--verbose', '1', '--output',
+            #         save_dir + '/results/']
 
-            path, dirs, files = os.walk(save_dir).next()
-            file_count = len(files)
+            # path, dirs, files = os.walk(save_dir).next()
+            # file_count = len(files)
 
-            list.append('--ncpus')
-            list.append(str(min(file_count, 20)))
+            # list.append('--ncpus')
+            # list.append(str(min(file_count, 20)))
 
             request_obj.log_to_terminal(str('Images Processed. Starting Executable'))
-            request_obj.run_executable(list, '/app/media/pictures/demo1/results/result_stitch.jpg')
+            request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'), '/app/media/pictures/demo1/results/result_stitch.jpg')
 
             data.append({'text': str('')})
             data.append({'result': '/app/media/pictures/demo/output/result_stitch.jpg'})
@@ -312,13 +314,12 @@ def log_every_request(job_obj):
                           function=job_obj.executable, dateTime=now)
         req_obj.save()
     except Exception as e:
+        r = redis.StrictRedis(host = 'redis', port=6379, db=0)
         r.publish('chat', json.dumps({'error': str(traceback.format_exc()), 'socketid': job_obj.socketid}))
 
 @csrf_exempt
 def matlabReadRequest(request):
-    """
-    Method that makes request to the matlab api. 
-    """
+    r = redis.StrictRedis(host = 'redis', port=6379, db=0)
     if request.method == 'POST':    # post request
         post_dict = parser.parse(request.POST.urlencode())
 
@@ -393,7 +394,6 @@ def callback(request, auth_name):
         code = str(post_dict['code'])
         json_response = gauth.handleCallback(code, request)
         return HttpResponse(json_response)
-
     return HttpResponse('Invalid URL')
 
 ####################################################################
@@ -773,6 +773,4 @@ def insert_file(service, title, parent_id, filename):
 
 up_storage_api = login_required(UploadApiTest.as_view())
 down_storage_api = login_required(DownloadApiTest.as_view())
-
-
 
