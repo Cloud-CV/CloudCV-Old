@@ -17,7 +17,6 @@ import re
 
 r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
-
 def parseParameters(params):
     params = str(params)
     log(params, parseParameters.__name__)
