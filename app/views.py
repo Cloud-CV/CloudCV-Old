@@ -17,6 +17,7 @@ from io import BytesIO
 
 from app.celery.web_tasks.ImageStitchingTask import runImageStitching
 from app.models import Picture, RequestLog, Decaf
+from rest_framework import permissions
 from app.core.job import Job
 from querystring_parser import parser
 from log import logger, log, log_to_terminal, log_and_exit
@@ -667,6 +668,7 @@ class UploadApiTest(TemplateView):
                 #   pass
         return HttpResponse(json.dumps(result), content_type="application/json")
 
+
 def put_data_on_s3(request, source_path, dest_path,bucket):
     result = {}
     # source_path = request.POST['source_path']
@@ -848,4 +850,3 @@ def insert_file(service, title, parent_id, filename):
 
 up_storage_api = login_required(UploadApiTest.as_view())
 down_storage_api = login_required(DownloadApiTest.as_view())
-
