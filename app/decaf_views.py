@@ -9,7 +9,7 @@ from PIL import Image
 from querystring_parser import parser
 from os.path import splitext, basename
 from urlparse import urlparse
-
+from app.models import Images
 from celeryTasks.webTasks.decafTask import decafImages
 import redis
 

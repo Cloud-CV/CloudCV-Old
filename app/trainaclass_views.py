@@ -1,21 +1,5 @@
 __author__ = 'clint'
 
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_exempt
-from urlparse import urlparse
-from PIL import Image
-from querystring_parser import parser
-from os.path import splitext, basename
-
-# from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
-from app.models import *
-from app.executable.LDA_files.test import caffe_classify, caffe_classify_image
-from app.executable.LDA_files import train_fast
-from app.classify_views import  classify_wrapper_local as default_classify
-
-import app.conf as conf
 import time
 import os
 import json
@@ -139,7 +123,7 @@ def response_mimetype(request):
 
 
 class TrainaclassCreateView(CreateView):
-    model = Images
+    model = Trainaclass
     r = None
     socketid = None
 
@@ -214,7 +198,7 @@ class TrainaclassCreateView(CreateView):
 
                 for file in all_files:
                     try:
-                        a = Images()
+                        a = Picture()
                         tick = time.time()
                         strtick = str(tick).replace('.','_')
                         fileName, fileExtension = os.path.splitext(file.name)
@@ -251,12 +235,12 @@ class TrainaclassCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(TrainaclassCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Images.objects.all()
+        context['pictures'] = Trainaclass.objects.all()
         return context
 
 
 class TrainaclassDeleteView(DeleteView):
-    model = Images
+    model = Trainaclass
 
     def delete(self, request, *args, **kwargs):
         """
@@ -283,9 +267,6 @@ class JSONResponse(HttpResponse):
 
 @csrf_exempt
 def trainamodel(request):
-    """
-    Method for training a model
-    """
     data = {}
 
     post_dict = parser.parse(request.POST.urlencode())
@@ -309,9 +290,6 @@ def trainamodel(request):
 
 @csrf_exempt
 def testmodel(request):
-    """
-    Method for testing an already trained model.
-    """
     data = {}
     try:
         post_dict = parser.parse(request.POST.urlencode())
