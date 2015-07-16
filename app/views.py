@@ -11,8 +11,7 @@ from PIL import Image
 from io import BytesIO
 
 from rest_framework import permissions
-from app.celery.web_tasks.ImageStitchingTask import runImageStitching
-# from app.models import Picture, RequestLog, Decaf
+from app.models import Images, RequestLog
 from app.models import *
 from app.core.job import Job
 from querystring_parser import parser
