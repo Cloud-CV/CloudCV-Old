@@ -10,7 +10,6 @@ from querystring_parser import parser
 from os.path import splitext, basename
 from urlparse import urlparse
 
-# from app.models import Picture, RequestLog, Decaf, Decafmodel
 from app.models import Images
 from .response import JSONResponse, response_mimetype
 from app.celery.web_tasks.DecafTask import decafImages
@@ -29,6 +28,7 @@ import requests
 import re
 
 redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
+
 ps_obj = redis_obj.pubsub()
 decaf_channel_name = 'decaf_server_queue'
 IMAGEFOLDER = '/srv/share/cloudcv/jobs/'
