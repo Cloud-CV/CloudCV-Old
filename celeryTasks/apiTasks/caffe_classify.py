@@ -8,6 +8,7 @@ While editing please make sure:
 3) Any new import will require you to install it in the worker container.
    (See Docker/CPUWorker/Dockerfile)
 """
+import redis
 r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 def caffe_classify_image(single_image):
     import operator
