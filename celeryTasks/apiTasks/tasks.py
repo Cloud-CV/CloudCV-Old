@@ -334,5 +334,6 @@ def run(parsed_dict):
                                           'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
     except Exception as e:
-        pass
+        r.publish('chat', json.dumps({'message': 'Exception in run', 'socketid': str(socketid)}))
         #log_and_exit(str(traceback.format_exc()), socketid)
+
