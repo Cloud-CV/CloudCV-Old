@@ -26,8 +26,8 @@ urlpatterns += patterns('app.views',
     url(r'^matlab/$','matlabReadRequest', name='matlabReadRequest'),
     url(r'^api/$','matlabReadRequest', name='apiRequest'),
     url(r'^ec2/$','ec2', name='ec2'),
-    url(r'api/upload', 'auths.views.up_storage_api', name='api_upload'),
-    url(r'api/download', 'auths.views.down_storage_api', name='api_download'),
+    url(r'api/upload', 'up_storage_api', name='api_upload'),
+    url(r'api/download', 'down_storage_api', name='api_download'),
 
 )
 
