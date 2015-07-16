@@ -11,6 +11,7 @@ from os.path import splitext, basename
 from urlparse import urlparse
 
 from celeryTasks.webTasks.decafTask import decafImages
+import redis
 
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
 ps_obj = redis_obj.pubsub()
