@@ -593,6 +593,7 @@ class CloudCV_UserDetail(APIView):
 
 from django.views.generic import *
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.models import * 
 from cloudcv17 import *
 from app.models import *
