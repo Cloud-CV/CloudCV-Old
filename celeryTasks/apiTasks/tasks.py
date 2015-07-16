@@ -244,8 +244,10 @@ def run_classification(userid, jobid, image_path, socketid, token, source_type, 
     message = 'Classification Complete'
     result = caffe_classify.caffe_classify(image_path)
     result = json.dumps(result)
+    r.publish('chat', json.dumps({'message': 'Running Classification', 'socketid': str(socketid)}))
     sendsMessageToRedis(userid, jobid, source_type, socketid, '', result_path=result_path, result_text=str(result),
                         dropbox_token=db_token)
+    r.publish('chat', json.dumps({'message': 'Send message to Redis', 'socketid': str(socketid)}))
     r.publish('chat', json.dumps({'done': str(message), 'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
 def run_image_stitching(list, token, result_url, socketid, result_path, source_type):
@@ -317,6 +319,7 @@ def run(parsed_dict):
             r.publish('chat', json.dumps({'message': str('Bounding Boxes Generated'), 'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
         elif(parsed_dict['exec'] == 'classify'):
+            r.publish('chat', json.dumps({'message': 'Exec is Classify', 'socketid': str(socketid)}))
             run_classification(parsed_dict['userid'], parsed_dict['jobid'], parsed_dict['image_path'],
                                parsed_dict['socketid'], parsed_dict['token'], parsed_dict['source_type'],result_path,
                                db_token=db_token)
