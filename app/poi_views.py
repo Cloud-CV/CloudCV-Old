@@ -34,7 +34,6 @@ demo_log_file = physical_job_root + 'classify_demo.log'
 
 
 def log_to_terminal(message, socketid):
-    """Method for logging to terminal"""
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
 
 
@@ -55,7 +54,6 @@ class CustomPrint():
 
 
 def classify_wrapper_redis(src_path, socketid, result_path):
-    """ Method for pushing jobs into redis classify queue"""
     try:
         # PUSH job into redis classify queue
         redis_obj.publish(classify_channel_name, json.dumps(
@@ -77,7 +75,7 @@ def response_mimetype(request):
 
 
 class PoiCreateView(CreateView):
-    model = Images
+    model = Poi
     r = None
     socketid = None
     count_hits = 0
@@ -115,7 +113,7 @@ class PoiCreateView(CreateView):
 
         for file in all_files:
             try:
-                a = Images()
+                a = Picture()
                 tick = time.time()
                 strtick = str(tick).replace('.', '_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -157,12 +155,12 @@ class PoiCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(PoiCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Images.objects.all()
+        context['pictures'] = Poi.objects.all()
         return context
 
 
 class PoiDeleteView(DeleteView):
-    model = Images
+    model = Poi
 
     def delete(self, request, *args, **kwargs):
         """

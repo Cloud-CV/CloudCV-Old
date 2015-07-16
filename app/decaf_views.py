@@ -9,12 +9,17 @@ from PIL import Image
 from querystring_parser import parser
 from os.path import splitext, basename
 from urlparse import urlparse
+<<<<<<< HEAD
 
 from app.models import Images
 from .response import JSONResponse, response_mimetype
 from app.celery.web_tasks.DecafTask import decafImages
 import app.conf as conf
 
+=======
+from app.models import Images
+from celeryTasks.webTasks.decafTask import decafImages
+>>>>>>> views changed to support the previous code
 import redis
 import traceback
 import time
