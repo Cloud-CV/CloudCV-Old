@@ -16,7 +16,7 @@ def caffe_classify_image(single_image):
 
     import scipy.io as sio
     import caffe
-
+    import os
     matWNID = sio.loadmat(os.path.join(os.path.dirname(os.path.abspath(__file__)),'WNID.mat'))
     WNID_cells = matWNID['wordsortWNID']
 
