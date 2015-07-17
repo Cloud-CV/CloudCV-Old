@@ -12,7 +12,6 @@ While editing please make sure:
 def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results, modelname = '', modelnet=None):
 
     import os
-    import app.conf as conf
     import scipy.io as sio
     import caffe
 
@@ -27,13 +26,15 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
 
     os.environ['OMP_NUM_THREADS'] = '4'
 
+    CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__),"..",".."))
+
     r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 
     print "Started test script"
     # Set the right path to your model file, pretrained model,
     # and the image you would like to classify.
-    MODEL_FILE = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
-    PRETRAINED = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
+    MODEL_FILE = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
+    PRETRAINED = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
     #caffe.set_phase_test()
     caffe.set_mode_cpu()
     net = caffe.Classifier(MODEL_FILE, PRETRAINED)
