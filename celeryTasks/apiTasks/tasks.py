@@ -11,7 +11,7 @@ While editing please make sure:
 
 from __future__ import absolute_import
 from celeryTasks.celery import app
-from app.thirdparty import dropbox_upload as dbu
+# from app.thirdparty import dropbox_upload as dbu
 import os
 import subprocess
 import json
@@ -62,16 +62,16 @@ def sendsMessageToRedis(userid, jobid, source_type, socketid, complete_output,
             elif result_text is not None:
                 r.hset(jobid, 'output', result_text)
 
-        elif source_type == 'dropbox':
-            f = open(result_path.rstrip('/') + '/output.txt', 'w')
-            if complete_output is not None or complete_output is not '':
-                f.write(str(complete_output))
-            if result_text is not None:
-                f.write(str(result_text))
-            f.close()
+        # elif source_type == 'dropbox':
+        #     f = open(result_path.rstrip('/') + '/output.txt', 'w')
+        #     if complete_output is not None or complete_output is not '':
+        #         f.write(str(complete_output))
+        #     if result_text is not None:
+        #         f.write(str(result_text))
+        #     f.close()
 
-            response, url = dbu.upload_files_to_dropbox(userid, jobid, result_path, dropbox_token)
-            r.hset(jobid, 'output', str(response) + '\n' + str(url))
+        #     response, url = dbu.upload_files_to_dropbox(userid, jobid, result_path, dropbox_token)
+        #     r.hset(jobid, 'output', str(response) + '\n' + str(url))
     except Exception as e:
         raise e
 
