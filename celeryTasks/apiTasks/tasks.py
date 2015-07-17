@@ -11,7 +11,7 @@ While editing please make sure:
 
 from __future__ import absolute_import
 from celeryTasks.celery import app
-# from app.thirdparty import dropbox_upload as dbu
+from app.thirdparty import dropbox_upload as dbu
 import os
 import subprocess
 import json
