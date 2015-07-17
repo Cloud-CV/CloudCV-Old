@@ -47,7 +47,7 @@ class CustomPrint():
 def sendsMessageToRedis(userid, jobid, source_type, socketid, complete_output,
                         result_path=None, result_url=None, result_text=None, dropbox_token=None):
     #logger.write('P', 'Inside send message to redis')
-    from app.thirdparty import dropbox_upload as dbu
+    # from app.thirdparty import dropbox_upload as dbu
     try:
 
         r.hset(jobid, 'output', str(complete_output))
