@@ -14,8 +14,6 @@ def caffe_classify_image(single_image):
     import operator
     import numpy as np
 
-    from ..app import conf
-
     import scipy.io as sio
     import caffe
 
