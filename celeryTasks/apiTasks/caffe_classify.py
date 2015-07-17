@@ -12,25 +12,25 @@ While editing please make sure:
 def caffe_classify_image(single_image):
     import operator
     import numpy as np
-    import app.conf as conf
-
 
     import scipy.io as sio
     import caffe
 
-    matWNID = sio.loadmat(os.path.join(conf.EXEC_DIR, 'WNID.mat'))
+    matWNID = sio.loadmat(os.path.join(os.path.dirname(os.path.abspath(__file__)),'WNID.mat'))
     WNID_cells = matWNID['wordsortWNID']
+
+    CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__),"..",".."))
 
     # Set the right path to your model file, pretrained model,
     # and the image you would like to classify.
-    MODEL_FILE = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
-    PRETRAINED = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
+    MODEL_FILE = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
+    PRETRAINED = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
 
     #caffe.set_phase_test()
     caffe.set_mode_cpu()
 
     net = caffe.Classifier(MODEL_FILE, PRETRAINED,
-                        mean=np.load(os.path.join(conf.CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy')).mean(1).mean(1),
+                        mean=np.load(os.path.join(CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy')).mean(1).mean(1),
                         channel_swap=(2, 1, 0),
                         raw_scale=255,
                         image_dims=(256, 256))
