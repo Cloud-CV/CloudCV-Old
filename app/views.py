@@ -312,6 +312,7 @@ def matlabReadRequest(request):
             response = saveFilesAndProcess(request, job_obj)
 
         except Exception as e:
+            r.publish('chat', json.dumps({'message': 'Error in matlabReadRequest'+traceback.format_exc(), 'socketid': str(socketid)}))
             log_and_exit(str(traceback.format_exc()), job_obj.socketid)
             return HttpResponse('Error at server side')
 

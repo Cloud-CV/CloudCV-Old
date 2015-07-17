@@ -27,7 +27,7 @@ class Parameters:
             self.dropbox_path = dict['dropbox_path']
             self.dropbox_token = dict['dropbox_token']
         if 'jobid' in dict:
-            self.jobid = dict['userid']
+            self.jobid = dict['jobid']
         if 'userid' in dict:
             self.userid = dict['userid']
         if 'token' in dict:
