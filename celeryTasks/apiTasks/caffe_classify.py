@@ -8,9 +8,9 @@ While editing please make sure:
 3) Any new import will require you to install it in the worker container.
    (See Docker/CPUWorker/Dockerfile)
 """
-import redis
-r = redis.StrictRedis(host = 'redis', port=6379, db=0)
-def caffe_classify_image(single_image):
+
+
+def caffe_classify_image(single_image,r):
     import operator
     import numpy as np
     import app.conf as conf
@@ -21,12 +21,10 @@ def caffe_classify_image(single_image):
 
     matWNID = sio.loadmat(os.path.join(conf.EXEC_DIR, 'WNID.mat'))
     WNID_cells = matWNID['wordsortWNID']
-    r.publish('chat', json.dumps({'message': 'Finished Imports', 'socketid': str(socketid)}))
     # Set the right path to your model file, pretrained model,
     # and the image you would like to classify.
     MODEL_FILE = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
     PRETRAINED = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
-    r.publish('chat', json.dumps({'message': 'Finished Imports2', 'socketid': str(socketid)}))
     #caffe.set_phase_test()
     caffe.set_mode_cpu()
 
@@ -35,7 +33,6 @@ def caffe_classify_image(single_image):
                         channel_swap=(2, 1, 0),
                         raw_scale=255,
                         image_dims=(256, 256))
-    r.publish('chat', json.dumps({'message': 'Classifier Net', 'socketid': str(socketid)}))
     input_image = caffe.io.load_image(single_image)
     prediction = net.predict([input_image])
     map = {}
@@ -45,7 +42,6 @@ def caffe_classify_image(single_image):
     predsorted = sorted(map.iteritems(), key=operator.itemgetter(1), reverse=True)
     top5 = predsorted[0:5]
     topresults = [] 
-    r.publish('chat', json.dumps({'message': 'Got results', 'socketid': str(socketid)}))
     for i in top5:
         #topresults[str(WNID_cells[i, 0][0][0])] = str(i[1])
         topresults.append([str(WNID_cells[i, 0][0][0]),str(i[1])])
@@ -54,13 +50,12 @@ def caffe_classify_image(single_image):
 
 def caffe_classify(ImagePath):
     import os
-
+   
     results = {}
-    r.publish('chat', json.dumps({'message': 'In caffe_classify', 'socketid': str(socketid)}))
     for file_name in os.listdir(ImagePath):
         if os.path.isfile(os.path.join(ImagePath, file_name)):
             input_image_path = os.path.join(ImagePath, file_name)
-            topresults = caffe_classify_image(input_image_path)
+            topresults = caffe_classify_image(input_image_path,r)
             results[file_name] = topresults
 
     return results
