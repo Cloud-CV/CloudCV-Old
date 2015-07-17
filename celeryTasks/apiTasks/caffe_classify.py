@@ -13,7 +13,7 @@ While editing please make sure:
 def caffe_classify_image(single_image):
     import operator
     import numpy as np
-    
+
     from ..app import conf
 
     import scipy.io as sio
@@ -21,10 +21,13 @@ def caffe_classify_image(single_image):
 
     matWNID = sio.loadmat(os.path.join(os.path.dirname(os.path.abspath(__file__)),'WNID.mat'))
     WNID_cells = matWNID['wordsortWNID']
+
+    CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__),"..",".."))
+
     # Set the right path to your model file, pretrained model,
     # and the image you would like to classify.
-    MODEL_FILE = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
-    PRETRAINED = os.path.join(conf.CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
+    MODEL_FILE = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
+    PRETRAINED = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
 
     #caffe.set_phase_test()
     caffe.set_mode_cpu()
