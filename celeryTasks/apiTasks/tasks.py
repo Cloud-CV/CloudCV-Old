@@ -10,6 +10,7 @@ While editing please make sure:
 """
 
 from __future__ import absolute_import
+# from app.thirdparty import dropbox_upload as dbu
 from celeryTasks.celery import app
 
 import os
@@ -47,7 +48,7 @@ class CustomPrint():
 def sendsMessageToRedis(userid, jobid, source_type, socketid, complete_output,
                         result_path=None, result_url=None, result_text=None, dropbox_token=None):
     #logger.write('P', 'Inside send message to redis')
-    from ..app.thirdparty import dropbox_upload as dbu
+    
     try:
 
         r.hset(jobid, 'output', str(complete_output))
@@ -73,6 +74,7 @@ def sendsMessageToRedis(userid, jobid, source_type, socketid, complete_output,
             response, url = dbu.upload_files_to_dropbox(userid, jobid, result_path, dropbox_token)
             r.hset(jobid, 'output', str(response) + '\n' + str(url))
     except Exception as e:
+        r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
         raise e
 
 def run_matlab_code(mlab_inst, exec_path, task_args, socketid):
