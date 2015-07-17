@@ -55,7 +55,7 @@ def caffe_classify(ImagePath):
     for file_name in os.listdir(ImagePath):
         if os.path.isfile(os.path.join(ImagePath, file_name)):
             input_image_path = os.path.join(ImagePath, file_name)
-            topresults = caffe_classify_image(input_image_path,r)
+            topresults = caffe_classify_image(input_image_path)
             results[file_name] = topresults
 
     return results
