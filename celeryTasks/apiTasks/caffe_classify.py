@@ -10,7 +10,7 @@ While editing please make sure:
 """
 
 
-def caffe_classify_image(single_image,r):
+def caffe_classify_image(single_image):
     import operator
     import numpy as np
     import app.conf as conf
