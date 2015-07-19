@@ -1,20 +1,5 @@
 __author__ = 'clint'
 
-from urlparse import urlparse
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_exempt
-from PIL import Image
-from querystring_parser import parser
-from os.path import splitext, basename
-
-# from app.models import Picture, RequestLog, Decaf, Classify
-from app.models import *
-from app.executable.caffe_classify import caffe_classify, caffe_classify_image
-import app.conf as conf
-from app.celery.web_tasks.ClassifyTask import classifyImages
-
 import time
 import subprocess
 import os
@@ -27,9 +12,19 @@ import json
 import threading
 import operator
 import sys
+
+from urlparse import urlparse
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+
+from PIL import Image
+from querystring_parser import parser
+from os.path import splitext, basename
 import redis
 
-from app.models import Picture, RequestLog, Decaf, Classify
+from app.models import Picture, RequestLog, Classify
 import app.conf as conf
 from celeryTasks.webTasks.classifyTask import classifyImages
 
@@ -48,9 +43,6 @@ demo_log_file = physical_job_root + 'classify_demo.log'
 
 
 def log_to_terminal(message, socketid):
-    """
-    Method for publishing the message and socket-id to the channel 'chat'. 
-    """
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
 
 
@@ -69,10 +61,10 @@ class CustomPrint():
         log_to_terminal(text, self.socketid)
 
 def classify_wrapper_redis(src_path, socketid, result_path):
-    """
-    PUSH job into redis classify queue
-    """
     try:
+
+        ## PUSH job into redis classify queue
+
         redis_obj.publish(classify_channel_name, json.dumps({'src_path': src_path, 'socketid': socketid, 'result_path': result_path}))
         log_to_terminal('Task Scheduled..Please Wait', socketid)
 
@@ -80,9 +72,6 @@ def classify_wrapper_redis(src_path, socketid, result_path):
         log_to_terminal(str(traceback.format_exc()), socketid)
 
 def classify_wrapper_local(src_path, socketid, result_path):
-    """
-    Deprecated Classification code. We don't want to loose it. So, it is commented.
-    """
 
     # try:
     #     #Entire Directory
@@ -169,9 +158,6 @@ def classify_wrapper_local(src_path, socketid, result_path):
 
 
 def response_mimetype(request):
-    """
-    To check the type of data in response.
-    """
     if "application/json" in request.META['HTTP_ACCEPT']:
         return "application/json"
     else:
@@ -179,7 +165,7 @@ def response_mimetype(request):
 
 
 class ClassifyCreateView(CreateView):
-    model = Images
+    model = Classify
     r = None
     socketid = None
 
@@ -228,7 +214,7 @@ class ClassifyCreateView(CreateView):
 
         for file in all_files:
             try:
-                a = Images()
+                a = Picture()
                 tick = time.time()
                 strtick = str(tick).replace('.','_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -270,12 +256,12 @@ class ClassifyCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(ClassifyCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Images.objects.all()
+        context['pictures'] = Classify.objects.all()
         return context
 
 
 class ClassifyDeleteView(DeleteView):
-    model = Images
+    model = Classify
 
     def delete(self, request, *args, **kwargs):
         """
@@ -301,9 +287,6 @@ class JSONResponse(HttpResponse):
 
 @csrf_exempt
 def demoClassify(request):
-    """
-    To classify the demo images
-    """
     post_dict = parser.parse(request.POST.urlencode())
     try:
         if not os.path.exists(demo_log_file):

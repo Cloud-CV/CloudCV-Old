@@ -127,11 +127,64 @@ class StorageCredentials(models.Model):
     aws_access_key = models.CharField(max_length = 100)
     aws_access_secret = models.CharField(max_length = 100)
 
+class Classify(models.Model):
+
+    # This is a small demo using just two fields. The slug field is really not
+    # necessary, but makes the code simpler. ImageField depends on PIL or
+    # pillow (where Pillow is easily installable in a virtualenv. If you have
+    # problems installing pillow, use a more generic FileField instead.
+
+    #file = models.FileField(upload_to="pictures")
+    file = models.ImageField(upload_to="pictures")
+    slug = models.SlugField(max_length=50, blank=True)
+
+    def __unicode__(self):
+        return self.file.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('classify', )
+
+    def save(self, *args, **kwargs):
+        self.slug = self.file.name
+        super(Classify, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.file.delete(False)
+        super(Classify, self).delete(*args, **kwargs)
+
+class Poi(models.Model):
+
+    # This is a small demo using just two fields. The slug field is really not
+    # necessary, but makes the code simpler. ImageField depends on PIL or
+    # pillow (where Pillow is easily installable in a virtualenv. If you have
+    # problems installing pillow, use a more generic FileField instead.
+
+    #file = models.FileField(upload_to="pictures")
+    file = models.ImageField(upload_to="pictures")
+    slug = models.SlugField(max_length=50, blank=True)
+
+    def __unicode__(self):
+        return self.file.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('poi', )
+
+    def save(self, *args, **kwargs):
+        self.slug = self.file.name
+        super(Poi, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.file.delete(False)
+        super(Poi, self).delete(*args, **kwargs)
+
 class Picture(models.Model):
     """This is a small demo using just two fields. The slug field is really not
     necessary, but makes the code simpler. ImageField depends on PIL or
     pillow (where Pillow is easily installable in a virtualenv. If you have
     problems installing pillow, use a more generic FileField instead.
+
     """
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
@@ -152,3 +205,80 @@ class Picture(models.Model):
         self.file.delete(False)
         super(Picture, self).delete(*args, **kwargs)
 
+class Decaf(models.Model):
+
+    # This is a small demo using just two fields. The slug field is really not
+    # necessary, but makes the code simpler. ImageField depends on PIL or
+    # pillow (where Pillow is easily installable in a virtualenv. If you have
+    # problems installing pillow, use a more generic FileField instead.
+
+    #file = models.FileField(upload_to="pictures")
+    file = models.ImageField(upload_to="pictures")
+    slug = models.SlugField(max_length=50, blank=True)
+
+    def __unicode__(self):
+        return self.file.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('decaf', )
+
+    def save(self, *args, **kwargs):
+        self.slug = self.file.name
+        super(Decaf, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.file.delete(False)
+        super(Decaf, self).delete(*args, **kwargs)
+
+class Decafmodel(models.Model):
+
+    # This is a small demo using just two fields. The slug field is really not
+    # necessary, but makes the code simpler. ImageField depends on PIL or
+    # pillow (where Pillow is easily installable in a virtualenv. If you have
+    # problems installing pillow, use a more generic FileField instead.
+
+    #file = models.FileField(upload_to="pictures")
+    file = models.ImageField(upload_to="pictures")
+    slug = models.SlugField(max_length=50, blank=True)
+
+    def __unicode__(self):
+        return self.file.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('decaf', )
+
+    def save(self, *args, **kwargs):
+        self.slug = self.file.name
+        super(Decafmodel, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.file.delete(False)
+        super(Decafmodel, self).delete(*args, **kwargs)
+
+class Trainaclass(models.Model):
+
+    # This is a small demo using just two fields. The slug field is really not
+    # necessary, but makes the code simpler. ImageField depends on PIL or
+    # pillow (where Pillow is easily installable in a virtualenv. If you have
+    # problems installing pillow, use a more generic FileField instead.
+
+    #file = models.FileField(upload_to="pictures")
+    file = models.ImageField(upload_to="pictures")
+    slug = models.SlugField(max_length=50, blank=True)
+
+    def __unicode__(self):
+        return self.file.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('trainaclass', )
+
+    def save(self, *args, **kwargs):
+        self.slug = self.file.name
+        super(Trainaclass, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.file.delete(False)
+        super(Trainaclass, self).delete(*args, **kwargs)

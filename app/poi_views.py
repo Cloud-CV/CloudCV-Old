@@ -1,22 +1,5 @@
 __author__ = 'clint'
 
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_exempt
-from urlparse import urlparse
-from PIL import Image
-from os.path import splitext, basename
-from querystring_parser import parser
-
-# from app.models import Picture, RequestLog, Poi
-from app.models import *
-from app.executable.caffe_classify import caffe_classify, caffe_classify_image
-from app.executable.poi_demo import findRelativeImportance
-#from app.executable.poi_demo import findImportantPeople
-
-import app.conf as conf
-import redis
 import time
 import subprocess
 import os
@@ -49,7 +32,6 @@ from celeryTasks.webTasks.poiTask import poiImages
 import app.conf as conf
 
 redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
->>>>>>> origin/Docker
 classify_channel_name = 'classify_queue'
 
 ### SET OF PATH CONSTANTS - SOME UNUSED
@@ -59,9 +41,11 @@ download_directory = conf.PIC_DIR
 # Input image is saved here (symbolic links) - after resizing to 500 x 500
 physical_job_root = conf.LOCAL_CLASSIFY_JOB_DIR
 demo_log_file = physical_job_root + 'classify_demo.log'
+##
+###
+
 
 def log_to_terminal(message, socketid):
-    """Method for logging to terminal"""
     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
 
 
@@ -80,8 +64,10 @@ class CustomPrint():
         log_to_terminal(text, self.socketid)
 
 def classify_wrapper_redis(src_path, socketid, result_path):
-    """ Method for pushing jobs into redis classify queue"""
     try:
+
+        ## PUSH job into redis classify queue
+
         redis_obj.publish(classify_channel_name, json.dumps({'src_path': src_path, 'socketid': socketid, 'result_path': result_path}))
         log_to_terminal('Task Scheduled..Please Wait', socketid)
 
@@ -100,7 +86,7 @@ def response_mimetype(request):
 
 
 class PoiCreateView(CreateView):
-    model = Images
+    model = Poi
     r = None
     socketid = None
 
@@ -149,7 +135,7 @@ class PoiCreateView(CreateView):
 
         for file in all_files:
             try:
-                a = Images()
+                a = Picture()
                 tick = time.time()
                 strtick = str(tick).replace('.','_')
                 fileName, fileExtension = os.path.splitext(file.name)
@@ -192,12 +178,12 @@ class PoiCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(PoiCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Images.objects.all()
+        context['pictures'] = Poi.objects.all()
         return context
 
 
 class PoiDeleteView(DeleteView):
-    model = Images
+    model = Poi
 
     def delete(self, request, *args, **kwargs):
         """
