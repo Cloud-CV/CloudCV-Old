@@ -27,8 +27,9 @@ sudo docker run -d --link cloudcv_desh_redis:redis --name cloudcv_desh_node clou
 rm ./Node/chat.js
 
 echo "Pulling the image and starting DIGITS server"
-sudo docker pull kaixhin/digits
-sudo docker run -d --name cloudcv_desh_digits kaixhin/digits ./digits-devserver
+# sudo docker pull kaixhin/digits
+docker build -t cloudcv/desh_digits ./DIGITS/
+sudo docker run -d --name cloudcv_desh_digits cloudcv/desh_digits ./digits-devserver
 
 echo "Pulling the image and starting django server"
 sudo docker build -t cloudcv/desh_django ./Django/
@@ -37,4 +38,4 @@ sudo docker run -d --volumes-from cloudcv_desh_code --link cloudcv_desh_rabbitmq
 echo "Pulling the image and starting nginx server"
 cp ../fileupload_nginx.conf ./Nginx/default.conf
 sudo docker build -t cloudcv/desh_nginx ./Nginx/
-sudo docker run -d -p 80:80 -p 443:443 --volumes-from cloudcv_desh_code --name cloudcv_desh_nginx --link cloudcv_desh_node:node --link cloudcv_desh_redis:redis --link cloudcv_desh_digits:digits --link cloudcv_desh_django:django cloudcv/desh_nginx
+sudo docker run -d -p 8500:80 --volumes-from cloudcv_desh_code --name cloudcv_desh_nginx --link cloudcv_desh_node:node --link cloudcv_desh_redis:redis --link cloudcv_desh_digits:digits --link cloudcv_desh_django:django cloudcv/desh_nginx
