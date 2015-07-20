@@ -1,9 +1,7 @@
 """
 This Python script helps in the setup of the CloudCV Server code on 
 a new machine. Just run this code and relax. 
-
 This code is written for Linux based systems and tested on Ubuntu 14.04
-
 Author - Prashant Jalan
 """
 
@@ -17,7 +15,7 @@ if os.geteuid() != 0:
 	exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
 
 #Check redis server
-rs = redis.Redis("localhost")
+rs = redis.Redis("redis")
 if not rs.ping():
 	exit("The redis server is not running.\nMake sure you have configured the redis server to run robustly at its default port. Exiting.")
 
@@ -101,13 +99,10 @@ os.system('cp '+project_path+'/cloudcv17_uwsgi.ini /etc/uwsgi/')
 print "Creating upstart for uWSGI emperor"
 script = """
 # Emperor uWSGI script
-
 description "uWSGI Emperor"
 start on runlevel [2345]
 stop on runlevel [06]
-
 respawn
-
 exec uwsgi --emperor /etc/uwsgi
 """
 out = open('/etc/init/emperor.uwsgi.conf', 'w')
@@ -127,7 +122,6 @@ os.system(foreverStartCMD)
 print "\nCreating upstart script for forever"
 script = """
 # Node.js forever script
-
 description "node.js forever"
 start on startup
 """
