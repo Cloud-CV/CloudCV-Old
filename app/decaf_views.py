@@ -1,5 +1,15 @@
 __author__ = 'dexter'
-
+import time
+import subprocess
+import os
+import json
+import traceback
+import operator
+import shortuuid
+import requests
+from os.path import splitext, basename
+from urlparse import urlparse
+import traceback
 from django.views.generic import CreateView, DeleteView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -9,17 +19,12 @@ from PIL import Image
 from querystring_parser import parser
 from os.path import splitext, basename
 from urlparse import urlparse
-<<<<<<< HEAD
 
 from app.models import Images
 from .response import JSONResponse, response_mimetype
 from app.celery.web_tasks.DecafTask import decafImages
 import app.conf as conf
 
-=======
-from app.models import Images
-from celeryTasks.webTasks.decafTask import decafImages
->>>>>>> views changed to support the previous code
 import redis
 import traceback
 import time
@@ -59,7 +64,7 @@ def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_fil
 
 
 class DecafCreateView(CreateView):
-    model = Images
+    model = Decaf
     r = None
     socketid = None
 
@@ -144,19 +149,13 @@ class DecafCreateView(CreateView):
         return response
 
     def get_context_data(self, **kwargs):
-        """
-        Method to get the context data.
-        """
         context = super(DecafCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Images.objects.all()
+        context['pictures'] = Decaf.objects.all()
         return context
 
 
 @csrf_exempt
 def demoDecaf(request):
-    """
-    Method for processing the Decaf-Server Demo Images
-    """
     post_dict = parser.parse(request.POST.urlencode())
     try:
         if 'src' not in post_dict:
@@ -206,10 +205,8 @@ def decafDemo(request):
             {'dir': DEMO_IMAGE_PATH, 'flag': '2', 'socketid': post_dict['socketid']}))
 
 
+import re
 def downloadAndSaveImages(url_list, socketid):
-    """
-    To download and save images.
-    """
     try:
         uuid = shortuuid.uuid()
         directory = os.path.join(conf.PIC_DIR, str(uuid))
@@ -244,9 +241,6 @@ def downloadAndSaveImages(url_list, socketid):
 
 @csrf_exempt
 def decafDropbox(request):
-    """
-    Try Decaf-Server through Dropbox
-    """
     post_dict = parser.parse(request.POST.urlencode())
     try:
         if 'urls' not in post_dict:
@@ -274,7 +268,7 @@ def decafDropbox(request):
 
 
 class DecafModelCreateView(CreateView):
-    model = Images
+    model = Decafmodel
     r = None
     socketid = None
 
@@ -367,7 +361,7 @@ class DecafModelCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(DecafModelCreateView, self).get_context_data(**kwargs)
-        context['pictures'] = Images.objects.all()
+        context['pictures'] = Decaf.objects.all()
         return context
 
 
