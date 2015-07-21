@@ -129,3 +129,12 @@ r = redis.StrictRedis(host='redis', port=6379, db=0)
 r.set('CLOUDCV_ABS_DIR', BASE_ABS_DIR)
 r.set('CLOUDCV_MEDIA_ROOT', MEDIA_ROOT)
 r.set('CLOUDCV_PIC_ROOT', os.path.join(MEDIA_ROOT, 'pictures', 'cloudcv'))
+
+import uwsgi
+from uwsgidecorators import timer
+from django.utils import autoreload
+
+@timer(3)
+def change_code_gracefull_reload(sig):
+    if autoreload.code_changed():
+        uwsgi.reload()

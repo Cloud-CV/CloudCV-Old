@@ -15,3 +15,5 @@ local_settings.py
 .*
 !/.gitignore
 sftp-config.json
+db.sqlite3
+cloudcv17/media/*
