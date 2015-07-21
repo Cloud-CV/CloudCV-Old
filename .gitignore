@@ -14,3 +14,4 @@ db
 local_settings.py
 .*
 !/.gitignore
+sftp-config.json
