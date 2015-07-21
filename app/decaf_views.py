@@ -103,7 +103,7 @@ def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_fil
             result_path = os.path.join(result_url, 'results')
         decafImages.delay(src_path, socketid, output_path, result_path)
     except Exception as e:
-    log_to_terminal(str(traceback.format_exc()),socketid);
+	log_to_terminal(str(traceback.format_exc()),socketid);
 
 class DecafCreateView(CreateView):
     model = Decaf
