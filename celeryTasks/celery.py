@@ -17,6 +17,7 @@ app = Celery('cloudcv',
 app.conf.update(
     CELERY_ENABLE_UTC=True,
     CELERY_TASK_RESULT_EXPIRES=3600,
+    CELERYD_POOL_RESTARTS=True,
 )
 
 if __name__ == '__main__':
