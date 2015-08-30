@@ -2,12 +2,11 @@
 '''
 Author: Deshraj
 '''
-
 from django.db import models
 from django.core.validators import URLValidator
 from jsonfield import JSONField
 from django.contrib.auth.models import User
-
+from organizations.models import Organization
 
 class UserDetails(models.Model):
     '''
@@ -24,14 +23,8 @@ class UserDetails(models.Model):
         (BUSINESS,'Business'),
         (OTHERS,'Others'),
         )
-    # email_id = models.EmailField(max_length = 254, unique = True)
-    # first_name = models.CharField(max_length =100)
-    # last_name = models.CharField(max_length = 100)
-    # username = models.CharField(max_length = 50, unique = True)
-    # last_login = models.DateTimeField()
-    # date_joined = models.DateTimeField()
     user = models.OneToOneField(User)
-    institution = models.CharField(max_length = 500) # Represents the institution/company where the user belongs to.
+    institution = models.CharField(max_length = 500)
     purpose = models.CharField(max_length = 2,
         choices = PURPOSE,
         default = EDUCATION)
@@ -77,7 +70,7 @@ class RequestLog(models.Model):
         default = START)
     job_id = models.CharField(max_length = 100)
     no_of_images = models.PositiveIntegerField()
-    '''
+   '''
     for the next field, the data comes in the form on json data. So, 
     DictModel is used for storing the json data. 
     See the link : http://stackoverflow.com/questions/402217/how-to-store-a-dictionary-on-a-django-model
@@ -90,17 +83,17 @@ class RequestLog(models.Model):
     output_source_type = models.CharField(max_length = 100)
     output_source_value = models.PositiveIntegerField()
 
-class Group(models.Model):
-    '''
-    This table stores the information about the group of people who 
-    are doing research/work using cloudcv and is used to monitor that 
-    which group is researching over what.
-    '''
-    model = models.ForeignKey(ModelStorage)
-    group_id = models.PositiveIntegerField()
-    group_name = models.CharField(max_length = 100)
-    purpose = models.CharField(max_length = 100)
-    user = models.ForeignKey(User)
+# class Group(models.Model):
+#     '''
+#     This table stores the information about the group of people who 
+#     are doing research/work using cloudcv and is used to monitor that 
+#     which group is researching over what.
+#     '''
+#     model = models.ForeignKey(ModelStorage)
+#     group_id = models.PositiveIntegerField()
+#     group_name = models.CharField(max_length = 100)
+#     purpose = models.CharField(max_length = 100)
+#     user = models.ForeignKey(User)
 
 class CurrentRequest(models.Model):
     '''
@@ -126,6 +119,10 @@ class StorageCredentials(models.Model):
     user  = models.ForeignKey(User)
     aws_access_key = models.CharField(max_length = 100)
     aws_access_secret = models.CharField(max_length = 100)
+
+class Job(models.Model):
+    job_id = models.CharField(max_length = 100)
+    workspace = models.ForeignKey(Organization)
 
 class Classify(models.Model):
 
