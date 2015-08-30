@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, url
+from django.contrib import admin
+
 from app.views import (
     PictureCreateView, BasicPlusVersionCreateView
 )
@@ -6,6 +8,10 @@ from app.decaf_views import DecafCreateView, DecafModelCreateView
 from app.classify_views import ClassifyCreateView
 from app.poi_views import PoiCreateView
 from app.trainaclass_views import TrainaclassCreateView
+from app import views
+
+# the below module import is used for importing the foramt type in which we the data like json or xml
+from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = patterns('',
                        url(r'^image-stitch/$', PictureCreateView.as_view(), name='upload-new'),
@@ -18,15 +24,15 @@ urlpatterns = patterns('',
                        )
 
 urlpatterns += patterns('app.views',
-                        url(r'^$', 'homepage', name="home"),
-                        url(r'^demoupload/(?P<executable>\w+)/$', 'demoUpload', name='demoUpload'),
-                        url(r'^auth/(?P<auth_name>\w+)/$', 'authenticate', name='authenticate'),
-                        url(r'^callback/(?P<auth_name>\w+)/$', 'callback', name='callback'),
-                        url(r'^matlab/$', 'matlabReadRequest', name='matlabReadRequest'),
-                        url(r'^api/$', 'matlabReadRequest', name='apiRequest'),
-                        url(r'^ec2/$', 'ec2', name='ec2'),
-                        url(r'api/upload', 'up_storage_api', name='api_upload'),
-                        url(r'api/download', 'down_storage_api', name='api_download'),
+    url(r'api/upload', 'up_storage_api', name='api_upload'),
+    url(r'api/download', 'down_storage_api', name='api_download'),
+    url(r'^$', 'homepage', name="home"),
+    url(r'^demoupload/(?P<executable>\w+)/$','demoUpload', name='demoUpload'),
+    url(r'^auth/(?P<auth_name>\w+)/$','authenticate', name='authenticate'),
+    url(r'^callback/(?P<auth_name>\w+)/$', 'callback', name='callback'),
+    url(r'^matlab/$','matlabReadRequest', name='matlabReadRequest'),
+    url(r'^api/$','matlabReadRequest', name='apiRequest'),
+    url(r'^ec2/$','ec2', name='ec2'),
 )
 
 urlpatterns += patterns('app.decaf_views',
