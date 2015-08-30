@@ -1,0 +1,26 @@
+{% extends "organizations_base.html" %}
+{% load url from future %}
+{% load org_tags %}
+{% block content %}
+<style type="text/css">
+	.card .card-title{
+		color: black;
+	}
+</style>
+    <div class="row dashboardControls">
+      <div class="col s12 m12 l12">
+        <div class="card darken-1 topcard">
+          <div class="card-content">
+            <span class="card-title">{{ organization }}'s Members</span>
+            <div class="divider"></div>
+			{% organization_users organization %}
+          </div>
+          <div class="card-action">
+            <ul>
+               <li><a href="{% url "organization_user_add" organization.pk %}">Add a member</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
