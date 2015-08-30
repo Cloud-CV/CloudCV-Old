@@ -9,9 +9,10 @@ from django.views.generic import CreateView, DeleteView
 from django.template import Context,RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, render_to_response
+from django.http import Http404
+from django.conf import settings
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize
-from django.conf import settings
 from PIL import Image
 from io import BytesIO
 
@@ -24,6 +25,16 @@ from log import logger, log, log_to_terminal, log_and_exit
 from savefile import saveFilesAndProcess
 import app.thirdparty.dropbox_auth as dbauth
 import app.thirdparty.google_auth as gauth
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework import filters
+from rest_framework import permissions
+
+from app.serializers import *
+from serializers import *
 
 import app.conf as conf
 import base64
@@ -346,15 +357,15 @@ def callback(request, auth_name):
 
     return HttpResponse('Invalid URL')
 
-####################################################################
 
-from rest_framework.views import APIView
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.http import Http404
-from rest_framework import generics
-from serializers import *
+class UserList(generics.ListCreateAPIView):
+    """
+    List all Users, or Create a new User
+    """
+    queryset = UserDetails.objects.all()
+    serializer_class = UserSerializer
+    model = UserDetails
+    filter_fields = ('institution', 'purpose')
 
 
 class CloudCV_UserList(APIView):
@@ -590,263 +601,3 @@ class CloudCV_UserDetail(APIView):
 #     queryset = ModelStorage.objects.all()
 #     serializer_class = ModelStorageSerializer
 #     model = ModelStorage
-
-#############################################################
-
-from django.views.generic import *
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from allauth.socialaccount.models import * 
-from cloudcv17 import *
-from app.models import *
-from dropbox.client import DropboxClient
-from dropbox.session import DropboxSession
-from boto.s3.connection import * 
-from apiclient import errors
-from apiclient.http import MediaFileUpload
-from cloudcv17.settings import *
-from os import path
-import httplib2
-import json
-import traceback
-import glob
-import os
-import dropbox
-
-class UploadApiTest(TemplateView):
-    def get(self, request, *args, **kwargs):
-        providers = []
-        tokens = SocialToken.objects.filter(account__user__id = request.user.id)
-        for i in tokens:
-            providers.append(str(i.app))
-        s3 = StorageCredentials.objects.filter(user__id = request.user.id).count()
-        if s3:
-            providers.append("Amazon S3")
-        return render_to_response("app/upload_to_storage.html",{'p':providers},context_instance = RequestContext(request))
-    
-    @csrf_exempt
-    def post(self,request):
-        print "POST Request to API "
-        source_path = request.POST['source_path']
-        path = request.POST['dest_path']
-        if path.split("//")[0][:-1]=="s3":
-            print "S3 is working "
-            bucket = path.split("//")[1]
-            dest_path = "/"+str(path.split("//")[2])
-            result = put_data_on_s3(request,dest_path,bucket)
-        else:
-            if path.split("//")[0][:-1]=="dropbox":
-                dest_path = path.split("//")[1]
-                access_token = SocialToken.objects.get(account__user__id = request.user.id, app__name = "Dropbox")
-                # print "ACCESS TOKEN: ",access_token
-                session = DropboxSession(settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET)
-                access_key, access_secret = access_token.token, access_token.token_secret  # Previously obtained OAuth 1 credentials
-                session.set_token(access_key, access_secret)
-                client = DropboxClient(session)
-                token = client.create_oauth2_access_token()
-                result = put_data_on_dropbox(request, source_path, dest_path, token)
-            elif str(storage)=="Google Drive":
-                # try:
-                print "############## GOOGLE DRIVE ##############   "
-                storage = Storage(SocialToken, 'id', request.user.id, 'token')
-                print storage
-                credential = storage.get()
-                # credentials = SocialToken.objects.get(account__user__id = request.user.id, app__name = storage)
-                # credentials = credentials.token
-                http = credential.authorize(httplib2.Http())
-                service = discovery.build('drive', 'v2', http=http)
-                results = service.files().list(maxResults=10).execute()
-                items = results.get('items', [])
-                if not items:
-                    print 'No files found.'
-                else:
-                    print 'Files:'
-                    for item in items:
-                        print '{0} ({1})'.format(item['title'], item['id'])
-                result = put_data_on_google_drive(request,path,access_token.token)
-                # except:
-                #   pass
-        return HttpResponse(json.dumps(result), content_type="application/json")
-
-
-def put_data_on_s3(request, source_path, dest_path,bucket):
-    result = {}
-    # source_path = request.POST['source_path']
-    print "the source path is ", source_path
-    # files = [ os.path.abspath(f) for f in os.listdir(source_path) if path.isfile(f)]
-    files = [name for name in glob.glob(os.path.join(source_path,'*.*')) if os.path.isfile(os.path.join(source_path,name))]
-    print files
-    result['sourcePath'] = source_path
-    result['dest_path'] = request.POST['dest_path']
-    result['bucket'] = bucket
-    # result['storage'] = request.POST['storageName']
-    result['uplaodedTo']= []
-    result['user'] = request.user.email
-    s3 = StorageCredentials.objects.get(user__id = request.user.id)
-    conn = S3Connection(s3.aws_access_key,s3.aws_access_secret)
-    try:
-        b = conn.get_bucket(bucket)
-        print "TRY "
-    except:
-        print "CATCH"
-        b = conn.create_bucket(bucket)
-    for i in files:
-        # upload_file_on_cloudcv_server(i)
-        k = Key(b)
-        k.key = dest_path+i.split("/")[-1]
-        result['uplaodedTo'].append(k.key)
-        k.set_contents_from_filename(i)
-        print i
-    return result
-
-
-def put_data_on_dropbox(request, source_path, dest_path,access_token):
-    result = {}
-    client = dropbox.client.DropboxClient(access_token)
-    result['pathProvided'] = dest_path
-    result['user'] = request.user.email
-    result['uplaodedTo'] = []
-    files = [name for name in glob.glob(os.path.join(source_path,'*.*')) if os.path.isfile(os.path.join(source_path,name))]
-    for i in files:
-        f = open(i,'rb')
-        response = client.put_file(dest_path+i.split("/")[-1], f)
-        result['uplaodedTo'].append(response)
-    return result
-
-
-
-class DownloadApiTest(TemplateView):
-    def get(self, request, *args, **kwargs):
-        providers = []
-        tokens = SocialToken.objects.filter(account__user__id = request.user.id)
-        for i in tokens:
-            providers.append(str(i.app))
-        s3 = StorageCredentials.objects.filter(user__id = request.user.id).count()
-        if s3:
-            providers.append("Amazon S3")
-        return render_to_response("app/download_from_storage.html",{'p':providers},context_instance = RequestContext(request))
-    
-    def post(self,request):
-        path = request.POST['source_path']
-        dest_path = request.POST['dest_path']
-        print "POST Request to Download API "
-        path = request.POST['source_path']
-        if path.split("//")[0][:-1]=="s3":
-            print "S3 is working "
-            bucket = path.split("//")[1]
-            source_path = "/"+str(path.split("//")[2])
-            result = get_data_from_s3(request, source_path, dest_path, bucket)
-        else:
-            if path.split("//")[0][:-1]=="dropbox":
-                access_token = SocialToken.objects.get(account__user__id = request.user.id, app__name = "Dropbox")
-                # print "ACCESS TOKEN: ",access_token
-                session = DropboxSession(settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET)
-                access_key, access_secret = access_token.token, access_token.token_secret  # Previously obtained OAuth 1 credentials
-                session.set_token(access_key, access_secret)
-                client = DropboxClient(session)
-                token = client.create_oauth2_access_token()
-                result = get_data_from_dropbox(request, source_path, dest_path, token)
-            elif storage=="Google Drive":
-                get_data_from_google(request,path,access_token)
-        return HttpResponse(json.dumps(result), content_type="application/json")
-
-
-def get_data_from_s3(request,source_path, dest_path, bucket):
-    result = {}
-    try:
-        s3 = StorageCredentials.objects.get(user__id = request.user.id)
-        conn = S3Connection(s3.aws_access_key,s3.aws_access_secret)
-        b = conn.get_bucket(bucket)
-        result['user'] = request.user.email
-        result['bucket'] = bucket
-        result['location']= []
-        result['downloadTo'] = []
-    except:
-        result['error'] = "Check if the S3 bucket exists or not."
-        return result
-    bucket_entries = b.list(source_path[1:])
-    if dest_path[-1]!="/":
-        dast_path+="/"
-    for i in bucket_entries:
-        result['location'].append(i.key)
-        file_name = str(i.key).split("/")[-1]
-        result['downloadTo'].append(dest_path+file_name)
-        i.get_contents_to_filename(dest_path+file_name)
-    return result
-
-
-
-def get_data_from_dropbox(request,source_path, dest_path, access_token):
-    result = {}
-    try:
-        client = dropbox.client.DropboxClient(str(access_token))
-        images_metadata = client.metadata(source_path)
-        result['user'] = request.user.email
-        result['storage'] = request.POST['storageName']
-        result['location']= []
-        result['downloadTo'] = []
-        for i in images_metadata['contents']:
-            if i['is_dir'] == False:
-                result['location'].append(i['path'])
-                f, metadata = client.get_file_and_metadata(i['path'])
-                out = open(dest_path + str(i.name), 'wb')
-                result['downloadTo'].append(dest_path + str(i.name))
-                out.write(f.read())
-                out.close()
-    except:
-        result['error'] = "Check if the directory exists or not and then try again."
-    return result   
-
-"BELOW METHOD NOT WORKING FOR NOW"
-def createDriveService():
-    """
-        Builds and returns a Drive service object authorized with the
-        application's service account.
-        Returns:
-           Drive service object.
-    """
-    from oauth2client.appengine import AppAssertionCredentials
-    from apiclient.discovery import build
-    credentials = AppAssertionCredentials(scope='https://www.googleapis.com/auth/drive')
-    http = httplib2.Http()
-    http = credentials.authorize(http)
-    return build('drive', 'v2', http=http, developerKey=API_KEY)
-
-"BELOW METHOD NOT WORKING FOR NOW"
-def insert_file(service, title, parent_id, filename):
-  """Insert new file.
-
-  Args:
-    service: Drive API service instance.
-    title: Title of the file to insert, including the extension.
-    description: Description of the file to insert.
-    parent_id: Parent folder's ID.
-    mime_type: MIME type of the file to insert.
-    filename: Filename of the file to insert.
-  Returns:
-    Inserted file metadata if successful, None otherwise.
-  """
- #  media_body = MediaFileUpload(filename,resumable=True)
- #  body = {
-    # 'title': title,
- #  }
- #  # Set the parent folder.
- #  if parent_id:
-    # body['parents'] = [{'id': parent_id}]
-
- #  try:
-    # file = service.files().insert(
-    #   body=body,
-    #   media_body=media_body).execute()
-
-    # # Uncomment the following line to print the File ID
-    # print 'File ID: %s' % file['id']
-
-    # return file
- #  except errors.HttpError, error:
-    # print 'An error occured: %s' % error
-    # return None
-
-
-up_storage_api = login_required(UploadApiTest.as_view())
-down_storage_api = login_required(DownloadApiTest.as_view())
