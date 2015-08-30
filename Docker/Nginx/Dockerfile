@@ -20,4 +20,5 @@ VOLUME ["/var/cache/nginx"]
 EXPOSE 80 443
 
 COPY ./default.conf /etc/nginx/conf.d/default.conf
+#RUN ln -s /CloudCV_Server/fileupload_nginx.conf /etc/nginx/conf.d/fileupload_nginx.conf
 CMD ["nginx", "-g", "daemon off;"]
