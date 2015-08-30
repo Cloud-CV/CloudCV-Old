@@ -1,0 +1,72 @@
+{% extends "organizations_base.html" %}
+{% block content %}
+<style type="text/css">
+  #heading{
+    font-weight: 300;
+    text-align: center;
+  }
+  @media screen and (min-width: 800px) {   
+  .leftpart{
+    border-right: 1px dashed #ccc;
+  }
+}
+  #login2{
+    background-color: #007EE5;
+    width: 80%;
+    text-align: center;
+  }
+  #login1{
+    background-color: #C33B2B;
+    width: 80%;
+    text-align: center;
+  }
+  .btn-large {
+    width:100%;
+  }
+  #nicebox{
+    border-top: 3px solid #4c9cdf;
+    margin-top:6%;
+    background-color: white;
+  }
+  .waves-effect.waves-blue .waves-ripple {
+      background-color: rgb(33,150,243);
+    }
+  .errorlist{
+    list-style-type: none;
+    color: #b11616;
+    font-size: 12px;
+    margin: 5px 0 0 0;
+    float: left;
+  }
+  #submitbtn{
+    border-top: 0.8px solid #ccc;
+    /*position: relative;*/
+    margin-top: 20px;
+    float: left;
+  }
+  form{
+    text-align: center;
+  }
+  #label_name{
+    text-align: left;
+  }
+</style>
+<div class="row dashboardControls" >
+  <div class="container z-depth-2" id="nicebox">  
+    <div class="container">
+    <div class="row">
+      
+    <div class="col s12 m12 l12" >
+    <h4>Create a New Workspace</h4>
+    <form action="." method="post">
+      {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="submit" class="btn-large">
+    </form>
+      <br><br>
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

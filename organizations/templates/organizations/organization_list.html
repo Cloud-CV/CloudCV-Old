@@ -1,0 +1,33 @@
+{% extends "organizations_base.html" %}
+{% block content %}
+<style type="text/css">
+	.card .card-title{
+		color: black;
+	}
+  .btn{
+    width: 100%;
+  }
+</style>
+    <div class="row dashboardControls">
+      <div class="col s12 m12 l12">
+        <div class="card darken-1 topcard">
+          <div class="card-content">
+            <span class="card-title">List of Organizations</span>
+            <div class="divider"></div>
+            <ul>
+            <div class="row">
+              
+          {% for organization in organizations %}
+          <div class="col s12 m12 l3">
+            <a href="{{ organization.get_absolute_url }}" class="btn btn-large">{{ organization }}</a>
+          </div>
+        {% endfor %}
+            </div>
+          </div>
+          <div class="card-action">
+				<p>Do you want to create workspace ? <a href="/workspace/add"> Click Here</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
