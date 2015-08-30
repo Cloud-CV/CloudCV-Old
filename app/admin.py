@@ -2,3 +2,4 @@
 from django.contrib import admin
 
 # admin.site.register(Picture)
+# admin.site.register(Job)
