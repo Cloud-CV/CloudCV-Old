@@ -1,0 +1,39 @@
+{% extends "organizations_base.html" %}
+{% load url from future %}
+{% load org_tags %}
+{% block content %}
+<style type="text/css">
+.btn-large{
+	width: 60%;
+}
+</style>
+    <div class="row dashboardControls">
+      <div class="col s12 m12 l12">
+        <div class="card darken-1 topcard">
+          <div class="card-content">
+            <span class="card-title black-text">{{ organization }}</span>
+            <div class="divider"></div>
+            <br>	
+            <div class="row">
+            <div class="col s12 m12 l4">
+				    <a href="{% url "organization_edit" organization.pk %}" class="btn-large"><i class="small material-icons">settings_applications</i>Edit</a>
+            </div>            	
+            <div class="col s12 m12 l4">
+				    <a href="{% url "organization_delete" organization.pk %}" class="btn-large"><i class="small material-icons">warning</i>Delete</a>
+            </div>
+            <div class="col s12 m12 l4">
+				    <a href="{% url "organization_user_add" organization.pk %}" class="btn-large"><i class="small material-icons">supervisor_account</i>Add Member</a>
+            </div>
+            </div>
+          </div>
+          <div class="card-action">
+            <span class="card-title black-text">Members of {{ organization }}</span>
+			{% organization_users organization %}
+			<div class="divider"></div>
+			<center><h4><b><a href="http://localhost:5000?workspace={{ organization_pk_encrypted }}" class="blue-text">Start working in {{ organization }}</a></b></h4></center>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
