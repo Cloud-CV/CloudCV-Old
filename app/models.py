@@ -70,7 +70,7 @@ class RequestLog(models.Model):
         default = START)
     job_id = models.CharField(max_length = 100)
     no_of_images = models.PositiveIntegerField()
-   '''
+    '''
     for the next field, the data comes in the form on json data. So, 
     DictModel is used for storing the json data. 
     See the link : http://stackoverflow.com/questions/402217/how-to-store-a-dictionary-on-a-django-model
