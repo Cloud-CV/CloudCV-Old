@@ -5,37 +5,37 @@
 
 echo "Creating base image"
 cp ../requirements.txt ./Base/
-sudo docker build -t cloudcv/desh_base ./Base/
+sudo docker build -t cloudcv/desh_base1 ./Base/
 rm ./Base/requirements.txt
 
-echo "Creating data container"
-sudo docker build --no-cache -t cloudcv/desh_code ./Code/
-sudo docker create -v /CloudCV_Server --name cloudcv_desh_code cloudcv/desh_code /bin/true
+#echo "Creating data container"
+sudo docker build --no-cache -t cloudcv/desh_code1 ./Code/
+sudo docker create -v /CloudCV_Server --name cloudcv_desh_code1 cloudcv/desh_code1 /bin/true
 
 echo "Pulling the image and starting redis server."
 sudo docker pull redis:3.0
-sudo docker run -d --name cloudcv_desh_redis redis
+sudo docker run -d --name cloudcv_desh_redis1 redis
 
-echo "Pulling the image and starting rabbitmq server."
+#echo "Pulling the image and starting rabbitmq server."
 sudo docker pull rabbitmq
-sudo docker run -d --name cloudcv_desh_rabbitmq rabbitmq
+sudo docker run -d --name cloudcv_desh_rabbitmq1 rabbitmq
 
 echo "Pulling the image and starting the node.js server"
 cp ../nodejs/chat.js ./Node/
-sudo docker build -t cloudcv/desh_node ./Node/
-sudo docker run -d --link cloudcv_desh_redis:redis --name cloudcv_desh_node cloudcv/desh_node
+sudo docker build -t cloudcv/desh_node1 ./Node/
+sudo docker run -d --link cloudcv_desh_redis1:redis --name cloudcv_desh_node1 cloudcv/desh_node1
 rm ./Node/chat.js
 
-echo "Pulling the image and starting DIGITS server"
+#echo "Pulling the image and starting DIGITS server"
 # sudo docker pull kaixhin/digits
-docker build -t cloudcv/desh_digits ./DIGITS/
-sudo docker run -d --name cloudcv_desh_digits cloudcv/desh_digits ./digits-devserver
+docker build -t cloudcv/desh_digits1 ./DIGITS/
+sudo docker run -d --name cloudcv_desh_digits1 cloudcv/desh_digits1 ./digits-devserver
 
 echo "Pulling the image and starting django server"
-sudo docker build -t cloudcv/desh_django ./Django/
-sudo docker run -d --volumes-from cloudcv_desh_code --link cloudcv_desh_rabbitmq:rabbitmq --link cloudcv_desh_redis:redis --name cloudcv_desh_django cloudcv/desh_django uwsgi --emperor /CloudCV_Server/
+sudo docker build -t cloudcv/desh_django1 ./Django/
+sudo docker run -d --volumes-from cloudcv_desh_code1 --link cloudcv_desh_rabbitmq1:rabbitmq --link cloudcv_desh_redis1:redis --name cloudcv_desh_django1 cloudcv/desh_django1 uwsgi --emperor /CloudCV_Server/
 
-echo "Pulling the image and starting nginx server"
+echo " the image and starting nginx server"
 cp ../fileupload_nginx.conf ./Nginx/default.conf
-sudo docker build -t cloudcv/desh_nginx ./Nginx/
-sudo docker run -d -p 8500:80 --volumes-from cloudcv_desh_code --name cloudcv_desh_nginx --link cloudcv_desh_node:node --link cloudcv_desh_redis:redis --link cloudcv_desh_digits:digits --link cloudcv_desh_django:django cloudcv/desh_nginx
+sudo docker build -t cloudcv/desh_nginx1 ./Nginx/
+sudo docker run -d -p 8500:80 --volumes-from cloudcv_desh_code1 --name cloudcv_desh_nginx1 --link cloudcv_desh_node1:node --link cloudcv_desh_redis1:redis --link cloudcv_desh_digits1:digits --link cloudcv_desh_django1:django cloudcv/desh_nginx1
