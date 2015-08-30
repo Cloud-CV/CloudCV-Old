@@ -1,5 +1,7 @@
 # encoding: utf-8
 from django.conf.urls import patterns, url
+from django.contrib import admin
+
 from app.views import (
         PictureCreateView,BasicPlusVersionCreateView
         )
@@ -7,6 +9,10 @@ from app.decaf_views import DecafCreateView, decafDropbox, DecafModelCreateView
 from app.classify_views import ClassifyCreateView
 from app.poi_views import PoiCreateView
 from app.trainaclass_views import TrainaclassCreateView
+from app import views
+
+# the below module import is used for importing the foramt type in which we the data like json or xml
+from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = patterns('',
     url(r'^image-stitch/$', PictureCreateView.as_view(), name='upload-new'),
@@ -26,9 +32,6 @@ urlpatterns += patterns('app.views',
     url(r'^matlab/$','matlabReadRequest', name='matlabReadRequest'),
     url(r'^api/$','matlabReadRequest', name='apiRequest'),
     url(r'^ec2/$','ec2', name='ec2'),
-    url(r'api/upload', 'up_storage_api', name='api_upload'),
-    url(r'api/download', 'down_storage_api', name='api_download'),
-
 )
 
 urlpatterns += patterns('app.decaf_views',
@@ -49,15 +52,10 @@ urlpatterns += patterns('app.trainaclass_views',
     url(r'^testmodel/$', 'testmodel', name="testmodel"),
 )
 
-########################################################################
-
-from app import views
-
-'''
-the below module import is used for importing the foramt type in which we 
-the data like json or xml
-'''
-from rest_framework.urlpatterns import format_suffix_patterns
+urlpatterns += patterns('app.cloudstorage_api_views',
+    url(r'api/upload', 'up_storage_api', name='api_upload'),
+    url(r'api/download', 'down_storage_api', name='api_download'),
+)
 
 urlpatterns += patterns('app.serializers',
     url(r'^api/users/$', views.UserList.as_view()),
@@ -72,7 +70,6 @@ urlpatterns += patterns('app.serializers',
     url(r'^api/images/(?P<pk>[0-9]+)/$', views.ImagesDetail.as_view()),
     url(r'^api/models/$', views.ModelStorageList.as_view()),
     url(r'^api/models/(?P<pk>[0-9]+)/$', views.ModelStorageDetail.as_view()),
-
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)
