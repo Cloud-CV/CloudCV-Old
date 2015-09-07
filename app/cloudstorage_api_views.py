@@ -68,7 +68,7 @@ class UploadAPI(APIView):
 
 			elif path.split(":")[0].lower()=="dropbox":
 				print "[UPLOAD API FOR DROPBOX]"
-				dest_path = path.split(":")[1]
+				dest_path = path.split(":")[1][1:]
 				access_token = SocialToken.objects.get(account__user__id = user_id, app__name = "Dropbox")
 				session = DropboxSession(settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET)
 				access_key, access_secret = access_token.token, access_token.token_secret  # Previously obtained OAuth 1 credentials
@@ -78,6 +78,7 @@ class UploadAPI(APIView):
 				result = post_data_on_dropbox(request, source_path, dest_path, token, user_id)
 
 			elif path.split(":")[0].lower()=="gdrive":
+				'''*** NOT WORKING ***'''
 				print "[UPLOAD API FOR GOOGLE DRIVE]"
 				storage = Storage(SocialToken, 'id', user_id, 'token')
 				credential = storage.get()
@@ -165,15 +166,16 @@ class DownloadAPI(APIView):
 			dest_path.append(str(user_id))
 			dest_path[-1],dest_path[-2] = dest_path[-2],dest_path[-1]
 			dest_path = '/'.join(dest_path)
+			print "dest_path at starting is ", dest_path
 			try:
 				# Increment the name of new directory by one
 				directories = map(int, os.listdir(dest_path))
-				dest_path+='/'+str(max(directories)+1)
+				dest_path+=str(max(directories)+1)
 			except:
 				# If no directory exists then give it name 1
 				dest_path+='/'+'1'
 
-			if dest_path[-1]!="/":
+			if dest_path[-1] != "/":
 				# Append forward slash to given url if not exists
 				dest_path+="/"
 			if not os.path.isdir(dest_path):
@@ -199,8 +201,10 @@ class DownloadAPI(APIView):
 				# NON FUNCTIONAL
 				get_data_from_google(request,path,access_token)
 			else:
+				shutil.rmtree(dest_path[:-1])
 				result = {"error":"Check if you have attached the type of cloud storage with your account or enter valid path"}
 		except:
+			shutil.rmtree(dest_path[:-1])
 			result = {"error":"Invalid Input Provided"}
 		return HttpResponse(json.dumps(result))
 
@@ -248,14 +252,22 @@ def get_data_from_dropbox(request,source_path, dest_path, access_token, user_id)
 		result['user_id'] = user_id
 		result['source_path'] = source_path
 		result['dest_path'] = dest_path
-		for i in images_metadata['contents']:
-			if not i['is_dir']:
-				f, metadata = client.get_file_and_metadata(i['path'])
-				out = open(dest_path + str(i['path'].split("/")[-1]), 'wb')
-				out.write(f.read())
-				out.close()
+		if source_path[-9:] == '.prototxt' or source_path[-11:] == '.caffemodel':
+			f, metadata = client.get_file_and_metadata(images_metadata['path'])
+			out = open(dest_path + str(images_metadata['path'].split("/")[-1]), 'wb')
+			out.write(f.read())
+			out.close()
+			result['dest_path'] = dest_path + str(images_metadata['path'].split("/")[-1])
+		else:
+			for i in images_metadata['contents']:
+				if not i['is_dir']:
+					f, metadata = client.get_file_and_metadata(i['path'])
+					out = open(dest_path + str(i['path'].split("/")[-1]), 'wb')
+					out.write(f.read())
+					out.close()
 	except:
-		result['error'] = "Check if the directory exists or not and then try again."
+		shutil.rmtree(dest_path[:-1])
+		result['error'] = "Check if the Directory/Files exist or not and then try again."
 	return result
 
 # BELOW METHOD NOT WORKING FOR NOW
@@ -310,4 +322,3 @@ def insert_file(service, title, parent_id, filename):
 
 up_storage_api = csrf_exempt(UploadAPI.as_view())
 down_storage_api = csrf_exempt(DownloadAPI.as_view())
-
