@@ -10,7 +10,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from fileupload.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
+from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
 
 
 def upload_files_to_dropbox(userid, jobid, result_path, dropbox_token=None):

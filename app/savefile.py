@@ -8,15 +8,15 @@ import sys
 import app.core.execute as core_execute
 from app.models import Picture
 import app.thirdparty.ccv_dropbox as ccvdb
-from app.celery.api_tasks.tasks import saveDropboxFiles
+from celeryTasks.apiTasks.tasks import saveDropboxFiles
 
-from app.log import logger, log_to_terminal, log_error_to_terminal
+from app.log import log, logger, log_to_terminal, log_error_to_terminal
 import redis
-from app.core.run_executables import parseParameters
 import app.conf as conf
 import base64
+import re
 from io import BytesIO
-r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 
 ''' Not using getThumbnail code anymore
 def getThumbnail(image_url_prefix, name):
@@ -29,6 +29,28 @@ def getThumbnail(image_url_prefix, name):
     im.save('/var/www/html/cloudcv/fileupload' + file, list[1])
     return file
 '''
+
+def parseParameters(params):
+    params = str(params)
+
+    log(params, parseParameters.__name__)
+
+    pat = re.compile('u\'[\w\s,]*\'')
+
+    decoded_params = ''
+    end = 0
+
+    for i in pat.finditer(str(params)):
+        decoded_params = decoded_params + params[end:i.start()] + '"' + params[i.start()+2:i.end()-1]+'"'
+        end = i.end()
+
+    decoded_params += params[end:]
+
+    log(decoded_params, parseParameters.__name__)
+
+    dict = json.loads(decoded_params)
+    return dict
+
 
 
 def resizeImageAndTransfer(path, directory, size, file):

@@ -22,9 +22,9 @@ from app.models import Picture, RequestLog, Decaf, Decafmodel
 import app.conf as conf
 from .response import JSONResponse, response_mimetype
 
-from app.celery.web_tasks.DecafTask import decafImages
+from celeryTasks.webTasks.decafTask import decafImages
 
-redis_obj = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
 ps_obj = redis_obj.pubsub()
 decaf_channel_name = 'decaf_server_queue'
 IMAGEFOLDER = '/srv/share/cloudcv/jobs/'
@@ -94,7 +94,14 @@ def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_fil
     #     log_to_terminal(str(traceback.format_exc()), socketid)
     print "Inside decaf_wrapper_local: ModelName: " + modelname
     try:
-    	decafImages.delay(src_path, output_path, socketid, result_path, single_file_name, modelname)
+        src_path = os.path.join(src_path, single_file_name)
+        if os.path.isdir(src_path):
+            result_url = urlparse(result_path).path
+            result_path = os.path.join(result_url, 'results')
+        else:
+            result_url = os.path.dirname(urlparse(result_path).path)
+            result_path = os.path.join(result_url, 'results')
+        decafImages.delay(src_path, socketid, output_path, result_path)
     except Exception as e:
 	log_to_terminal(str(traceback.format_exc()),socketid);
 

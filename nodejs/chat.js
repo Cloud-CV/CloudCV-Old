@@ -14,8 +14,8 @@ var cookie_reader = require('cookie');
 var querystring = require('querystring');
 
 var redis = require('redis');
-var sub = redis.createClient();
-var cli = redis.createClient();
+var sub = redis.createClient('6379', 'redis');
+var cli = redis.createClient('6379', 'redis');
 //Subscribe to the Redis chat channel
 sub.subscribe('chat');
 var count = 0;
@@ -38,7 +38,7 @@ var count = 0;
  */
 
 sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(__dirname+'/../db.sqlite3');
+var db = new sqlite3.Database(__dirname+'/db.sqlite3');
 
 var socket_jobid_map = {};
 

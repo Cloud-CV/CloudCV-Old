@@ -6,9 +6,9 @@ from django.http import HttpResponse
 import redis
 from app.log import log_to_terminal, log_error_to_terminal, log_and_exit
 # import cloudcvMaster as ccvM
-from app.celery.api_tasks.tasks import run
+from celeryTasks.apiTasks.tasks import run
 
-r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 
 def execute(job_obj, image_path=None, source_type=None):
     try:

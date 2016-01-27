@@ -51,7 +51,7 @@ class Logger:
 logger = Logger()
 
 
-r = redis.StrictRedis(host = '127.0.0.1', port=6379, db=0)
+r = redis.StrictRedis(host = 'redis', port=6379, db=0)
 
 
 def log(message, name):
