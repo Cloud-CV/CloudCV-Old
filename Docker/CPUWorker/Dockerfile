@@ -7,8 +7,7 @@ MAINTAINER Prashant Jalan
 # decaf, POI, image stitching and training a new model.
 
 # Basics
-
-RUN apt-get update
+RUN sudo apt-get update
 RUN apt-get install -y gfortran git wget unzip python-dev build-essential
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 
@@ -17,14 +16,6 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip
 RUN wget https://github.com/BVLC/caffe/archive/rc2.zip && unzip rc2 && mv caffe-rc2 caffe && rm rc2.zip
 RUN git clone https://github.com/graphlab-code/graphlab.git
 RUN wget -O OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.11/opencv-2.4.11.zip/download && unzip OpenCV-2.4.11.zip && mv opencv-2.4.11 opencv && rm OpenCV-2.4.11.zip
-
-# Graphlab installation
-
-# Graphlab dependencies
-RUN apt-get install -y gcc g++ build-essential libopenmpi-dev openmpi-bin default-jdk cmake zlib1g-dev gfortran openmpi-checkpoint openmpi-bin
-
-RUN cd /graphlab && ./configure
-RUN cd /graphlab/release/toolkits/computer_vision && make
 
 # OpenCV Installation
 
@@ -38,6 +29,14 @@ RUN cd /opencv && \
     cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
     make -j 4 && \
     make install
+
+# Graphlab installation
+
+# Graphlab dependencies
+# RUN apt-get install -y gcc g++ build-essential libopenmpi-dev openmpi-bin default-jdk cmake zlib1g-dev git
+
+# RUN cd /graphlab && ./configure
+# RUN cd /graphlab/release/toolkits/computer_vision && sudo make
 
 # Caffe installation
 
