@@ -30,8 +30,9 @@ from app.models import Picture, RequestLog, Poi
 #from app.executable.poi_demo import findRelativeImportance
 from celeryTasks.webTasks.poiTask import poiImages
 import app.conf as conf
+from cloudcv17 import config
 
-redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
+redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 classify_channel_name = 'classify_queue'
 
 ### SET OF PATH CONSTANTS - SOME UNUSED

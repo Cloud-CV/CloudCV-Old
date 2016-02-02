@@ -7,7 +7,8 @@ from celeryTasks.celery import app
 def trainImages(jobPath, socketid):
     #Establishing connection to send results and write messages
     import redis, json
-    rs = redis.StrictRedis(host='redis', port=6379)
+    from cloudcv17 import config
+    rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
 
     #Module imports
     import os, sys, numpy as np, leveldb, caffe, time, math, scipy.io as sio, shutil
@@ -131,7 +132,7 @@ def trainImages(jobPath, socketid):
 def customClassifyImages(jobPath, socketid, result_path):
     #Establishing connection to send results and write messages
     import redis, json
-    rs = redis.StrictRedis(host='redis', port=6379)
+    rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
 
     try:
         #Module import

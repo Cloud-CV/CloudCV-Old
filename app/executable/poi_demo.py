@@ -12,9 +12,10 @@
 # svmModel = svm_load_model(modelFolder+'/poi_linear.model')
 # minSVR = -1.4
 # maxSVR = 1.4
+# from cloudcv17 import config
 
 # import redis, json
-# redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
+# redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
 # def log_to_terminal(message, socketid):
 #     redis_obj.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))

@@ -11,7 +11,7 @@ import traceback
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 import app.conf as conf
-import cloudcv17.conf
+from cloudcv17 import config
 
 flow = OAuth2WebServerFlow(client_id=config.GOOGLE_CLIENT_ID,
                            client_secret=config.GOOGLE_CLIENT_SECRET,

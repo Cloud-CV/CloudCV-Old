@@ -16,7 +16,8 @@ def stitchImages(src_path, socketid, output_path, result_path):
     
     #Establishing connection to send results and write messages
     import redis, json
-    rs = redis.StrictRedis(host='redis', port=6379)
+    from cloudcv17 import config
+    rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
 
     try:
         import os, time
