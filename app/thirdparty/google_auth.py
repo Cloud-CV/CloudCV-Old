@@ -11,9 +11,10 @@ import traceback
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 import app.conf as conf
+import cloudcv17.conf
 
-flow = OAuth2WebServerFlow(client_id='304725803980-p08qcvksb2l3ppfcfv44l4d98dr6srb0.apps.googleusercontent.com',
-                           client_secret='BOCtUNche-1OTKU0lx2Dlxi_',
+flow = OAuth2WebServerFlow(client_id=config.GOOGLE_CLIENT_ID,
+                           client_secret=config.GOOGLE_CLIENT_SECRET,
                            scope='profile email',
                            redirect_uri='http://localhost:8000/callback/google')
 
@@ -99,4 +100,3 @@ def handleAuth(request, is_API, contains_UUID):
         flow.params['state'] = request.GET['state']
         authorize_url = flow.step1_get_authorize_url()
         return authorize_url
-

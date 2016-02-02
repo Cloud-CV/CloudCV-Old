@@ -8,10 +8,11 @@ import dropbox
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
+import cloudcv17.config
 
 def handleAuth(request, is_API, contains_UUID):
-    APP_KEY = '3bh4nkyaszl2nhd'
-    APP_SECRET = 'en8d42vv2xej8ox'
+    APP_KEY = config.DROPBOX_APP_KEY
+    APP_SECRET = config.DROPBOX_APP_SECRET
     redirect_url = 'http://localhost:8000/dropbox_callback'
 
     if is_API:
