@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from cloudcv17 import config
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 BASE_ABS_DIR = os.path.abspath(os.path.dirname(__file__))
 os.environ['CLOUDCV_ABS_DIR'] = BASE_ABS_DIR
@@ -125,7 +126,7 @@ LOGGING = {
 
 """
 import redis
-r = redis.StrictRedis(host='redis', port=6379, db=0)
+r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 r.set('CLOUDCV_ABS_DIR', BASE_ABS_DIR)
 r.set('CLOUDCV_MEDIA_ROOT', MEDIA_ROOT)
 r.set('CLOUDCV_PIC_ROOT', os.path.join(MEDIA_ROOT, 'pictures', 'cloudcv'))

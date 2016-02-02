@@ -34,8 +34,9 @@ from PIL import Image
 import StringIO
 import base64
 from io import BytesIO
+from cloudcv17 import config
 
-r = redis.StrictRedis(host='redis', port=6379, db=0)
+r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
 from celeryTasks.webTasks.stitchTask import stitchImages
 
@@ -60,7 +61,7 @@ class Request:
         #         # r = redis.StrictRedis(host = 'redis' , port=6379, db=0)
         #
         #         if line:
-        #             # r = redis.StrictRedis(host='redis', port=6379, db=0)
+        #             # r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
         #             self.log_to_terminal(line)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'
@@ -68,7 +69,7 @@ class Request:
         #             count += 1
         #                     # time.sleep(1)
         #         if errline:
-        #             # r = redis.StrictRedis(host='redis', port=6379, db=0)
+        #             # r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
         #             self.log_to_terminal(errline)
         #             # fi.write(line+'*!*'+socketid+'\n')
         #             print count,line, '\n'

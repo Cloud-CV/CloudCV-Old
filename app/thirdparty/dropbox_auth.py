@@ -8,7 +8,7 @@ import dropbox
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
-import cloudcv17.config
+from cloudcv17 import config
 
 def handleAuth(request, is_API, contains_UUID):
     APP_KEY = config.DROPBOX_APP_KEY

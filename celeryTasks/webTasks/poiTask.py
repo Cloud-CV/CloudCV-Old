@@ -17,7 +17,8 @@ def poiImages(src_path, socketid, result_path):
 
 	#Establishing connection to send results and write messages
 	import redis, json
-	rs = redis.StrictRedis(host='redis', port=6379)
+	from cloudcv17 import config
+	rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
 
 	#Get the absolute path to poi_files directory
 	modelFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'poi_files')

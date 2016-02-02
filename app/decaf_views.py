@@ -21,10 +21,10 @@ from querystring_parser import parser
 from app.models import Picture, RequestLog, Decaf, Decafmodel
 import app.conf as conf
 from .response import JSONResponse, response_mimetype
-
 from celeryTasks.webTasks.decafTask import decafImages
+from cloudcv17 import config
 
-redis_obj = redis.StrictRedis(host='redis', port=6379, db=0)
+redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 ps_obj = redis_obj.pubsub()
 decaf_channel_name = 'decaf_server_queue'
 IMAGEFOLDER = '/srv/share/cloudcv/jobs/'
