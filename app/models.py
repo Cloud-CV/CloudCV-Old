@@ -1,7 +1,9 @@
 # encoding: utf-8
 from django.db import models
+
 from oauth2client.django_orm import CredentialsField
 from oauth2client.django_orm import FlowField
+
 
 class Picture(models.Model):
     """This is a small demo using just two fields. The slug field is really not
@@ -29,6 +31,7 @@ class Picture(models.Model):
         self.file.delete(False)
         super(Picture, self).delete(*args, **kwargs)
 
+
 class Decaf(models.Model):
 
     # This is a small demo using just two fields. The slug field is really not
@@ -55,6 +58,7 @@ class Decaf(models.Model):
         self.file.delete(False)
         super(Decaf, self).delete(*args, **kwargs)
 
+
 class Decafmodel(models.Model):
 
     # This is a small demo using just two fields. The slug field is really not
@@ -80,6 +84,7 @@ class Decafmodel(models.Model):
     def delete(self, *args, **kwargs):
         self.file.delete(False)
         super(Decafmodel, self).delete(*args, **kwargs)
+
 
 class Trainaclass(models.Model):
 
@@ -134,6 +139,7 @@ class Classify(models.Model):
         self.file.delete(False)
         super(Classify, self).delete(*args, **kwargs)
 
+
 class Poi(models.Model):
 
     # This is a small demo using just two fields. The slug field is really not
@@ -168,14 +174,17 @@ class CloudCV_Users(models.Model):
     emailid = models.EmailField(max_length = 254, unique=True)
     is_active = models.BooleanField()
 
+
 class GoogleAccountInfo(models.Model):
     cloudcvid = models.ForeignKey(CloudCV_Users, unique = True)
     credential = CredentialsField()
     flow = FlowField()
 
+
 class DropboxAccount(models.Model):
     cloudcvid = models.ForeignKey(CloudCV_Users, unique = True)
     access_token = models.CharField(max_length=100, null=False)
+
 
 class RequestLog(models.Model):
     cloudcvid = models.CharField(max_length=100, null=False)

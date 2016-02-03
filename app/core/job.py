@@ -5,6 +5,7 @@ import os
 
 IMAGE_PARENT_PATH = conf.PIC_DIR
 
+
 class Parameters:
     count = 0
     token = None
@@ -45,10 +46,12 @@ class Parameters:
         list = ['-e', self.executable, '-c', str(self.count), '-t', self.token, '-s', self.socketid, '-p', self.params]
         return list
 
+
 class Job(Parameters):
     jobid = None
     storage_path = None
     url = None
+
     def __init__(self, params_obj=None):
         if params_obj is not None:
             Parameters.__init__(self, params=params_obj)
@@ -61,7 +64,6 @@ class Job(Parameters):
         self.storage_path = os.path.join(IMAGE_PARENT_PATH, str(self.userid))
         if not os.path.exists(self.storage_path):
             os.makedirs(self.storage_path)
-
 
     def createUniqueJobID(self):
         self.jobid = shortuuid.uuid()

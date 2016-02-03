@@ -1,15 +1,15 @@
+from logistic_sgd import LogisticRegression, load_data
+
 import os
 import sys
 import time
-
 import numpy
-
 import theano
 import theano.tensor as T
 
 import pdb
-from logistic_sgd import LogisticRegression, load_data
 import utils
+
 
 # start-snippet-1
 class HiddenLayer(object):
@@ -52,6 +52,7 @@ class HiddenLayer(object):
         W, b = state
         self.W = W
         self.b = b
+
 
 # start-snippet-2
 class MLP(object):

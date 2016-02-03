@@ -162,6 +162,7 @@ def response_mimetype(request):
     else:
         return "text/plain"
 
+
 class JSONResponse(HttpResponse):
     """JSON response class."""
     def __init__(self,obj='', json_opts={},mimetype="application/json",*args,**kwargs):

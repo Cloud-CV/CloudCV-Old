@@ -1,6 +1,5 @@
 import time
 import numpy as np
-
 import pdb
 
 
@@ -29,6 +28,8 @@ class SVM():
 
     def predictProb(self, data):
         return self.model.predict_proba(data)
+
+
 def kmeans(data, k):
     # doing k means on data and return the label and k center.
     print 'Using the scikit-learn K-means clustering and returning %d centers' %(k)
@@ -39,5 +40,3 @@ def kmeans(data, k):
     # find the nearset vector in data for each cluster_centers.
     ind = np.argmin(dis, axis=1)
     return kmeans.labels_, kmeans.cluster_centers_, data[np.argmin(dis, axis=1)]
-
-

@@ -1,4 +1,3 @@
-# encoding: utf-8
 from django.conf.urls import patterns, url
 from app.views import (
         PictureCreateView,BasicPlusVersionCreateView
@@ -31,12 +30,13 @@ urlpatterns += patterns('app.views',
 urlpatterns += patterns('app.decaf_views',
     url(r'^decaf_dropbox/$', 'decafDropbox', name="decafDropbox"),
     url(r'^decaf_train/$', 'decaf_train', name="decaf_train"),
-     url(r'^demo_decaf/$', 'demoDecaf', name="demoDecaf"),
+    url(r'^demo_decaf/$', 'demoDecaf', name="demoDecaf"),
 )
 
 urlpatterns += patterns('app.classify_views',
     url(r'^demo_classify/$', 'demoClassify', name="demoClassify"),
 )
+
 urlpatterns += patterns('app.poi_views',
     url(r'^demo_poi/$', 'demoPoi', name="demoPoi"),
 )

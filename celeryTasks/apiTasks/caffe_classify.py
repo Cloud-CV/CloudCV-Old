@@ -9,6 +9,7 @@ While editing please make sure:
    (See Docker/CPUWorker/Dockerfile)
 """
 
+
 def caffe_classify_image(single_image):
     import operator
     import numpy as np
@@ -55,7 +56,6 @@ def caffe_classify(ImagePath):
     import os
 
     results = {}
-
     for file_name in os.listdir(ImagePath):
         if os.path.isfile(os.path.join(ImagePath, file_name)):
             input_image_path = os.path.join(ImagePath, file_name)
@@ -67,4 +67,3 @@ def caffe_classify(ImagePath):
 
 if __name__ == "__main__":
     results = caffe_classify(sys.argv[1])
-    print str(results)

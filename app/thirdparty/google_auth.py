@@ -1,22 +1,25 @@
+from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
+
 from app.models import Picture, CloudCV_Users, GoogleAccountInfo
+from cloudcv17 import config
+import app.conf as conf
+
+from oauth2client.client import OAuth2WebServerFlow
+from oauth2client import xsrfutil
+from oauth2client.django_orm import Storage
 
 import requests
 import json
 import uuid
 import os
-from oauth2client.client import OAuth2WebServerFlow
-from oauth2client import xsrfutil
-from oauth2client.django_orm import Storage
 import traceback
-from django.db import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist
-import app.conf as conf
-from cloudcv17 import config
 
 flow = OAuth2WebServerFlow(client_id=config.GOOGLE_CLIENT_ID,
                            client_secret=config.GOOGLE_CLIENT_SECRET,
                            scope='profile email',
                            redirect_uri='http://localhost:8000/callback/google')
+
 
 def create_folder(user_uuid):
     parent_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,6 +27,7 @@ def create_folder(user_uuid):
     if os.path.exists(image_dir) is False:
         os.makedirs(image_dir, 0775)
     return image_dir.encode('utf-8')
+
 
 def saveIntoDatabase(gaccountinfo, credentials):
     user_uuid = str(uuid.uuid1())
@@ -57,9 +61,8 @@ def saveIntoDatabase(gaccountinfo, credentials):
         googleuser.flow = flow
         googleuser.save()
         response_dict['gaccount_table_message'] = 'Already existing user entry, updated the entries\n'
-
-
     return json.dumps(response_dict)
+
 
 def handleCallback(code, request):
     credentials = flow.step2_exchange(request.REQUEST)
@@ -69,14 +72,13 @@ def handleCallback(code, request):
     gaccountinfo = json.loads(result.text.encode('utf-8'))
 
     json_response = saveIntoDatabase(gaccountinfo, credentials)
-
     #response contains  a JSON object containing unique id and email id.
     return json_response
+
 
 def handleAuth(request, is_API, contains_UUID):
     #if the call comes from Matlab or Python API
     if is_API:
-
         #contains uuid
         if contains_UUID:
             request_userid = request.GET['userid']
@@ -88,13 +90,11 @@ def handleAuth(request, is_API, contains_UUID):
                 return json.dumps({'isValid':'True', 'first_name':user.first_name})
             except Exception as e:
                 return json.dumps({'error': traceback.format_exc()})
-
         #doesnt contain uuid
         else:
             flow.params['state'] = request.GET['state']
             authorize_url = flow.step1_get_authorize_url()
             return json.dumps({'redirect':'True','url': authorize_url.encode('utf-8')})
-
     #else if it comes from browser
     else:
         flow.params['state'] = request.GET['state']

@@ -1,11 +1,12 @@
-import numpy as np
-import pickle
 from collections import defaultdict
 
+import numpy as np
+import pickle
 import pdb
+
+
 def output(Q_val, I_val, QI_val, C_val, printAnswer, iterator):
-    
-    
+
     # given the image, question, and caption, store the corresponding label for each    
     count = 0
     data = defaultdict(list)
@@ -20,14 +21,10 @@ def output(Q_val, I_val, QI_val, C_val, printAnswer, iterator):
         uData['C_ans'] = printAnswer[C_val[count]]
         data[imageId].append(uData)
         count += 1
-
-
     pair = []
     for key, value in data.iteritems():
         pair.append({'imgId':key, 'text':value})
     return pair
-
-
 
 
 def uniqueVec(data, k):
@@ -40,6 +37,7 @@ def uniqueVec(data, k):
     # return top k. 
     ind = np.argsort(-count)
     return a[idx[ind[:k]]], count[ind[:k]], idx[ind[:k]]
+
 
 def filterVec(vecs, answerVec, questionVec):
 
@@ -59,6 +57,7 @@ def filterVec(vecs, answerVec, questionVec):
         counts += 1
     return TrainLabel, TrainVec, AnswerVec
 
+
 def fallKplus1(y_val, k):
     count = 0
     right = 0
@@ -69,6 +68,7 @@ def fallKplus1(y_val, k):
         count += 1
     accuracy = np.float(right) / count
     print ' %.4f' %(accuracy),
+
 
 def calAccuracy(y_val, W2VAnswerNear, W2VAnswerTest, answerGroup):
     right = 0
@@ -85,6 +85,7 @@ def calAccuracy(y_val, W2VAnswerNear, W2VAnswerTest, answerGroup):
     accuracy = np.float(right) / len(y_val)
     print ' %.4f' %(accuracy),
 
+
 def labelAccuracy(y_val, label):
     count = 0
     right = 0
@@ -95,6 +96,7 @@ def labelAccuracy(y_val, label):
 
     accuracy = np.float(right) / count
     print '%.4f' %(accuracy),
+
 
 def mlpOPlable(out, gt, answerGroup, numAnswer):
     label_count = np.zeros(numAnswer)
@@ -113,6 +115,7 @@ def mlpOPlable(out, gt, answerGroup, numAnswer):
     accuracy = np.float(soft_right) / len(answerGroup)
     print 'The Open-answer task Acc is %.4f' %(accuracy)
     return label_count
+
 
 def mlpOPAcc(out, gt, answerGroup, numAnswer):
     label_count = np.zeros(numAnswer)
@@ -181,6 +184,7 @@ def mlpMSAcc(out, gt, answerGroup, multiAnswer, numAnswer):
     accuracy = np.float(soft_right) / count
     print 'The Multi choice task with %d Question, Acc is %.4f' %(count, accuracy)
 
+
 def printAnswer(ixtoword, vecs, counts):
     store = []
     for i in range(len(vecs)):
@@ -188,23 +192,20 @@ def printAnswer(ixtoword, vecs, counts):
         for j in range(len(vecs[i])):
             if vecs[i][j] > 0:
                 string = string + ' ' + ixtoword.get(j, 'NoInVocab')
-        #print '%s %d' %(string, counts[i]),
         store.append(string)
-    #print ''
     return store
 
+
 def intersction(x,y):
-    # intersction kernel
     return np.minimum(x,y).sum()
 
 
 def pickleLoad(path):
-    
     f = open(path)
     data = pickle.load(f)
     f.close()
-
     return data
+
 
 def pickleSave(path, data):
     f = open(path, 'w')

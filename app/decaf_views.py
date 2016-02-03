@@ -1,4 +1,22 @@
 __author__ = 'dexter'
+
+from os.path import splitext, basename
+from urlparse import urlparse
+from querystring_parser import parser
+from PIL import Image
+
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+
+from app.models import Picture, RequestLog, Decaf, Decafmodel
+import app.conf as conf
+from .response import JSONResponse, response_mimetype
+from celeryTasks.webTasks.decafTask import decafImages
+from cloudcv17 import config
+
 import time
 import subprocess
 import os
@@ -7,22 +25,9 @@ import traceback
 import operator
 import shortuuid
 import requests
-from os.path import splitext, basename
-from urlparse import urlparse
 import traceback
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from PIL import Image
 import redis
-from querystring_parser import parser
-from app.models import Picture, RequestLog, Decaf, Decafmodel
-import app.conf as conf
-from .response import JSONResponse, response_mimetype
-from celeryTasks.webTasks.decafTask import decafImages
-from cloudcv17 import config
+import re
 
 redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 ps_obj = redis_obj.pubsub()
@@ -34,65 +39,8 @@ DEMO_IMAGE_PATH = '/srv/share/cloudcv/jobs/demo'
 def log_to_terminal(message, socketid):
         redis_obj.publish('chat', json.dumps({'error': str(message), 'socketid': str(socketid)}))
 
+
 def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_file_name='', modelname=''):
-    # try:
-    #     #Entire Directory
-    #     if os.path.isdir(os.path.join(src_path,single_file_name)):
-    #
-    #         for file_name in os.listdir(src_path):
-    #             tags = {}
-    #             image_path = os.path.join(src_path, file_name)
-    #             if os.path.isfile(image_path):
-    #
-    #                 """ Trying to get the output of classify python script to send to user - Part 1/4
-    #                 myPrint = CustomPrint(socketid)
-    #                 old_stdout=sys.stdout
-    #                 sys.stdout = myPrint
-    #                 """
-    #                 print 'Running caffe classify on multiple images'
-    #
-    #                 mat_file_path = decaf.calculate_decaf_image(file_name, src_path, output_path, 3, socketid, tags)
-    #                 print tags
-    #                 """ Part 2/2
-    #                 sys.stdout=old_stdout
-    #                 """
-    #                 log_to_terminal("Results: "+str(tags), socketid)
-    #                 sorted_tags = sorted(tags.iteritems(), key=operator.itemgetter(1), reverse=True)
-    #
-    #                 webResult = {}
-    #                 webResult[str(result_path + file_name)] = sorted_tags
-    #                 result_url = urlparse(result_path).path
-    #                 redis_obj.publish('chat',
-    #                                json.dumps({'web_result': os.path.join(result_url, 'results', file_name+'.mat'), 'socketid': str(socketid)}))
-    #
-    #         log_to_terminal('Thank you for using CloudCV', socketid)
-    #     # Single File
-    #     else:
-    #         """ Part 3/4
-    #         myPrint = CustomPrint(socketid)
-    #         old_stdout=sys.stdout
-    #         sys.stdout = myPrint
-    #         """
-    #         tags = {}
-    #         print 'Running caffe classify on a single image: ' + single_file_name
-    #
-    #         mat_file_path = decaf.calculate_decaf_image(single_file_name, src_path, output_path, 3, socketid, tags)
-    #         """ Part 4/4
-    #         sys.stdout=old_stdout
-    #         """
-    #         log_to_terminal("Results: "+str(tags), socketid)
-    #
-    #         tags = sorted(tags.iteritems(), key=operator.itemgetter(1), reverse=True)
-    #         web_result = {}
-    #         web_result[str(result_path)] = tags
-    #         result_url = os.path.dirname(urlparse(result_path).path)
-    #         redis_obj.publish('chat', json.dumps({'web_result': os.path.join(result_url, 'results', single_file_name+'.mat'), 'socketid': str(socketid)}))
-    #
-    #         log_to_terminal('Thank you for using CloudCV', socketid)
-    #
-    # except Exception as e:
-    #     log_to_terminal(str(traceback.format_exc()), socketid)
-    print "Inside decaf_wrapper_local: ModelName: " + modelname
     try:
         src_path = os.path.join(src_path, single_file_name)
         if os.path.isdir(src_path):
@@ -104,6 +52,7 @@ def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_fil
         decafImages.delay(src_path, socketid, output_path, result_path)
     except Exception as e:
 	log_to_terminal(str(traceback.format_exc()),socketid);
+
 
 class DecafCreateView(CreateView):
     model = Decaf
@@ -120,7 +69,6 @@ class DecafCreateView(CreateView):
         return file
 
     count_hits = 0
-
 
     def form_valid(self, form):
 
@@ -146,12 +94,10 @@ class DecafCreateView(CreateView):
             os.makedirs(save_dir)
             os.makedirs(os.path.join(save_dir, 'results'))
 
-
         if len(all_files) == 1:
             log_to_terminal(str('Downloading Image...'), self.socketid)
         else:
             log_to_terminal(str('Downloading Images...'), self.socketid)
-
 
         for file in all_files:
             try:
@@ -199,23 +145,20 @@ class DecafCreateView(CreateView):
         context['pictures'] = Decaf.objects.all()
         return context
 
+
 @csrf_exempt
 def demoDecaf(request):
     post_dict = parser.parse(request.POST.urlencode())
     try:
-
         if 'src' not in post_dict:
             # Run on all images:
             image_path = conf.LOCAL_DEMO_PIC_DIR
             imgname = ''
 
             img_url = os.path.join(os.path.dirname(urlparse(conf.PIC_URL.rstrip('/')).path), 'demo')
-            print img_url
         else:
             data = {'info': 'Processing'}
             img_url = post_dict['src']
-            print img_url
-
             imgname = basename(urlparse(img_url).path)
             image_path = os.path.join(conf.LOCAL_DEMO_PIC_DIR, imgname)
 
@@ -223,8 +166,6 @@ def demoDecaf(request):
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
-        print image_path
-        print output_path
         log_to_terminal('Processing image...', post_dict['socketid'])
 
         # This is for running it locally ie on Godel
@@ -245,6 +186,7 @@ def demoDecaf(request):
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
+
 def decafDemo(request):
     post_dict = parser.parse(request.POST.urlencode())
     log_to_terminal('Processing Demo Images Now', post_dict['socketid'])
@@ -254,7 +196,6 @@ def decafDemo(request):
     else:
         redis_obj.publish(decaf_channel_name, json.dumps({'dir': DEMO_IMAGE_PATH, 'flag': '2', 'socketid': post_dict['socketid']}))
 
-import re
 def downloadAndSaveImages(url_list, socketid):
     try:
         uuid = shortuuid.uuid()
@@ -269,12 +210,9 @@ def downloadAndSaveImages(url_list, socketid):
                 file = requests.get(url)
                 file_full_name_raw = basename(urlparse(url).path)
                 file_name_raw, file_extension = os.path.splitext(file_full_name_raw)
-                print file_name_raw, file_extension
                 regex = re.compile('[^a-zA-Z0-9]')
                 #First parameter is the replacement, second parameter is your input string
                 file_name = re.sub('[^a-zA-Z0-9]+', '', file_name_raw)
-                print file_name_raw
-                print file_name
 
                 f = open(os.path.join(conf.PIC_DIR, str(uuid)+file_name+file_extension), 'wb')
                 f.write(file.content)
@@ -292,7 +230,6 @@ def downloadAndSaveImages(url_list, socketid):
         print 'Exception'+str(traceback.format_exc())
 
 
-
 @csrf_exempt
 def decafDropbox(request):
     post_dict = parser.parse(request.POST.urlencode())
@@ -305,9 +242,6 @@ def decafDropbox(request):
             uuid, image_path = downloadAndSaveImages(post_dict['urls'], post_dict['socketid'])
 
             output_path = os.path.join(image_path, 'results')
-            print image_path
-            print output_path
-            print uuid
             if not os.path.exists(output_path):
                 os.makedirs(output_path)
             decaf_wrapper_local(image_path, output_path, post_dict['socketid'], os.path.join(conf.PIC_URL, uuid))
@@ -316,11 +250,13 @@ def decafDropbox(request):
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
+
     except Exception as e:
         data = {'result': str(traceback.format_exc())}
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
+
 
 class DecafModelCreateView(CreateView):
     model = Decafmodel
@@ -337,7 +273,6 @@ class DecafModelCreateView(CreateView):
         return file
 
     count_hits = 0
-
 
     def form_valid(self, form):
 
@@ -373,7 +308,6 @@ class DecafModelCreateView(CreateView):
             log_to_terminal(str('Downloading Image...'), self.socketid)
         else:
             log_to_terminal(str('Downloading Images...'), self.socketid)
-
 
         for file in all_files:
             try:
@@ -421,6 +355,7 @@ class DecafModelCreateView(CreateView):
         context['pictures'] = Decaf.objects.all()
         return context
 
+
 @csrf_exempt
 def decaf_train(request):
     post_dict = parser.parse(request.POST.urlencode())
@@ -434,9 +369,6 @@ def decaf_train(request):
             uuid, image_path = downloadAndSaveImages(post_dict['urls'], post_dict['socketid'])
 
             output_path = os.path.join(image_path, 'results')
-            print image_path
-            print output_path
-            print uuid
             if not os.path.exists(output_path):
                 os.makedirs(output_path)
             decaf_wrapper_local(image_path, output_path, post_dict['socketid'], os.path.join(conf.PIC_URL, uuid))

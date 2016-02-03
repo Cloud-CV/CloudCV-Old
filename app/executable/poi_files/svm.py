@@ -3,8 +3,8 @@
 from ctypes import *
 from ctypes.util import find_library
 from os import path
-import sys
 
+import sys
 
 try:
 	dirname = path.dirname(path.abspath(__file__))
@@ -96,6 +96,7 @@ class svm_problem(Structure):
 
 		self.x = (POINTER(svm_node) * l)() 
 		for i, xi in enumerate(self.x_space): self.x[i] = xi
+
 
 class svm_parameter(Structure):
 	_names = ["svm_type", "kernel_type", "degree", "gamma", "coef0",
@@ -215,6 +216,7 @@ class svm_parameter(Structure):
 		for i in range(self.nr_weight): 
 			self.weight[i] = weight[i]
 			self.weight_label[i] = weight_label[i]
+
 
 class svm_model(Structure):
 	_names = ['param', 'nr_class', 'l', 'SV', 'sv_coef', 'rho',

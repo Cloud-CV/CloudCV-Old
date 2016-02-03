@@ -1,8 +1,29 @@
 # encoding: utf-8
+from django.conf import settings
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
 
+from cloudcv17 import config
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize
+from app.models import Picture, RequestLog, Decaf
+from celeryTasks.webTasks.stitchTask import stitchImages
+from log import logger, log, log_to_terminal, log_and_exit
+from app.core.job import Job
+from savefile import saveFilesAndProcess
+import app.thirdparty.dropbox_auth as dbauth
+import app.thirdparty.google_auth as gauth
+import decaf_views
+import app.conf as conf
 
+from PIL import Image
+from io import BytesIO
+from querystring_parser import parser
+
+import base64
+import StringIO
 import time
 import subprocess
 import os
@@ -12,119 +33,19 @@ import uuid
 import datetime
 import shortuuid
 import mimetypes
-
-from django.views.generic import CreateView, DeleteView
-
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
-from querystring_parser import parser
 import redis
-
-from app.models import Picture, RequestLog, Decaf
-from log import logger, log, log_to_terminal, log_and_exit
-from app.core.job import Job
-from savefile import saveFilesAndProcess
-import app.thirdparty.dropbox_auth as dbauth
-import app.thirdparty.google_auth as gauth
-import decaf_views
-import app.conf as conf
-from django.conf import settings
-from PIL import Image
-import StringIO
-import base64
-from io import BytesIO
-from cloudcv17 import config
 
 r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
-from celeryTasks.webTasks.stitchTask import stitchImages
 
 class Request:
     socketid = None
 
     def run_executable(self, src_path, output_path, result_path):
-
-        # try:
-        #     popen = subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        #     count=1
-        #     print 'Coming Here'
-        #     while True:
-        #         popen.poll()
-        #         if(popen.stdout):
-        #             line=popen.stdout.readline()
-        #             popen.stdout.flush()
-        #
-        #         if(popen.stderr):
-        #             errline = popen.stderr.readline()
-        #             popen.stderr.flush()
-        #         # r = redis.StrictRedis(host = 'redis' , port=6379, db=0)
-        #
-        #         if line:
-        #             # r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
-        #             self.log_to_terminal(line)
-        #             # fi.write(line+'*!*'+socketid+'\n')
-        #             print count,line, '\n'
-        #
-        #             count += 1
-        #                     # time.sleep(1)
-        #         if errline:
-        #             # r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
-        #             self.log_to_terminal(errline)
-        #             # fi.write(line+'*!*'+socketid+'\n')
-        #             print count,line, '\n'
-        #             count += 1
-        #
-        #         if line == '':
-        #             break
-        #
-        #     self.log_to_terminal('Thank you for using CloudCV')
-        #     r.publish('chat', json.dumps({'web_result': result_path, 'socketid': str(self.socketid)}))
-        # except Exception as e:
-        #     self.log_to_terminal(str(traceback.format_exc()))
-        #     print str(traceback.format_exc())
-        #
-        # return '\n', '\n'
         stitchImages.delay(src_path, self.socketid, output_path, result_path)
 
     def log_to_terminal(self, message):
         r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
-
-# def run_executable(list, session, socketid, ):
-#         try:
-
-#             popen=subprocess.Popen(list,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#             count=1
-#             r = redis.StrictRedis(host = 'redis', port=6379, db=0)
-
-#             while True:
-#                 popen.poll()
-#                 if(popen.stdout):
-#                     line=popen.stdout.readline()
-#                     popen.stdout.flush()
-
-#                 if(popen.stderr):
-#                    errline=popen.stdout.readline()
-#                    popen.stderr.flush()
-
-
-#                 if line:
-#                     r.publish('chat', json.dumps({'message': str(line), 'socketid': str(socketid)}))
-#                     print count,line, '\n'
-#                     count += 1
-
-#                 if errline:
-#                     r.publish('chat', json.dumps({'message': str(errline), 'socketid': str(socketid)}))
-#                     print count,line, '\n'
-#                     count += 1
-
-#                 if line == '':
-#                     break
-#             r.publish('chat', json.dumps({'message': str('Thank you for using CloudCV'), 'socketid': str(socketid)}))
-
-#         except Exception as e:
-#             r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
-#         return '\n', '\n'
 
 
 class PictureCreateView(CreateView):
@@ -138,9 +59,6 @@ class PictureCreateView(CreateView):
             self.object = form.save()
             serialize(self.object)
             data = {'files': []}
-
-            # List of Images: Url, Name, Type
-            print data
 
             old_save_dir = os.path.dirname(conf.PIC_DIR)
 
@@ -163,7 +81,6 @@ class PictureCreateView(CreateView):
                 file.name = fileName + strtick + fileExtension
                 a.file.save(file.name, file)
 
-
                 file.name = a.file.name
 
                 # imgstr = base64.b64encode(file.read())
@@ -182,13 +99,7 @@ class PictureCreateView(CreateView):
                     'thumbnailUrl': conf.PIC_URL+thumbPath,
                     'size': 0,
                 })
-            # path, dirs, files = os.walk(save_dir).next()
-            # file_count = len(files)
 
-            # list = [os.path.join(conf.EXEC_DIR, 'stitch_full'), '--img', save_dir, '--verbose', '1', '--output',
-            #         os.path.join(save_dir, 'results/'), ]
-
-            # print list
             request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'), os.path.join(conf.PIC_URL, folder_name, 'results/result_stitch.jpg'))
 
             response = JSONResponse(data, mimetype=response_mimetype(self.request))
@@ -196,15 +107,16 @@ class PictureCreateView(CreateView):
 
             return response
         except Exception as e:
-            print traceback.format_exc()
             r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(self.socketid)}))
 
 
 class BasicPlusVersionCreateView(PictureCreateView):
     template_name_suffix = '_basicplus_form'
 
+
 def homepage(request):
     return render(request, 'index.html')
+
 
 def ec2(request):
     token = request.GET['dropbox_token']
@@ -251,6 +163,7 @@ def ec2(request):
     popen.communicate()
     return HttpResponse(complete_output)
 
+
 @csrf_exempt
 def demoUpload(request, executable):
     try:
@@ -264,15 +177,6 @@ def demoUpload(request, executable):
             print request_obj.socketid
             data = []
             save_dir = os.path.join(conf.LOCAL_DEMO1_PIC_DIR)
-
-            # list = [os.path.join(conf.EXEC_DIR, 'stitch_full'), '--img', save_dir, '--verbose', '1', '--output',
-            #         save_dir + '/results/']
-
-            # path, dirs, files = os.walk(save_dir).next()
-            # file_count = len(files)
-
-            # list.append('--ncpus')
-            # list.append(str(min(file_count, 20)))
 
             request_obj.log_to_terminal(str('Images Processed. Starting Executable'))
             request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'), '/app/media/pictures/demo1/results/result_stitch.jpg')
@@ -288,6 +192,7 @@ def demoUpload(request, executable):
 
     return HttpResponse('Not a post request')
 
+
 def log_every_request(job_obj):
     try:
         now = datetime.datetime.utcnow()
@@ -296,15 +201,15 @@ def log_every_request(job_obj):
                           function=job_obj.executable, dateTime=now)
         req_obj.save()
     except Exception as e:
-        r = redis.StrictRedis(host = 'redis', port=6379, db=0)
+        r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
         r.publish('chat', json.dumps({'error': str(traceback.format_exc()), 'socketid': job_obj.socketid}))
+
 
 @csrf_exempt
 def matlabReadRequest(request):
-    r = redis.StrictRedis(host = 'redis', port=6379, db=0)
+    r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
-
-    if request.method == 'POST':    # post request
+    if request.method == 'POST':
         post_dict = parser.parse(request.POST.urlencode())
 
         try:
@@ -316,14 +221,13 @@ def matlabReadRequest(request):
             log_and_exit(str(traceback.format_exc()), job_obj.socketid)
             return HttpResponse('Error at server side')
 
-
         return HttpResponse(str(response))
 
-    else:                           # get request
+    else:
         response = JSONResponse({}, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
-        # return HttpResponse(str(request))
+
 
 def authenticate(request, auth_name):
     if auth_name == 'dropbox':
