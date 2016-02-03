@@ -1,14 +1,17 @@
+from django.http import HttpResponse
+
+import app.conf as conf
+from app.log import log_to_terminal, log_error_to_terminal, log_and_exit
+from celeryTasks.apiTasks.tasks import run
+from cloudcv17 import config
+
 import os
 import traceback
 import json
-import app.conf as conf
-from django.http import HttpResponse
 import redis
-from app.log import log_to_terminal, log_error_to_terminal, log_and_exit
-# import cloudcvMaster as ccvM
-from celeryTasks.apiTasks.tasks import run
 
-r = redis.StrictRedis(host = 'redis', port=6379, db=0)
+r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
+
 
 def execute(job_obj, image_path=None, source_type=None):
     try:
@@ -24,7 +27,6 @@ def execute(job_obj, image_path=None, source_type=None):
         if job_obj.url is None:
             job_obj.url = os.path.join(conf.PIC_URL, job_obj.userid, job_obj.jobid)
 
-
         log_to_terminal('Files Stored. Waiting for one of the worker nodes to handle this request', job_obj.socketid)
         parsed_dict = {'jobid': job_obj.jobid, 'userid': job_obj.userid,
                         'image_path': str(image_path),'result_path': str(result_path),
@@ -38,7 +40,6 @@ def execute(job_obj, image_path=None, source_type=None):
         run.delay(parsed_dict)
 
     except Exception as e:
-        print str(traceback.format_exc())
         log_and_exit(str(traceback.format_exc()), job_obj.socketid)
         return str('Error pushing to the job queue')
 

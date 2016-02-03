@@ -9,6 +9,7 @@ While editing please make sure:
    (See Docker/CPUWorker/Dockerfile)
 """
 
+
 def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results, modelname = '', modelnet=None):
 
     import os
@@ -22,35 +23,31 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
     import os
     import operator
     import numpy as np
-
+    from cloudcv17 import config
 
     os.environ['OMP_NUM_THREADS'] = '4'
 
     CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__),"..",".."))
 
-    r = redis.StrictRedis(host = 'redis', port=6379, db=0)
+    r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
-    print "Started test script"
     # Set the right path to your model file, pretrained model,
     # and the image you would like to classify.
     MODEL_FILE = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
     PRETRAINED = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
-    #caffe.set_phase_test()
     caffe.set_mode_cpu()
     net = caffe.Classifier(MODEL_FILE, PRETRAINED)
 
-    if modelnet==None:
+    if modelnet == None:
         modelnet = net
 
     def decaf_features(single_image, modelnet=net):
-        print str(modelnet)
         try:
             # Compute the features
             input_image = caffe.io.load_image(single_image)
             modelnet.predict([input_image])
             blobs = modelnet.blobs.items()
             features = blobs[-3][1].data[:,:,0,0]
-            print features.shape, features[1].shape
             return features
         except Exception as e:
             raise e
@@ -100,6 +97,7 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
 
     return str(os.path.join(resultpath, file + '.mat'))
 
+
 def calculate_decaf(imagepath, resultpath, flag, socketid, all_results):
     import os 
 
@@ -112,6 +110,4 @@ def calculate_decaf(imagepath, resultpath, flag, socketid, all_results):
 
 
 if __name__ == '__main__':
-    print sys.argv[1]
     calculate_decaf(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
-

@@ -10,8 +10,10 @@ While editing please make sure:
 """
 
 from __future__ import absolute_import
-from celeryTasks.celery import app
 
+from celeryTasks.celery import app
+from celeryTasks.apiTasks import caffe_classify, decaf_cal_feature
+from cloudcv17 import config
 import os
 import subprocess
 import json
@@ -19,22 +21,18 @@ import re
 import traceback
 import os.path
 import redis
-#from app.log import log, log_to_terminal, log_error_to_terminal, log_and_exit
-from celeryTasks.apiTasks import caffe_classify, decaf_cal_feature
-#import app.conf as conf
 import time
-#import envoy
+import sys
+
+os.environ['OMP_NUM_THREADS'] = '4'
+r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
+jobid = ''
 
 @app.task(ignore_result=True)
 def saveDropboxFiles(job_dict):
     from app.thirdparty import ccv_dropbox
     ccv_dropbox.downloadFiles(job_dict)
 
-os.environ['OMP_NUM_THREADS'] = '4'
-r = redis.StrictRedis(host = 'redis', port=6379, db=0)
-jobid = ''
-
-import sys
 
 class CustomPrint():
     def __init__(self, socketid):
@@ -43,6 +41,7 @@ class CustomPrint():
 
     def write(self, text):
         r.publish('chat', json.dumps({'error': str(text), 'socketid': str(self.socketid)}))
+
 
 def sendsMessageToRedis(userid, jobid, source_type, socketid, complete_output,
                         result_path=None, result_url=None, result_text=None, dropbox_token=None):
@@ -75,6 +74,7 @@ def sendsMessageToRedis(userid, jobid, source_type, socketid, complete_output,
     except Exception as e:
         raise e
 
+
 def run_matlab_code(mlab_inst, exec_path, task_args, socketid):
     customPrint = CustomPrint(socketid)
     old_stdout = sys.stdout
@@ -83,17 +83,14 @@ def run_matlab_code(mlab_inst, exec_path, task_args, socketid):
     sys.stdout = old_stdout
     return str(res)
 
-def run_executable(list, live=True, socketid=None):
 
+def run_executable(list, live=True, socketid=None):
     try:
         popen = subprocess.Popen(list, bufsize=1, stdin=open(os.devnull), stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
         count = 0
         complete_output=''
         line = ''
         errline = ''
-
-
-
         while True:
             print 'inside while loop'
             if popen.poll() is not None:
@@ -102,42 +99,33 @@ def run_executable(list, live=True, socketid=None):
 
             if popen.stdout:
                 line = popen.stdout.readline()
-                if live is True:
+                if live:
                     r.publish('chat', json.dumps({'error': str(line), 'socketid': socketid}))
                     print line
                 popen.stdout.flush()
 
             if popen.stderr:
                 errline = popen.stdout.readline()
-                if live is True:
+                if live:
                     r.publish('chat', json.dumps({'error': str(errline), 'socketid': socketid}))
                     print errline
                 popen.stderr.flush()
 
             if line:
-                # print count, line, '\n'
                 complete_output += str(line)
                 count += 1
 
             if errline:
-                # print count, errline, '\n'
                 complete_output += str(errline)
                 count += 1
-
-
-        # conn.close()
         return ''
     except Exception as e:
-        # conn.close()
         raise e
+
 
 def parseParameters(params):
     params = str(params)
-
-    #log(params, parseParameters.__name__)
-
     pat = re.compile('u\'[\w\s,]*\'')
-
     decoded_params = ''
     end = 0
 
@@ -146,11 +134,7 @@ def parseParameters(params):
         end = i.end()
 
     decoded_params += params[end:]
-
-    #log(decoded_params, parseParameters.__name__)
-
-    dict = json.loads(decoded_params)
-    return dict
+    return json.loads(decoded_params)
 
 
 def createList(directory, parsed_dict):
@@ -239,14 +223,13 @@ def createList(directory, parsed_dict):
 
 
 def run_classification(userid, jobid, image_path, socketid, token, source_type, result_path, db_token=None):
-    # logger.write('P', 'Inside run_classification')
-
     message = 'Classification Complete'
     result = caffe_classify.caffe_classify(image_path)
     result = json.dumps(result)
     sendsMessageToRedis(userid, jobid, source_type, socketid, '', result_path=result_path, result_text=str(result),
                         dropbox_token=db_token)
     r.publish('chat', json.dumps({'done': str(message), 'socketid': str(socketid), 'token': token, 'jobid': jobid}))
+
 
 def run_image_stitching(list, token, result_url, socketid, result_path, source_type):
    # logger.write('P', 'Inside Image Stitching')
@@ -260,8 +243,6 @@ def run_voc_release(list, token, result_url, socketid, result_path, source_type)
         message = 'Bounding Box Generated'
         run_executable(list, token, result_url, socketid, message, result_path, source_type)
     except Exception as e:
-        print str(e)+'\n'
-       # logger.write('P', str(e))
         raise e
 
 @app.task(ignore_result=True)
@@ -292,8 +273,6 @@ def run(parsed_dict):
         if 'server' in dict_of_param:
             server = dict_of_param['server']
 
-        #log(list, "__main__")
-
         token = parsed_dict['token']
 
         result_url = os.path.join(parsed_dict['url'], 'results')
@@ -308,7 +287,6 @@ def run(parsed_dict):
                                 dropbox_token=db_token)
             r.publish('chat', json.dumps({'done': str('Image Stitching done'), 'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
-
         elif(parsed_dict['exec'] == 'VOCRelease5'):
             # output = run_executable(list)
             output = run_matlab_code(mlab_obj, '/var/www/html/cloudcv/voc-dpm-matlab-bridge/pascal_object_detection.m', list, parsed_dict['socketid'])
@@ -322,7 +300,6 @@ def run(parsed_dict):
                                db_token=db_token)
 
         elif(parsed_dict['exec'] == 'features'):
-            print result_url
             tags = {}
             matlabfilepath = decaf_cal_feature.calculate_decaf(parsed_dict['image_path'], result_path,3,socketid, tags)
             sendsMessageToRedis(userid, jobid, source_type, socketid, '', result_path, result_url,
@@ -332,4 +309,3 @@ def run(parsed_dict):
 
     except Exception as e:
         pass
-        #log_and_exit(str(traceback.format_exc()), socketid)

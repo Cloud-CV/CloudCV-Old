@@ -1,22 +1,27 @@
+from django.http import HttpResponse
+
+
+from app.models import Picture
+from celeryTasks.apiTasks.tasks import saveDropboxFiles
+from app.log import log, logger, log_to_terminal, log_error_to_terminal
+from cloudcv17 import config
+import app.core.execute as core_execute
+import app.thirdparty.ccv_dropbox as ccvdb
+import app.conf as conf
+
+from PIL import Image
+from io import BytesIO
+
 import time
 import os
 import traceback
 import json
-from django.http import HttpResponse
-from PIL import Image
 import sys
-import app.core.execute as core_execute
-from app.models import Picture
-import app.thirdparty.ccv_dropbox as ccvdb
-from celeryTasks.apiTasks.tasks import saveDropboxFiles
-
-from app.log import log, logger, log_to_terminal, log_error_to_terminal
 import redis
-import app.conf as conf
 import base64
 import re
-from io import BytesIO
-r = redis.StrictRedis(host = 'redis', port=6379, db=0)
+
+r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
 ''' Not using getThumbnail code anymore
 def getThumbnail(image_url_prefix, name):
@@ -29,6 +34,7 @@ def getThumbnail(image_url_prefix, name):
     im.save('/var/www/html/cloudcv/fileupload' + file, list[1])
     return file
 '''
+
 
 def parseParameters(params):
     params = str(params)
@@ -50,7 +56,6 @@ def parseParameters(params):
 
     dict = json.loads(decoded_params)
     return dict
-
 
 
 def resizeImageAndTransfer(path, directory, size, file):
@@ -79,7 +84,6 @@ def resizeImageAndTransfer(path, directory, size, file):
     
 
 def getFilesFromRequest(request, count):
-    print request.FILES.keys()
 
     files_all = request.FILES.getlist('file')
     if len(files_all) == 0:
@@ -87,7 +91,6 @@ def getFilesFromRequest(request, count):
         for key in request.FILES.keys():
             files_all.append(request.FILES[key])
     return files_all
-
 
 
 def saveFilesAndProcess(request, job_obj):
@@ -144,7 +147,6 @@ def saveFilesAndProcess(request, job_obj):
                 resizeImageAndTransfer(path, job_directory, size, single_file)
 
             except Exception as e:
-                print str(traceback.format_exc())
                 raise e
 
         response = core_execute.execute(job_obj, job_directory, 'local')

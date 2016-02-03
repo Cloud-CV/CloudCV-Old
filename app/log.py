@@ -1,12 +1,17 @@
-from time import gmtime, strftime
 from django.conf import settings
+
+from time import gmtime, strftime
+from cloudcv17 import config
+
 import redis
 import os
 import json
 
+
 class Logger:
 
     log_path= os.path.join(settings.BASE_ABS_DIR, 'logs')
+
     def __init__(self):
         print self.log_path
 
@@ -37,7 +42,6 @@ class Logger:
         if(type == 'P'):
             self._fi_process.write(self.getData()+str(msg)+'\n')
 
-
     def close(self, type):
         if(type == 'S'):
             self._fi_server.close()
@@ -50,8 +54,7 @@ class Logger:
 
 logger = Logger()
 
-
-r = redis.StrictRedis(host = 'redis', port=6379, db=0)
+r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
 
 def log(message, name):
@@ -61,8 +64,10 @@ def log(message, name):
 def log_to_terminal(message, socketid):
     r.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
 
+
 def log_and_exit(message, socketid):
     r.publish('chat', json.dumps({'exit': str(message), 'socketid': str(socketid)}))
+
 
 def log_error_to_terminal(message, socketid, end):
 

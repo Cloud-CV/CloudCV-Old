@@ -6,4 +6,5 @@ GOOGLE_CLIENT_SECRET = ''
 DROPBOX_APP_KEY = ''
 DROPBOX_APP_SECRET = ''
 
+# Redis Configuration
 REDIS_HOST = '127.0.0.1'
