@@ -1,9 +1,9 @@
 from django.http import HttpResponse
 
-import app.conf as conf
 from app.log import log_to_terminal, log_error_to_terminal, log_and_exit
 from celeryTasks.apiTasks.tasks import run
 from cloudcv17 import config
+import app.conf as conf
 
 import os
 import traceback

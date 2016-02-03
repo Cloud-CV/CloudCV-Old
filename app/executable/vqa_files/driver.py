@@ -1,6 +1,13 @@
 # VQA MLP baseline for CloudCV
 # author: Jiasen Lu, Devi Parikh
 
+from data_provider import getDataProvider
+from tools import SVM
+from tools import kmeans
+from MLP import test_mlp
+from collections import defaultdict
+from random import randint
+
 import json
 import numpy as np
 import os
@@ -10,14 +17,7 @@ import time
 import pickle
 import utils
 import operator
-
 import scipy.io
-from data_provider import getDataProvider
-from tools import SVM
-from tools import kmeans
-from MLP import test_mlp
-from collections import defaultdict
-from random import randint
 
 def preProBuildWordVocabAll(question_iterator, caption_iterator, word_count_threshold):
     # count all word counts and threshold
@@ -49,6 +49,7 @@ def preProBuildWordVocabAll(question_iterator, caption_iterator, word_count_thre
         ixtoword[ix] = w
         ix += 1
     return wordtoix, ixtoword, vocab
+
 
 def preProBuildWordVocab(iterator, dic_size, word_order = 0):
     # word_order: the order of word in the sentece should be count, 0 means all the sentence.
@@ -113,6 +114,7 @@ def preProBuildAnswerVocab(iterator, dic_size = 1000):
         ixtoword[ix] = w
         ix += 1
     return wordtoix, ixtoword, vocab
+
 
 def preProBuildAnswerVocabTop(dp, th=25):
     t0 = time.time()
@@ -233,6 +235,7 @@ def GetWord2VecVocab(vocab):
     print '%d words find Word2Vec representation, %d words not' %(count, len(vocab)-count)
     return wordtovec
 
+
 def BoWEncoding(iterator, wordtoix, word_order=0):
 
     histLen = len(wordtoix)
@@ -255,6 +258,7 @@ def BoWEncoding(iterator, wordtoix, word_order=0):
 
         Qencoder.append(vectmp)
     return np.array(Qencoder)
+
 
 def BoWEncodingTop(iterator, wordtoix, word_order=0):
 
@@ -279,6 +283,7 @@ def BoWEncodingTop(iterator, wordtoix, word_order=0):
         Qencoder.append(vectmp)
     return np.array(Qencoder)
 
+
 def BoWAnswerEncodingVec(iterator, wordtoix):
     histLen = len(wordtoix) 
     Aencoder = []
@@ -291,6 +296,7 @@ def BoWAnswerEncodingVec(iterator, wordtoix):
         Aencoder.append(vectmp)
     return np.array(Aencoder)
 
+
 def BoWAnswerEncoding(iterator, wordtoix):
     histLen = len(wordtoix) 
     Aencoder = []
@@ -299,6 +305,7 @@ def BoWAnswerEncoding(iterator, wordtoix):
         idx = wordtoix.get(sent_string, histLen)
         Aencoder.append(idx)
     return np.array(Aencoder)
+
 
 def BOWMultiAnswerEncoding(iterator, wordtoix):
     histLen = len(wordtoix) 
@@ -334,7 +341,6 @@ def BOWMultiAnswerEncodingCheck(iterator, wordtoix, label, groups):
                         print '%d' %count
                         print 'wrong %s', sent
         count += 1
-
     return np.array(Aencoder)
 
 
@@ -382,6 +388,7 @@ def Word2VecEncoding(iterator, wordtovec):
 
     return np.array(encoder)
 
+
 def FindAnswerGroup(iterator):
     group = defaultdict(list)
     count = 0
@@ -394,8 +401,8 @@ def FindAnswerGroup(iterator):
         pair.append(value)
     return pair    
 
-def priorQuestion(dp, misc):
 
+def priorQuestion(dp, misc):
     misc['Qwordtoix1'], misc['Qixtoword1'], misc['Qvocab1'] = preProBuildWordVocab(dp.iterQuestion('train'),10, 1)
     misc['Qwordtoix2'], misc['Qixtoword2'], misc['Qvocab2'] = preProBuildWordVocab(dp.iterQuestion('train'),50, 2)
 
@@ -419,8 +426,8 @@ def priorQuestion(dp, misc):
         if sum(vec) == 2:
             count += 1
     print 'Cover testing sample %d with %.2f' % (count, np.float(count) / len(bowQuestionTest))
-    
     return bowQuestionTrain, bowQuestionTest, misc['Qixtoword1'], misc['Qixtoword2']
+
 
 def preQuestion(dp, misc):
     # get the vocabulary dictionary for question
@@ -450,8 +457,8 @@ def preCaption(dp, misc):
     misc['Cwordtoix'], misc['Cixtoword0'], misc['Cvocab'] = preProBuildWordVocab(dp.iterCaption('train'),1000, 0)
     bowCaptionTrain = BoWEncoding(dp.iterCaption('train'), misc['Cwordtoix'], 0)
     bowCaptionTest = BoWEncoding(dp.iterCaption('test'), misc['Cwordtoix'], 0)
-    
     return bowCaptionTrain, bowCaptionTest, misc
+
 
 def preImage(dp, misc):
     dataset = 'coco'
@@ -477,6 +484,7 @@ def preImage(dp, misc):
  
     return ImgFeatTrain, ImgFeatTest
 
+
 def preQuestionImage(dp, misc):
     bowQuestionTrain,bowQuestionTest, misc = preQuestion(dp, misc)
     ImgFeatTrainReduce, ImgFeatTestReduce = preImage(dp, misc)
@@ -485,6 +493,7 @@ def preQuestionImage(dp, misc):
     QuesImgTest = np.concatenate((bowQuestionTest, ImgFeatTestReduce), axis=1) 
 
     return QuesImgTrain, QuesImgTest, misc
+
 
 def preQuestionCaption(dp, misc):
     bowQuestionTrain,bowQuestionTest, misc = preQuestion(dp, misc)
@@ -495,6 +504,7 @@ def preQuestionCaption(dp, misc):
 
     return QuesCapTrain, QuesCapTest, misc
 
+
 def preQuestionCaptionImg(dp, misc):
     bowQuestionTrain,bowQuestionTest, misc = preQuestion(dp, misc)
     bowCaptionTrain, bowCaptionTest, misc = preCaption(dp, misc)    
@@ -502,6 +512,7 @@ def preQuestionCaptionImg(dp, misc):
     QuesCapImgTrain = np.concatenate((bowQuestionTrain, bowCaptionTrain, ImgFeatTrainReduce), axis=1) 
     QuesCapImgTest = np.concatenate((bowQuestionTest, bowCaptionTest, ImgFeatTestReduce), axis=1)   
     return QuesCapImgTrain, QuesCapImgTest, misc
+
 
 def trainModel(trainVec, trainLable, testVec, input_num, hidden_num, epoch_num, misc, L1=0.00, L2=0.001):
     # get the label for the answer.
@@ -530,22 +541,20 @@ def SVMtrainModel(trainVec, trainLable, testVec, misc):
     if len(out[0]) != misc['numAnswer']:
         print "label number is not consistent.", sys.exc_info()[0]
         raise
-
-
     return out
+
 
 def calAcc(out, misc):
 
     label_count = utils.mlpOPAcc(out, misc['bowAnswerTest'], misc['answerGroup'], misc['numAnswer'])
     utils.mlpMSAcc(out, misc['bowAnswerTest'], misc['answerGroup'], misc['multiAnswerTest'], misc['numAnswer'])
-
     print 'The statistics of label are %s' %(label_count)  
+
 
 def calRandomAcc(misc):
     label_count = utils.mlpOPlable(np.zeros(len(misc['bowAnswerTest'])), misc['bowAnswerTest'], misc['answerGroup'], misc['numAnswer'])
     randintx=[randint(0,499) for p in range(len(misc['bowAnswerTest']))]
     utils.mlpOPlable(randintx, misc['bowAnswerTest'], misc['answerGroup'], misc['numAnswer'])
-
 
 
 def openAnswerWriteJson(out, iterator, misc):
@@ -578,6 +587,7 @@ def openAnswerWriteJson(out, iterator, misc):
     savepath = os.path.join('Json', savename+'.json')
     with open(savepath, 'w') as outfile:
         json.dump(JsonData, outfile)
+
 
 def multChoiceWriteJson(out, iterator, misc):
     # given the prediction output, write the result to json format.
@@ -720,7 +730,6 @@ def Prior_baseline(num_hidden=50, K = 500, Type = 0, isBinary=0, classifier = 'M
         utils.mlpOPlable(ans, misc['bowAnswerTest'], misc['answerGroup'], misc['numAnswer'])
 
         openAnswerWriteJson(ans, dp.iterAll('test'), misc)
-
 
 
 def main(num_hidden=50, K = 150, Type = 1, isBinary=0, classifier = 'MLP', CNNfeat = 'softmax', L2 = 0.0005, C = 1):

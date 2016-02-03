@@ -1,7 +1,7 @@
 # encoding: utf-8
+from django.core.urlresolvers import reverse
 import mimetypes
 import re
-from django.core.urlresolvers import reverse
 
 
 def order_name(name):
@@ -30,7 +30,6 @@ def serialize(instance, file_attr='file'):
         size = obj.size
     except OSError:
         size = 0
-
     return {
         'url': obj.url,
         'name': order_name(obj.name),
@@ -38,5 +37,3 @@ def serialize(instance, file_attr='file'):
         'thumbnailUrl': obj.url,
         'size': size,
     }
-
-

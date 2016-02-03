@@ -99,13 +99,7 @@ class PictureCreateView(CreateView):
                     'thumbnailUrl': conf.PIC_URL+thumbPath,
                     'size': 0,
                 })
-            # path, dirs, files = os.walk(save_dir).next()
-            # file_count = len(files)
 
-            # list = [os.path.join(conf.EXEC_DIR, 'stitch_full'), '--img', save_dir, '--verbose', '1', '--output',
-            #         os.path.join(save_dir, 'results/'), ]
-
-            # print list
             request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'), os.path.join(conf.PIC_URL, folder_name, 'results/result_stitch.jpg'))
 
             response = JSONResponse(data, mimetype=response_mimetype(self.request))
@@ -183,15 +177,6 @@ def demoUpload(request, executable):
             print request_obj.socketid
             data = []
             save_dir = os.path.join(conf.LOCAL_DEMO1_PIC_DIR)
-
-            # list = [os.path.join(conf.EXEC_DIR, 'stitch_full'), '--img', save_dir, '--verbose', '1', '--output',
-            #         save_dir + '/results/']
-
-            # path, dirs, files = os.walk(save_dir).next()
-            # file_count = len(files)
-
-            # list.append('--ncpus')
-            # list.append(str(min(file_count, 20)))
 
             request_obj.log_to_terminal(str('Images Processed. Starting Executable'))
             request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'), '/app/media/pictures/demo1/results/result_stitch.jpg')

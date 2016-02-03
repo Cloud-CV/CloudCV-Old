@@ -1,10 +1,10 @@
 from django.http import HttpResponse
 
-
 from app.models import Picture
 from celeryTasks.apiTasks.tasks import saveDropboxFiles
 from app.log import log, logger, log_to_terminal, log_error_to_terminal
 from cloudcv17 import config
+
 import app.core.execute as core_execute
 import app.thirdparty.ccv_dropbox as ccvdb
 import app.conf as conf
@@ -38,53 +38,37 @@ def getThumbnail(image_url_prefix, name):
 
 def parseParameters(params):
     params = str(params)
-
     log(params, parseParameters.__name__)
-
     pat = re.compile('u\'[\w\s,]*\'')
-
     decoded_params = ''
     end = 0
-
     for i in pat.finditer(str(params)):
         decoded_params = decoded_params + params[end:i.start()] + '"' + params[i.start()+2:i.end()-1]+'"'
         end = i.end()
-
     decoded_params += params[end:]
-
     log(decoded_params, parseParameters.__name__)
-
     dict = json.loads(decoded_params)
     return dict
 
 
 def resizeImageAndTransfer(path, directory, size, file):
-
     try:
-        # pic = Picture()
         tick = time.time()
         print file.name
         strtick = str(tick).replace('.','_')
         fileName, fileExtension = os.path.splitext(file.name)
-        # file.name = fileName + strtick + fileExtension
-        # print file.name
         imgstr = base64.b64encode(file.read())
         img_file = Image.open(BytesIO(base64.b64decode(imgstr)))
         img_file.thumbnail(size, Image.ANTIALIAS)
-
     except Exception as e:
-        # logger.write('E', str('Error while saving to Picture Database'))
         raise e
-
     if not os.path.exists(directory):
         os.makedirs(directory)
         os.chmod(directory, 0776)
-
     img_file.save(os.path.join(directory, file.name))
     
 
 def getFilesFromRequest(request, count):
-
     files_all = request.FILES.getlist('file')
     if len(files_all) == 0:
         files_all = []
@@ -94,7 +78,6 @@ def getFilesFromRequest(request, count):
 
 
 def saveFilesAndProcess(request, job_obj):
-
     """
         TODO: Specify four types of location
         1.) CloudCV General Dataset
@@ -102,7 +85,6 @@ def saveFilesAndProcess(request, job_obj):
         3.) Dropbox folder
         4.) Local System - Either save it as a test and delete, or permanently by specifying a name
     """
-
     #  If the server is different. The storage path needs to be changed to shared folders.
     parsed_params = parseParameters(job_obj.params)
 
@@ -145,9 +127,7 @@ def saveFilesAndProcess(request, job_obj):
                 path = conf.PIC_DIR
                 size = (500, 500)
                 resizeImageAndTransfer(path, job_directory, size, single_file)
-
             except Exception as e:
                 raise e
-
         response = core_execute.execute(job_obj, job_directory, 'local')
         return response

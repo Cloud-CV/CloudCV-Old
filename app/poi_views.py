@@ -1,5 +1,20 @@
 __author__ = 'clint'
 
+from urlparse import urlparse
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+
+from PIL import Image
+from querystring_parser import parser
+from os.path import splitext, basename
+
+from app.models import Picture, RequestLog, Poi
+from celeryTasks.webTasks.poiTask import poiImages
+from cloudcv17 import config
+import app.conf as conf
+
 import time
 import subprocess
 import os
@@ -12,25 +27,7 @@ import json
 import threading
 import operator
 import sys
-
-from urlparse import urlparse
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_exempt
-
-from PIL import Image
-from querystring_parser import parser
-from os.path import splitext, basename
 import redis
-
-from app.models import Picture, RequestLog, Poi
-#from app.executable.caffe_classify import caffe_classify, caffe_classify_image
-#from app.executable.poi_demo import findImportantPeople
-#from app.executable.poi_demo import findRelativeImportance
-from celeryTasks.webTasks.poiTask import poiImages
-import app.conf as conf
-from cloudcv17 import config
 
 redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 classify_channel_name = 'classify_queue'
@@ -42,8 +39,6 @@ download_directory = conf.PIC_DIR
 # Input image is saved here (symbolic links) - after resizing to 500 x 500
 physical_job_root = conf.LOCAL_CLASSIFY_JOB_DIR
 demo_log_file = physical_job_root + 'classify_demo.log'
-##
-###
 
 
 def log_to_terminal(message, socketid):
@@ -64,16 +59,15 @@ class CustomPrint():
 
         log_to_terminal(text, self.socketid)
 
+
 def classify_wrapper_redis(src_path, socketid, result_path):
     try:
-
         ## PUSH job into redis classify queue
-
         redis_obj.publish(classify_channel_name, json.dumps({'src_path': src_path, 'socketid': socketid, 'result_path': result_path}))
         log_to_terminal('Task Scheduled..Please Wait', socketid)
-
     except Exception as e:
         log_to_terminal(str(traceback.format_exc()), socketid)
+
 
 def classify_wrapper_local(src_path, socketid, result_path):
     poiImages.delay(src_path, socketid, result_path)
@@ -90,7 +84,6 @@ class PoiCreateView(CreateView):
     model = Poi
     r = None
     socketid = None
-
     count_hits = 0
 
     def form_valid(self, form):
@@ -98,7 +91,6 @@ class PoiCreateView(CreateView):
         session = self.request.session.session_key
         socketid = self.request.POST['socketid-hidden']
         self.socketid = socketid
-
         try:
             #log_to_terminal('Logging user ip....', self.socketid)
             client_address = self.request.META['REMOTE_ADDR']
@@ -112,7 +104,6 @@ class PoiCreateView(CreateView):
             fcountfile = open(os.path.join(conf.LOG_DIR, 'log_count.txt'), 'a')
             fcountfile.write(str(self.request.META.get('REMOTE_ADDR')) + '\n')
             fcountfile.close()
-
             self.count_hits += 1
 
         except Exception as e:
@@ -127,12 +118,10 @@ class PoiCreateView(CreateView):
             os.makedirs(save_dir)
             os.makedirs(os.path.join(save_dir, 'results'))
 
-
         if len(all_files) == 1:
             log_to_terminal(str('Downloading Image...'), self.socketid)
         else:
             log_to_terminal(str('Downloading Images...'), self.socketid)
-
 
         for file in all_files:
             try:
@@ -172,10 +161,10 @@ class PoiCreateView(CreateView):
 
         # This is for posting it on Redis - ie to Rosenblatt
         #classify_wrapper_redis(job_directory, socketid, result_folder)
-
         response = JSONResponse(data, {}, response_mimetype(self.request))
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
+
 
     def get_context_data(self, **kwargs):
         context = super(PoiCreateView, self).get_context_data(**kwargs)
@@ -208,6 +197,7 @@ class JSONResponse(HttpResponse):
         content = json.dumps(obj, **json_opts)
         super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)
 
+
 @csrf_exempt
 def demoPoi(request):
     post_dict = parser.parse(request.POST.urlencode())
@@ -225,8 +215,6 @@ def demoPoi(request):
             imgname = basename(urlparse(result_path).path)
 
             image_path = os.path.join(conf.LOCAL_DEMO_POI_PIC_DIR, imgname)
-            print image_path
-            print result_path
             log_to_terminal('Processing image...', post_dict['socketid'])
 
             # This is for running it locally ie on Godel
@@ -234,14 +222,11 @@ def demoPoi(request):
 
             # This is for posting it on Redis - ie to Rosenblatt
             #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
-
             data = {'info': 'Completed'}
-
         try:
             client_address = request.META['REMOTE_ADDR']
             log_file.write('Demo classify request from IP:'+client_address)
             log_file.close();
-
         except Exception as e:
             log_file.write('Exception when finding client ip:'+str(traceback.format_exc())+'\n');
             log_file.close();

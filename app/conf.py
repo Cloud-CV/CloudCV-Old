@@ -1,19 +1,18 @@
 __author__ = 'parallels'
-import os
+from django.conf import settings
 
+import os
 import sys
+
 path = '/CloudCV_Server'
 sys.path.append(path)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cloudcv17.settings")
 
-from django.conf import settings
-
 # user
 USER = 'user'
 # directory where all pictures reside
 PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'cloudcv')
-
 
 # directory for classification job related stuff.
 LOCAL_CLASSIFY_JOB_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'classify')

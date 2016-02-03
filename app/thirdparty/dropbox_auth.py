@@ -1,3 +1,9 @@
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+
+from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
+from cloudcv17 import config
+
 import urllib
 import urlparse
 import requests
@@ -5,10 +11,7 @@ import base64
 import os
 import json
 import dropbox
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import IntegrityError
-from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
-from cloudcv17 import config
+
 
 def handleAuth(request, is_API, contains_UUID):
     APP_KEY = config.DROPBOX_APP_KEY
@@ -28,15 +31,13 @@ def handleAuth(request, is_API, contains_UUID):
                 authorize_url = 'https://www.dropbox.com/1/oauth2/authorize?client_id='+ APP_KEY+ '&response_type=code' \
                                                                                                   '&redirect_uri='+redirect_url+'&state='+str(request.GET['state'])
                 return json.dumps({'redirect': 'True', 'url': str(authorize_url)})
-
-
-
         else:
             return json.dumps({'isLoggedIn': 'False'})
     else:
         authorize_url = 'https://www.dropbox.com/1/oauth2/authorize?client_id=' + APP_KEY + '&response_type=code' \
                         '&redirect_uri=' + redirect_url + '&state=' + str(request.GET['state'])
         return authorize_url
+
 
 def handleCallback(user_id, code, request):
     APP_KEY = '3bh4nkyaszl2nhd'

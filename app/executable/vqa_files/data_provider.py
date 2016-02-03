@@ -1,16 +1,19 @@
+from collections import defaultdict
+
 import json
 import os
 import random
 import scipy.io
 import codecs
-from collections import defaultdict
 import urllib2
 import pdb
 import time
 import numpy as np
 import sys
 
+
 class DataProvider:
+
     def __init__(self, dataset, IsBinary):
         print 'Initializing the data provider for the dataset'
         self.dataset_root = os.path.join('data', dataset)
@@ -70,12 +73,6 @@ class DataProvider:
         print 'The training number is %d, and the testing number is %d' %(len(self.split['train']), 
             len(self.split['test']))
 
-
-#        answerNoImg_path = os.path.join(self.dataset_root, 'answer_without_img.json')
-#        self.answerNoImg = json.load(open(answerNoImg_path, 'r'))
-        
-#        self.QuePairImg, self.QuePairNoImg = self.genQuestionPair(self.dataset, self.answerNoImg)
-
     def _getSentence(self, sent):
         return sent
 
@@ -128,7 +125,6 @@ class DataProvider:
         self.dataset = dataset
         print 'After filtering Yes No, there are %d left' %(len(self.dataset))
 
-
     def genTokens(self, sent):
         tokens = []
         tmp = sent.lower().split()
@@ -149,8 +145,6 @@ class DataProvider:
         return pair
     
     def genQuestionPair(self, data1, data2):
-
-
         pairTmp1 = defaultdict(list)
         pairTmp2 = defaultdict(list)
         for i in range(len(data1)):
@@ -313,6 +307,7 @@ class DataProvider:
 
             fp.flush()
             fp.close()
+
 
 def getDataProvider(dataset, IsBinary=0):
 	assert dataset in ['coco'], 'dataset %s unknown' % (dataset, )

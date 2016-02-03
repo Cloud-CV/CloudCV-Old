@@ -1,5 +1,20 @@
 __author__ = 'clint'
 
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+
+from app.models import Picture, RequestLog, Decaf, Classify
+from celeryTasks.webTasks.classifyTask import classifyImages
+from cloudcv17 import config
+from os.path import splitext, basename
+import app.conf as conf
+
+from PIL import Image
+from urlparse import urlparse
+from querystring_parser import parser
+
 import time
 import subprocess
 import os
@@ -12,22 +27,8 @@ import json
 import threading
 import operator
 import sys
-
-from urlparse import urlparse
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_exempt
-
-from PIL import Image
-from querystring_parser import parser
-from os.path import splitext, basename
 import redis
 
-from app.models import Picture, RequestLog, Decaf, Classify
-import app.conf as conf
-from celeryTasks.webTasks.classifyTask import classifyImages
-from cloudcv17 import config
 redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 classify_channel_name = 'classify_queue'
 
@@ -38,8 +39,6 @@ download_directory = conf.PIC_DIR
 # Input image is saved here (symbolic links) - after resizing to 500 x 500
 physical_job_root = conf.LOCAL_CLASSIFY_JOB_DIR
 demo_log_file = physical_job_root + 'classify_demo.log'
-##
-###
 
 
 def log_to_terminal(message, socketid):
@@ -60,6 +59,7 @@ class CustomPrint():
 
         log_to_terminal(text, self.socketid)
 
+
 def classify_wrapper_redis(src_path, socketid, result_path):
     try:
 
@@ -71,90 +71,9 @@ def classify_wrapper_redis(src_path, socketid, result_path):
     except Exception as e:
         log_to_terminal(str(traceback.format_exc()), socketid)
 
+
 def classify_wrapper_local(src_path, socketid, result_path):
-
-    # try:
-    #     #Entire Directory
-    #     if os.path.isdir(src_path):
-    #         for file_name in os.listdir(src_path):
-    #             image_path = os.path.join(src_path, file_name)
-    #             if os.path.isfile(image_path):
-    #                 """ Trying to get the output of classify python script to send to user - Part 1/4
-    #                 # myPrint = CustomPrint(socketid)
-    #                 # old_stdout=sys.stdout
-    #                 # sys.stdout = myPrint
-    #                 """
-    #                 print 'Running caffe classify...'
-    #                 tags = caffe_classify_image(image_path)
-    #
-    #                 # """ Part 2/2
-    #                 # sys.stdout=old_stdout
-    #                 # """
-    #
-    #                 log_to_terminal("Results: "+str(tags), socketid)
-    #
-    #                 tags = sorted(tags.iteritems(), key=operator.itemgetter(1),reverse=True)
-    #                 webResult = {}
-    #                 webResult[str(os.path.join(result_path, file_name))] = tags
-    #
-    #                 redis_obj.publish('chat',
-    #                                json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
-    #
-    #         log_to_terminal('Thank you for using CloudCV', socketid)
-    #     # Single File
-    #     else:
-    #         """ Part 3/4
-    #         myPrint = CustomPrint(socketid)
-    #         old_stdout=sys.stdout
-    #         sys.stdout = myPrint
-    #         """
-    #
-    #         print 'Running caffe classify...'
-    #
-    #         tags = caffe_classify_image(src_path)
-    #         """ Part 4/4
-    #         sys.stdout=old_stdout
-    #         """
-    #
-    #         log_to_terminal("Results: "+str(tags), socketid)
-    #
-    #         tags = sorted(tags.iteritems(), key=operator.itemgetter(1), reverse=True)
-    #         web_result = {}
-    #         web_result[str(result_path)] = tags
-    #
-    #         redis_obj.publish('chat', json.dumps({'web_result': json.dumps(web_result), 'socketid': str(socketid)}))
-    #
-    #         log_to_terminal('Thank you for using CloudCV', socketid)
-    #
-    # except Exception as e:
-    #     log_to_terminal(str(traceback.format_exc()), socketid)
-
     classifyImages.delay(src_path, socketid, result_path)
-
-
-# class ClassifyThread(threading.Thread):
-#     def __init__(self, image_path, result_path, socketid):
-#         threading.Thread.__init__(self)
-#         self.r = redis_obj
-#         self.image_path = image_path
-#         self.result_path = result_path
-#         self.socketid = socketid
-#         self.log_to_terminal("inside thread")
-
-#     def run(self):
-#         try:
-#             result = caffe_classify(self.image_path)
-#             self.log_to_terminal(result)
-
-#             image, tags = result.popitem()
-#             web_result = {}
-#             web_result[self.result_path] = tags
-#             self.r.publish('chat',json.dumps({'web_result': json.dumps(web_result), 'socketid': str(self.socketid)}))
-#         except Exception as e:
-#             self.log_to_terminal(str(traceback.format_exc()))
-
-#     def log_to_terminal(self, message):
-#         self.r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
 
 
 def response_mimetype(request):
@@ -168,7 +87,6 @@ class ClassifyCreateView(CreateView):
     model = Classify
     r = None
     socketid = None
-
     count_hits = 0
 
     def form_valid(self, form):
@@ -285,6 +203,7 @@ class JSONResponse(HttpResponse):
         content = json.dumps(obj, **json_opts)
         super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)
 
+
 @csrf_exempt
 def demoClassify(request):
     post_dict = parser.parse(request.POST.urlencode())
@@ -302,8 +221,6 @@ def demoClassify(request):
             imgname = basename(urlparse(result_path).path)
 
             image_path = os.path.join(conf.LOCAL_DEMO_PIC_DIR, imgname)
-            print image_path
-            print result_path
             log_to_terminal('Processing image...', post_dict['socketid'])
 
             # This is for running it locally ie on Godel
@@ -311,17 +228,14 @@ def demoClassify(request):
 
             # This is for posting it on Redis - ie to Rosenblatt
             #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
-
             data = {'info': 'Completed'}
-
         try:
             client_address = request.META['REMOTE_ADDR']
             log_file.write('Demo classify request from IP:'+client_address)
-            log_file.close();
-
+            log_file.close()
         except Exception as e:
             log_file.write('Exception when finding client ip:'+str(traceback.format_exc())+'\n');
-            log_file.close();
+            log_file.close()
 
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'

@@ -1,4 +1,8 @@
 __author__ = 'dexter'
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
+
 import dropbox
 import os, sys
 
@@ -7,10 +11,6 @@ if path not in sys.path:
     sys.path.append(path)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import IntegrityError
-from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
 
 
 def upload_files_to_dropbox(userid, jobid, result_path, dropbox_token=None):
@@ -39,4 +39,3 @@ def upload_files_to_dropbox(userid, jobid, result_path, dropbox_token=None):
             return 'dropbox token not mentioned'
     except Exception as e:
         raise e
-

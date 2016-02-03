@@ -1,14 +1,14 @@
 
-from fileupload.models import Picture
-
 from django.http import HttpResponse, HttpResponseRedirect
+
+from fileupload.models import Picture
+from PIL import Image
+from log import Logger
+
 import time
 import subprocess
 import json
-from log import Logger
 import os
-from PIL import Image
-
 
 
 def run_executable(list, fi):
@@ -26,8 +26,8 @@ def run_executable(list, fi):
     except Exception as e:
         output="Exception Caught!!"+str(e)
         fi.write('exception caught'+str(e))
-
     return output,'\n'
+
 
 def getThumbnail(image_url_prefix, name):
     im = Image.open('/var/www/html/cloudcv/fileupload'+image_url_prefix+name)
@@ -36,6 +36,7 @@ def getThumbnail(image_url_prefix, name):
     file=image_url_prefix+'thumbnails/'+name[:-3]+'jpg'
     im.save('/var/www/html/cloudcv/fileupload'+file, "JPEG")
     return file
+
 
 def saveInPictureDatabase(file, log):
     try:
@@ -57,6 +58,7 @@ def saveInPictureDatabase(file, log):
     except Exception as e:
         log.write('E', str('Error while saving to Picture Database'))
         raise e
+
         
 def resizeImageAndTransfer(path, name, directory, size, oldname):
     img_file = Image.open(path+name.replace(" ","_"))
@@ -129,17 +131,10 @@ def saveFilesAndProcess(request, param_obj, log):
     except Exception as e:
         log.write('S',str(e))
 
-
-
-    #value=os.spawnl(os.P_WAIT,'/var/www/html/cloudcv/fileupload/run_exectutable.py', list) 
-
     result='new process spawned'
     log.write('S',str(result))
 
-    #fi.write(str+'**********\n\n\n\n*******')
-
     data.append(result)
-    #data.append({'result':'/cloudcv/fileupload/media/pictures/'+str(tickdir).replace('.','_')+'/result_stitch.jpg'})
 
     log.write('S',str(data))
 
@@ -154,16 +149,16 @@ def saveFilesAndProcess(request, param_obj, log):
         log.write('S',str(e))
         return response
 
+
 def response_mimetype(request):
     if "application/json" in request.META['HTTP_ACCEPT']:
         return "application/json"
     else:
         return "text/plain"
 
+
 class JSONResponse(HttpResponse):
     """JSON response class."""
     def __init__(self,obj='',json_opts={},mimetype="application/json",*args,**kwargs):
         content = json.dumps(obj,**json_opts)
         super(JSONResponse,self).__init__(content,mimetype,*args,**kwargs)
-
-
