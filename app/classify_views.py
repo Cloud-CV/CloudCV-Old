@@ -2,13 +2,12 @@ __author__ = 'clint'
 
 from django.views.generic import CreateView, DeleteView
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from app.models import Picture, RequestLog, Decaf, Classify
+from app.models import Picture, Classify
 from celeryTasks.webTasks.classifyTask import classifyImages
 from cloudcv17 import config
-from os.path import splitext, basename
+from os.path import basename
 import app.conf as conf
 
 from PIL import Image
@@ -16,24 +15,17 @@ from urlparse import urlparse
 from querystring_parser import parser
 
 import time
-import subprocess
 import os
 import json
 import traceback
-import uuid
 import shortuuid
-import datetime
-import json
-import threading
-import operator
 import sys
 import redis
 
 redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 classify_channel_name = 'classify_queue'
 
-### SET OF PATH CONSTANTS - SOME UNUSED
-##
+# SET OF PATH CONSTANTS - SOME UNUSED
 # File initially downloaded here
 download_directory = conf.PIC_DIR
 # Input image is saved here (symbolic links) - after resizing to 500 x 500
@@ -46,9 +38,10 @@ def log_to_terminal(message, socketid):
 
 
 class CustomPrint():
+
     def __init__(self, socketid):
-        self.old_stdout=sys.stdout #save stdout
-        self.socketid=socketid
+        self.old_stdout = sys.stdout  # save stdout
+        self.socketid = socketid
 
     def write(self, text):
         text = text.rstrip()
@@ -63,12 +56,13 @@ class CustomPrint():
 def classify_wrapper_redis(src_path, socketid, result_path):
     try:
 
-        ## PUSH job into redis classify queue
+        # PUSH job into redis classify queue
 
-        redis_obj.publish(classify_channel_name, json.dumps({'src_path': src_path, 'socketid': socketid, 'result_path': result_path}))
+        redis_obj.publish(classify_channel_name, json.dumps(
+            {'src_path': src_path, 'socketid': socketid, 'result_path': result_path}))
         log_to_terminal('Task Scheduled..Please Wait', socketid)
 
-    except Exception as e:
+    except:
         log_to_terminal(str(traceback.format_exc()), socketid)
 
 
@@ -91,19 +85,19 @@ class ClassifyCreateView(CreateView):
 
     def form_valid(self, form):
         self.r = redis_obj
-        session = self.request.session.session_key
+        self.request.session.session_key
         socketid = self.request.POST['socketid-hidden']
         self.socketid = socketid
 
         try:
-            #log_to_terminal('Logging user ip....', self.socketid)
-            client_address = self.request.META['REMOTE_ADDR']
-            #client_address = self.request.environ.get('HTTP_X_FORWARDED_FOR')
-            #log_to_terminal(client_address, self.socketid)
+            # log_to_terminal('Logging user ip....', self.socketid)
+            # client_address = self.request.META['REMOTE_ADDR']
+            # client_address = self.request.environ.get('HTTP_X_FORWARDED_FOR')
+            # log_to_terminal(client_address, self.socketid)
 
             self.object = form.save()
             all_files = self.request.FILES.getlist('file')
-            data = {'files':[]}
+            data = {'files': []}
 
             fcountfile = open(os.path.join(conf.LOG_DIR, 'log_count.txt'), 'a')
             fcountfile.write(str(self.request.META.get('REMOTE_ADDR')) + '\n')
@@ -111,7 +105,7 @@ class ClassifyCreateView(CreateView):
 
             self.count_hits += 1
 
-        except Exception as e:
+        except:
             log_to_terminal(str(traceback.format_exc()), self.socketid)
 
         old_save_dir = os.path.dirname(conf.PIC_DIR)
@@ -123,35 +117,33 @@ class ClassifyCreateView(CreateView):
             os.makedirs(save_dir)
             os.makedirs(os.path.join(save_dir, 'results'))
 
-
         if len(all_files) == 1:
             log_to_terminal(str('Downloading Image...'), self.socketid)
         else:
             log_to_terminal(str('Downloading Images...'), self.socketid)
 
-
         for file in all_files:
             try:
                 a = Picture()
                 tick = time.time()
-                strtick = str(tick).replace('.','_')
+                strtick = str(tick).replace('.', '_')
                 fileName, fileExtension = os.path.splitext(file.name)
                 file.name = fileName + strtick + fileExtension
                 a.file.save(file.name, file)
                 file.name = a.file.name
                 imgfile = Image.open(os.path.join(old_save_dir, file.name))
-                size = (500,500)
-                imgfile.thumbnail(size,Image.ANTIALIAS)
+                size = (500, 500)
+                imgfile.thumbnail(size, Image.ANTIALIAS)
                 imgfile.save(os.path.join(save_dir, file.name))
                 thumbPath = os.path.join(folder_name, file.name)
                 data['files'].append({
-                    'url': conf.PIC_URL+thumbPath,
+                    'url': conf.PIC_URL + thumbPath,
                     'name': file.name,
                     'type': 'image/png',
-                    'thumbnailUrl': conf.PIC_URL+thumbPath,
+                    'thumbnailUrl': conf.PIC_URL + thumbPath,
                     'size': 0,
                 })
-            except Exception as e:
+            except:
                 log_to_terminal(str(traceback.format_exc()), self.socketid)
 
         if len(all_files) == 1:
@@ -161,12 +153,12 @@ class ClassifyCreateView(CreateView):
 
         time.sleep(.5)
 
-        #TODO: Make this threaded
+        # TODO: Make this threaded
         # This is for running it locally ie on Godel
         classify_wrapper_local(save_dir, socketid, os.path.join(conf.PIC_URL, folder_name))
 
         # This is for posting it on Redis - ie to Rosenblatt
-        #classify_wrapper_redis(job_directory, socketid, result_folder)
+        # classify_wrapper_redis(job_directory, socketid, result_folder)
 
         response = JSONResponse(data, {}, response_mimetype(self.request))
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -227,21 +219,21 @@ def demoClassify(request):
             classify_wrapper_local(image_path, post_dict['socketid'], result_path)
 
             # This is for posting it on Redis - ie to Rosenblatt
-            #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
+            # classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
             data = {'info': 'Completed'}
         try:
             client_address = request.META['REMOTE_ADDR']
-            log_file.write('Demo classify request from IP:'+client_address)
+            log_file.write('Demo classify request from IP:' + client_address)
             log_file.close()
-        except Exception as e:
-            log_file.write('Exception when finding client ip:'+str(traceback.format_exc())+'\n');
+        except:
+            log_file.write('Exception when finding client ip:' + str(traceback.format_exc()) + '\n')
             log_file.close()
 
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
-    except Exception as e:
+    except:
         data = {'result': str(traceback.format_exc())}
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'

@@ -7,7 +7,8 @@ import time
 from PIL import Image
 from StringIO import StringIO
 import ntpath
-import os, subprocess
+import os
+import subprocess
 import traceback
 import json
 
@@ -29,6 +30,8 @@ def post_to_twitter():
     for tweet in public_tweets:
         print tweet.text
 '''
+
+
 class Dwnld_Worker(threading.Thread):
     token = ''
     path = ''
@@ -41,9 +44,9 @@ class Dwnld_Worker(threading.Thread):
 
         while(True):
             try:
-                self.redis_obj = redis.StrictRedis(host = 'mlpmasternode.cloudapp.net', port=6379, db=0)
+                self.redis_obj = redis.StrictRedis(host='mlpmasternode.cloudapp.net', port=6379, db=0)
                 break
-            except Exception as e:
+            except:
                 print "Error in Connection. "
         print "Thread Created", id
 
@@ -58,7 +61,7 @@ class Dwnld_Worker(threading.Thread):
         popen = subprocess.Popen(list_for_exec, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
         count = 0
 
-        complete_output=''
+        complete_output = ''
         line = ''
         errline = ''
 
@@ -88,18 +91,18 @@ class Dwnld_Worker(threading.Thread):
         client = dropbox.client.DropboxClient(token)
         try:
             client.file_create_folder('/' + str('Azure_Results'))
-        except Exception as e:
+        except:
             print 'Folder Already Made'
         try:
             client.file_create_folder('/' + str('Azure_results') + '/' + subdir)
-        except Exception as e:
+        except:
             print 'Folder Already Made'
 
-        #for file_name in os.listdir(result_path):
+        # for file_name in os.listdir(result_path):
         #    if os.path.isfile(os.path.join(result_path, file_name)):
         print os.path.join(result_path, file_name + '.mat')
         f = open(os.path.join(result_path, file_name + '.mat'), 'rb')
-        client.put_file('/' + str('Azure_results') + '/' + subdir + '/' + file_name +'.mat', f)
+        client.put_file('/' + str('Azure_results') + '/' + subdir + '/' + file_name + '.mat', f)
         f.close()
 
     def run(self):
@@ -111,7 +114,6 @@ class Dwnld_Worker(threading.Thread):
                     continue
                 json_dict = json.loads(popstr)
                 print json_dict
-
 
                 self.path = json_dict['path']
                 self.token = json_dict['token']
@@ -134,8 +136,8 @@ class Dwnld_Worker(threading.Thread):
                     output_path = prefix_path + str(self.uuid) + '/output'
                     file_name = ntpath.basename(self.path)
 
-                    img.save(prefix_path + str(self.uuid) + '/input/' + file_name, file_metadata['mime_type'].split('/')[1])
-
+                    img.save(prefix_path + str(self.uuid) + '/input/' +
+                             file_name, file_metadata['mime_type'].split('/')[1])
 
                     print str(self.id) + ": Image Saved. Executable Started"
 

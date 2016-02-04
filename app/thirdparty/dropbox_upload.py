@@ -1,10 +1,8 @@
 __author__ = 'dexter'
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import IntegrityError
-from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
 
 import dropbox
-import os, sys
+import os
+import sys
 
 path = os.environ.get('CLOUDCVPATH')
 if path not in sys.path:
@@ -20,20 +18,20 @@ def upload_files_to_dropbox(userid, jobid, result_path, dropbox_token=None):
             client = dropbox.client.DropboxClient(dropbox_token)
             try:
                 client.file_create_folder('/jobs')
-            except Exception as e:
+            except:
                 print 'Error Response'
-                
-            client.file_create_folder('/jobs/'+str(jobid))
+
+            client.file_create_folder('/jobs/' + str(jobid))
             for file_name in os.listdir(result_path):
                 if os.path.isfile(os.path.join(result_path, file_name)):
                     response += os.path.join(result_path, file_name)
-                    response +='\n'
+                    response += '\n'
                     f = open(os.path.join(result_path, file_name), 'rb')
                     client.put_file('/jobs/' + str(jobid) + '/' + file_name, f)
                     f.close()
 
             response += 'Output have been stored in your dropbox folder.'
-            url = 'http://www.dropbox.com/home/Apps/CloudCV/jobs/'+str(jobid)
+            url = 'http://www.dropbox.com/home/Apps/CloudCV/jobs/' + str(jobid)
             return response, url
         else:
             return 'dropbox token not mentioned'

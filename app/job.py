@@ -4,13 +4,11 @@ import os
 
 from django.http import HttpResponse
 from django.utils import simplejson
-import shortuuid
 from PIL import Image
 
 from fileupload.models import Picture
 import thirdparty.ccv_dropbox as ccvdb
 from log import logger
-from core.job import Job
 
 
 """ OLD CODE. REMOVE LATER
@@ -22,7 +20,6 @@ def run_executable(list, fi):
         (output, errdata) = popen.communicate()
         fi.write("Successfully started execution")
 
- 
         if(popen.returncode==None):
             output="Error! Signal: Not Terminated"+str(errdata)
         else:
@@ -31,15 +28,15 @@ def run_executable(list, fi):
     except Exception as e:
         output="Exception Caught!!"+str(e)
         fi.write('exception caught'+str(e))
-    
     return output,'\n'
 """
+
 
 def getThumbnail(image_url_prefix, name):
     im = Image.open('/var/www/html/cloudcv/fileupload' + image_url_prefix + name)
     size = 128, 128
     im.thumbnail(size, Image.ANTIALIAS)
-    file = image_url_prefix + 'thumbnails/' + name[:-3]+'jpg'
+    file = image_url_prefix + 'thumbnails/' + name[:-3] + 'jpg'
     im.save('/var/www/html/cloudcv/fileupload' + file, "JPEG")
     return file
 
@@ -48,32 +45,33 @@ def saveInPictureDatabase(file):
     try:
         pic = Picture()
         tick = time.time()
-        
-        strtick = str(tick).replace('.','_')
+
+        strtick = str(tick).replace('.', '_')
 
         logger.write('S', str(file.name))
-        
+
         format = file.name[-4:]
         name = file.name[:-4]
         new_name = name + strtick + format
-        
+
         pic.file.save(new_name, file)
-        
+
         return new_name
 
     except Exception as e:
         logger.write('E', str('Error while saving to Picture Database'))
         raise e
 
+
 def resizeImageAndTransfer(path, name, directory, size, oldname):
-    img_file = Image.open(path + name.replace(" ","_"))
+    img_file = Image.open(path + name.replace(" ", "_"))
     img_file.thumbnail(size, Image.ANTIALIAS)
-    
+
     if not os.path.exists(directory):
         os.makedirs(directory)
         os.chmod(directory, 0776)
     img_file.save(directory + '/' + oldname)
-    
+
 
 def getFilesFromRequest(files, count):
     files_all = files.getlist('file')
@@ -106,12 +104,11 @@ def execute(job_obj):
         return response
 
     except Exception as e:
-        logger.write('S',str(e))
+        logger.write('S', str(e))
         return ''
 
 
 def saveFilesAndProcess(request, job_obj):
-
     """
         TODO: Specify four types of location
         1.) CloudCV General Dataset
@@ -129,7 +126,7 @@ def saveFilesAndProcess(request, job_obj):
         if len(files_all) == 0:
             return 'Length of files = 0'
 
-        tickdir = time.time()
+        time.time()
         directory = job_obj.storage_path + str(job_obj.jobid)
 
         logger.write('S', 'Begin Uploading')
@@ -145,10 +142,10 @@ def saveFilesAndProcess(request, job_obj):
                 size = (500, 500)
                 resizeImageAndTransfer(path, new_file_name, directory, size, single_file.name)
 
-                thumbnail_url = getThumbnail(image_url_prefix, new_file_name)
+                getThumbnail(image_url_prefix, new_file_name)
 
             except Exception as e:
-                logger.write('S', 'Error in loop'+str(e))
+                logger.write('S', 'Error in loop' + str(e))
                 response = JSONResponse([], {}, response_mimetype(request))
                 response['Content-Disposition'] = 'inline; filename=files.json'
                 return response
@@ -165,8 +162,7 @@ def response_mimetype(request):
 
 class JSONResponse(HttpResponse):
     """JSON response class."""
-    def __init__(self,obj='', json_opts={},mimetype="application/json",*args,**kwargs):
-        content = simplejson.dumps(obj,**json_opts)
-        super(JSONResponse, self).__init__(content,mimetype,*args,**kwargs)
 
-
+    def __init__(self, obj='', json_opts={}, mimetype="application/json", *args, **kwargs):
+        content = simplejson.dumps(obj, **json_opts)
+        super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)

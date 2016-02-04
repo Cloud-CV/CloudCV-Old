@@ -1,5 +1,3 @@
-# encoding: utf-8
-from django.core.urlresolvers import reverse
 import mimetypes
 import re
 
@@ -25,7 +23,7 @@ def serialize(instance, file_attr='file'):
 
     """
     obj = getattr(instance, file_attr)
-    print obj;
+    print obj
     try:
         size = obj.size
     except OSError:

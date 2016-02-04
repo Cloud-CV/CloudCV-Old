@@ -4,36 +4,25 @@ import time
 import os
 import json
 import traceback
-import uuid
-import shortuuid
-import datetime
-import json
-import sys
 
-from urlparse import urlparse
 from django.views.generic import CreateView, DeleteView
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from PIL import Image
 from querystring_parser import parser
-from os.path import splitext, basename
 import redis
 
-from app.models import Picture, RequestLog, Decaf, Classify, Trainaclass
+from app.models import Picture, Trainaclass
 from celeryTasks.webTasks.trainTask import trainImages
 from celeryTasks.webTasks.trainTask import customClassifyImages
 from cloudcv17 import config
 import app.conf as conf
-import redis
-import json
 
 redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 classify_channel_name = 'classify_queue'
 
-### SET OF PATH CONSTANTS - SOME UNUSED
-##
+# SET OF PATH CONSTANTS - SOME UNUSED
 # File initially downloaded here
 download_directory = conf.PIC_DIR
 # Input image is saved here (symbolic links) - after resizing to 500 x 500
@@ -71,16 +60,11 @@ class TrainaclassCreateView(CreateView):
         """
         redis_obj.lpush('trainaclass', str(self.request))
         self.r = redis_obj
-        session = self.request.session.session_key
         socketid = self.request.POST['socketid']
         labelnames = self.request.POST['labelnames'].replace(' ', '_')
-        log_to_terminal("Label: "+str(self.request.POST['labelnames']), socketid)
+        log_to_terminal("Label: " + str(self.request.POST['labelnames']), socketid)
         self.socketid = socketid
         try:
-            #log_to_terminal('Logging user ip....', self.socketid)
-            client_address = self.request.META['REMOTE_ADDR']
-            #client_address = self.request.environ.get('HTTP_X_FORWARDED_FOR')
-            #log_to_terminal(client_address, self.socketid)
             self.object = form.save()
             fcountfile = open(os.path.join(conf.LOG_DIR, 'log_count.txt'), 'a')
             fcountfile.write(str(self.request.META.get('REMOTE_ADDR')) + '\n')
@@ -102,11 +86,11 @@ class TrainaclassCreateView(CreateView):
                 os.makedirs(util_dir)
                 os.makedirs(test_dir)
 
-            rs.publish('chat', json.dumps({'message': 'save_dir '+save_dir, 'socketid': str(socketid)}))
+            rs.publish('chat', json.dumps({'message': 'save_dir ' + save_dir, 'socketid': str(socketid)}))
 
             try:
                 all_files = self.request.FILES.getlist('file')
-                data = {'files':[]}
+                data = {'files': []}
 
                 if len(all_files) == 1:
                     log_to_terminal(str('Downloading Image for label: ' + labelnames), self.socketid)
@@ -127,14 +111,14 @@ class TrainaclassCreateView(CreateView):
                     try:
                         a = Picture()
                         tick = time.time()
-                        strtick = str(tick).replace('.','_')
+                        strtick = str(tick).replace('.', '_')
                         fileName, fileExtension = os.path.splitext(file.name)
                         file.name = fileName + strtick + fileExtension
                         a.file.save(file.name, file)
                         file.name = a.file.name
                         imgfile = Image.open(os.path.join(old_save_dir, file.name))
-                        size = (500,500)
-                        imgfile.thumbnail(size,Image.ANTIALIAS)
+                        size = (500, 500)
+                        imgfile.thumbnail(size, Image.ANTIALIAS)
                         imgfile.save(os.path.join(label_dir, file.name))
                         data['files'].append({
                             'label': labelnames,
@@ -150,7 +134,7 @@ class TrainaclassCreateView(CreateView):
             except Exception as e:
                 print e
                 log_to_terminal(str(traceback.format_exc()), self.socketid)
-            log_to_terminal(str(len(all_files)) + str(' images saved for '+ labelnames), self.socketid)
+            log_to_terminal(str(len(all_files)) + str(' images saved for ' + labelnames), self.socketid)
             response = JSONResponse(data, {}, response_mimetype(self.request))
             response['Content-Disposition'] = 'inline; filename=files.json'
             return response
@@ -198,12 +182,12 @@ def trainamodel(request):
     socketid = post_dict['socketid']
     log_to_terminal('Beginning training a new model', post_dict['socketid'])
 
-    old_save_dir = conf.PIC_DIR
+    # old_save_dir = conf.PIC_DIR
     folder_name = str(socketid)
     save_dir = os.path.join(conf.PIC_DIR, folder_name)
-    train_dir = os.path.join(save_dir, 'train')
-    test_dir = os.path.join(save_dir, 'test')
-    util_dir = os.path.join(save_dir, 'util')
+    # train_dir = os.path.join(save_dir, 'train')
+    # test_dir = os.path.join(save_dir, 'test')
+    # util_dir = os.path.join(save_dir, 'util')
 
     trainImages.delay(os.path.join(save_dir, ''), socketid)
     data['info'] = 'completed'
@@ -223,7 +207,7 @@ def testmodel(request):
         old_save_dir = conf.PIC_DIR
         folder_name = str(socketid)
         save_dir = os.path.join(conf.PIC_DIR, folder_name)
-        train_dir = os.path.join(save_dir, 'train')
+        # train_dir = os.path.join(save_dir, 'train')
         test_dir = os.path.join(save_dir, 'test')
         util_dir = os.path.join(save_dir, 'util')
 
@@ -233,8 +217,8 @@ def testmodel(request):
         if len(os.listdir(os.path.join(test_dir))) == 0:
             raise Exception('No test images provided')
 
-        if not os.path.isfile(os.path.join(util_dir,'newCaffeModel.prototxt')):
-            #default_classify(test_dir, socketid, os.path.join(conf.PIC_URL, folder_name, 'test'))
+        if not os.path.isfile(os.path.join(util_dir, 'newCaffeModel.prototxt')):
+            # default_classify(test_dir, socketid, os.path.join(conf.PIC_URL, folder_name, 'test'))
             raise Exception('No model has been trained for this job.')
 
         classify_wrapper_local(save_dir, socketid, os.path.join(conf.PIC_URL, folder_name, 'test'))
@@ -245,7 +229,7 @@ def testmodel(request):
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
-    except Exception as e:
+    except:
         data['error'] = str(traceback.format_exc())
         log_to_terminal(str(traceback.format_exc()), socketid)
         response = JSONResponse(data, {}, response_mimetype(request))

@@ -39,7 +39,7 @@ class Decaf(models.Model):
     # pillow (where Pillow is easily installable in a virtualenv. If you have
     # problems installing pillow, use a more generic FileField instead.
 
-    #file = models.FileField(upload_to="pictures")
+    # file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
 
@@ -66,7 +66,7 @@ class Decafmodel(models.Model):
     # pillow (where Pillow is easily installable in a virtualenv. If you have
     # problems installing pillow, use a more generic FileField instead.
 
-    #file = models.FileField(upload_to="pictures")
+    # file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
 
@@ -93,7 +93,7 @@ class Trainaclass(models.Model):
     # pillow (where Pillow is easily installable in a virtualenv. If you have
     # problems installing pillow, use a more generic FileField instead.
 
-    #file = models.FileField(upload_to="pictures")
+    # file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
 
@@ -120,7 +120,7 @@ class Classify(models.Model):
     # pillow (where Pillow is easily installable in a virtualenv. If you have
     # problems installing pillow, use a more generic FileField instead.
 
-    #file = models.FileField(upload_to="pictures")
+    # file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
 
@@ -147,7 +147,7 @@ class Poi(models.Model):
     # pillow (where Pillow is easily installable in a virtualenv. If you have
     # problems installing pillow, use a more generic FileField instead.
 
-    #file = models.FileField(upload_to="pictures")
+    # file = models.FileField(upload_to="pictures")
     file = models.ImageField(upload_to="pictures")
     slug = models.SlugField(max_length=50, blank=True)
 
@@ -168,21 +168,21 @@ class Poi(models.Model):
 
 
 class CloudCV_Users(models.Model):
-    first_name = models.CharField(max_length = 20)
-    last_name = models.CharField(max_length = 20)
-    userid = models.CharField(max_length = 100, primary_key=True)
-    emailid = models.EmailField(max_length = 254, unique=True)
+    first_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=20)
+    userid = models.CharField(max_length=100, primary_key=True)
+    emailid = models.EmailField(max_length=254, unique=True)
     is_active = models.BooleanField()
 
 
 class GoogleAccountInfo(models.Model):
-    cloudcvid = models.ForeignKey(CloudCV_Users, unique = True)
+    cloudcvid = models.ForeignKey(CloudCV_Users, unique=True)
     credential = CredentialsField()
     flow = FlowField()
 
 
 class DropboxAccount(models.Model):
-    cloudcvid = models.ForeignKey(CloudCV_Users, unique = True)
+    cloudcvid = models.ForeignKey(CloudCV_Users, unique=True)
     access_token = models.CharField(max_length=100, null=False)
 
 
@@ -193,7 +193,4 @@ class RequestLog(models.Model):
     function = models.CharField(max_length=50)
     dateTime = models.DateTimeField()
     isDropbox = models.BooleanField()
-    apiName =models.CharField(max_length=20, null=True)
-
-
-
+    apiName = models.CharField(max_length=20, null=True)

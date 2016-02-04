@@ -34,12 +34,6 @@ References:
 """
 __docformat__ = 'restructedtext en'
 
-import cPickle
-import gzip
-import os
-import sys
-import time
-
 import numpy
 
 import theano
@@ -55,7 +49,7 @@ class LogisticRegression(object):
     determine a class membership probability.
     """
 
-    def __init__(self, input, n_in, n_out, W=None, b = None):
+    def __init__(self, input, n_in, n_out, W=None, b=None):
         """ Initialize the parameters of the logistic regression
 
         :type input: theano.tensor.TensorType
@@ -112,13 +106,15 @@ class LogisticRegression(object):
 
         # parameters of the model
         self.params = [self.W, self.b]
+
     def __getstate__(self):
-        return self.W, self.b   
+        return self.W, self.b
 
     def __setstate__(self, state):
         W, b = state
         self.W = W
         self.b = b
+
     def negative_log_likelihood(self, y):
         """Return the mean of the negative log-likelihood of the prediction
         of this model under a given target distribution.
@@ -176,24 +172,23 @@ class LogisticRegression(object):
             raise NotImplementedError()
 
 
-def load_data(train_set, test_set,  valid_set):
+def load_data(train_set, test_set, valid_set):
     ''' Loads the dataset
 
     :type dataset: string
     :param dataset: the path to the dataset (here MNIST)
     '''
 
-    #############
-    # LOAD DATA #
-    #############
+    # # # # # # # # # # # # #
+    # LOAD DATA             #
+    # # # # # # # # # # # # #
 
-
-    #train_set, valid_set, test_set format: tuple(input, target)
-    #input is an numpy.ndarray of 2 dimensions (a matrix)
-    #witch row's correspond to an example. target is a
-    #numpy.ndarray of 1 dimensions (vector)) that have the same length as
-    #the number of rows in the input. It should give the target
-    #target to the example with the same index in the input.
+    # train_set, valid_set, test_set format: tuple(input, target)
+    # input is an numpy.ndarray of 2 dimensions (a matrix)
+    # witch row's correspond to an example. target is a
+    # numpy.ndarray of 1 dimensions (vector)) that have the same length as
+    # the number of rows in the input. It should give the target
+    # target to the example with the same index in the input.
 
     def shared_dataset(data_xy, borrow=True):
         """ Function that loads the dataset into shared variables
@@ -227,4 +222,3 @@ def load_data(train_set, test_set,  valid_set):
     rval = [(train_set_x, train_set_y), (valid_set_x, valid_set_y),
             (test_set_x, test_set_y)]
     return rval
-

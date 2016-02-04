@@ -5,18 +5,26 @@ from celeryTasks.celery import app
 # The functions are mostly copied from app.executable.LDA_files.train_fast
 @app.task(ignore_result=True)
 def trainImages(jobPath, socketid):
-    #Establishing connection to send results and write messages
-    import redis, json
+    # Establishing connection to send results and write messages
+    import redis
+    import json
     from cloudcv17 import config
     rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
 
-    #Module imports
-    import os, sys, numpy as np, leveldb, caffe, time, math, scipy.io as sio, shutil
+    # Module imports
+    import os
+    import numpy as np
+    import leveldb
+    import caffe
+    import time
+    import math
+    import scipy.io as sio
+    import shutil
     from caffe.proto import caffe_pb2
     from glob import glob
 
-    #Caffe root directory
-    caffe_root = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__),"..",".."))
+    # Caffe root directory
+    caffe_root = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
 
     def trainaclass(Imagepath):
 
@@ -45,8 +53,8 @@ def trainImages(jobPath, socketid):
         p2 = os.path.join(caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel ')
         p3 = os.path.join(Imagepath, 'imagenet_val.prototxt fc7') + ' ' + os.path.join(Imagepath,
                                                                                        'features') + ' %d GPU' % (train_size)
-               
-        rs.publish('chat', json.dumps({'message': "COMMAND: "+p1+p2+p3, 'socketid': str(socketid)}))
+
+        rs.publish('chat', json.dumps({'message': "COMMAND: " + p1 + p2 + p3, 'socketid': str(socketid)}))
         os.system(p1 + p2 + p3)
 
         # Convert the train_features leveldb to numpy array
@@ -62,9 +70,9 @@ def trainImages(jobPath, socketid):
 
         weight_new = np.dot(sigmainv, mean_new)
         w0 = - 0.5 * np.dot(np.dot(mean_new.transpose(), sigmainv), mean_new)
-        #w0 = math.log(train_size) - math.log(1281167) - 0.5 * np.dot(np.dot(mean_new.transpose(), sigmainv), mean_new)
+        # w0 = math.log(train_size) - math.log(1281167) - 0.5 * np.dot(np.dot(mean_new.transpose(), sigmainv), mean_new)
 
-        #print 'bias is ', w0
+        # print 'bias is ', w0
         os.system('rm -rf ' + Imagepath + '/features')
         os.system('rm -rf ' + Imagepath + '/imagenet_val.prototxt')
         os.system('rm -rf ' + Imagepath + '/file_list.txt')
@@ -79,21 +87,22 @@ def trainImages(jobPath, socketid):
 
         train_path = os.path.join(jobPath, 'train')
         model_path = os.path.join(jobPath, 'util')
-        dirs = [os.path.join(train_path, d) for d in os.listdir(train_path) if os.path.isdir(os.path.join(train_path, d))]
+        dirs = [os.path.join(train_path, d) for d in os.listdir(train_path)
+                if os.path.isdir(os.path.join(train_path, d))]
         new_labels = np.array(os.listdir(train_path), dtype=object)
         sio.savemat(os.path.join(model_path, 'new_labels.mat'), {'WNID': new_labels})
         num_labels = len(dirs)
 
         s = open(os.path.join(caffe_root, 'models/bvlc_reference_caffenet/deploy.prototxt')).read()
-        s = s.replace('fc8','fc8-new')
-        s = s.replace('1000','%d' %(1000+num_labels))
-        
+        s = s.replace('fc8', 'fc8-new')
+        s = s.replace('1000', '%d' % (1000 + num_labels))
+
         f = open(os.path.join(model_path, 'newCaffeModel.prototxt'), 'w')
         f.write(s)
         f.close()
-        
-        net = caffe.Classifier(os.path.join( caffe_root, 'models/bvlc_reference_caffenet/deploy.prototxt'),
-                               os.path.join( caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'))
+
+        net = caffe.Classifier(os.path.join(caffe_root, 'models/bvlc_reference_caffenet/deploy.prototxt'),
+                               os.path.join(caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'))
 
         net_new = caffe.Classifier(os.path.join(model_path, 'newCaffeModel.prototxt'),
                                    os.path.join(caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'))
@@ -108,8 +117,8 @@ def trainImages(jobPath, socketid):
         results = [trainaclass(dirs[label]) for label in range(num_labels)]
 
         for label in range(num_labels):
-            fc_params_new[1][0, 0, 0, 1000 + label] = results[label][0] - math.log(1000+num_labels)
-            #fc_params_new[1][0, 0, 0, 1000 + label] = results[label][0] 
+            fc_params_new[1][0, 0, 0, 1000 + label] = results[label][0] - math.log(1000 + num_labels)
+            # fc_params_new[1][0, 0, 0, 1000 + label] = results[label][0]
             fc_params_new[0][0, 0, 1000 + label, :] = results[label][1].transpose()[0, :]
 
         net_new.save(os.path.join(model_path, 'newCaffeModel.caffemodel'))
@@ -120,8 +129,8 @@ def trainImages(jobPath, socketid):
         completionMsg = 'Finished training your model with the new categories. Now, upload some test images to test this model.'
         rs.publish('chat', json.dumps({'message': completionMsg, 'socketid': str(socketid)}))
 
-    except Exception as e:
-        #In case of an error, send the whole error with traceback
+    except:
+        # In case of an error, send the whole error with traceback
         import traceback
         rs.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
 
@@ -130,54 +139,54 @@ def trainImages(jobPath, socketid):
 # and classify_wrapper_local in trainaclass_views
 @app.task(ignore_result=True)
 def customClassifyImages(jobPath, socketid, result_path):
-    #Establishing connection to send results and write messages
-    import redis, json
+    # Establishing connection to send results and write messages
+    import redis
+    import json
+    from cloudcv17 import config
     rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
 
     try:
-        #Module import
-        import caffe, numpy as np, os, glob, time, operator, scipy.io as sio
+        # Module import
+        import caffe
+        import numpy as np
+        import os
+        import scipy.io as sio
 
-        ImagePath = os.path.join(jobPath,'test')
-        modelPath = os.path.join(jobPath,'util')
+        ImagePath = os.path.join(jobPath, 'test')
+        modelPath = os.path.join(jobPath, 'util')
 
-        new_labels = sio.loadmat(os.path.join(modelPath,'new_labels.mat'))
+        new_labels = sio.loadmat(os.path.join(modelPath, 'new_labels.mat'))
         new_labels_cells = new_labels['WNID']
 
         # Set the right path to your model file, pretrained model,
         # and the image you would like to classify.
-        MODEL_FILE = os.path.join(modelPath,'newCaffeModel.prototxt')
-        PRETRAINED = os.path.join(modelPath,'newCaffeModel.caffemodel')
+        MODEL_FILE = os.path.join(modelPath, 'newCaffeModel.prototxt')
+        PRETRAINED = os.path.join(modelPath, 'newCaffeModel.caffemodel')
 
-        #caffe.set_phase_test()
+        # caffe.set_phase_test()
         caffe.set_mode_cpu()
 
-        CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__),"..",".."))
+        CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
         net = caffe.Classifier(MODEL_FILE, PRETRAINED,
-                        mean=np.load(os.path.join(CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy')).mean(1).mean(1),
-                        channel_swap=(2, 1, 0),
-                        raw_scale=255,
-                        image_dims=(256, 256))
-
-        results = {}
+                               mean=np.load(os.path.join(
+                                   CAFFE_DIR, 'python/caffe/imagenet/ilsvrc_2012_mean.npy')).mean(1).mean(1),
+                               channel_swap=(2, 1, 0),
+                               raw_scale=255,
+                               image_dims=(256, 256))
 
         if os.path.isdir(ImagePath):
             for file_name in os.listdir(ImagePath):
                 image_path = os.path.join(ImagePath, file_name)
                 if os.path.isfile(image_path):
-                    tags = caffe_classify_image(net, image_path, new_labels_cells)
+                    tags = caffe_classify_image(net, image_path, new_labels_cells)  # NOTE: UNDEFINED NAME caffe_classify_image
                     webResult = {}
-                    webResult[os.path.join(result_path,file_name)] = tags
+                    webResult[os.path.join(result_path, file_name)] = tags
                     rs.publish('chat',
-                                   json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
+                               json.dumps({'web_result': json.dumps(webResult), 'socketid': str(socketid)}))
 
-        rs.publish('chat', json.dumps({'message': 'Classification completed. Thank you for using CloudCV', 'socketid': str(socketid)}))
+        rs.publish('chat', json.dumps(
+            {'message': 'Classification completed. Thank you for using CloudCV', 'socketid': str(socketid)}))
 
-    except Exception as e:
-        #In case of an error, send the whole error with traceback
+    except:
         import traceback
         rs.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
-
-
-
-

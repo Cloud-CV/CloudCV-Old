@@ -5,12 +5,12 @@ app = Celery('cloudcv',
              broker='amqp://guest:guest@rabbitmq:5672//',
              backend='redis://redis:6379',
              include=[
-             'celeryTasks.webTasks.classifyTask',
-             'celeryTasks.webTasks.decafTask',
-             'celeryTasks.webTasks.poiTask',
-             'celeryTasks.webTasks.stitchTask',
-             'celeryTasks.webTasks.trainTask',
-             'celeryTasks.apiTasks.tasks'
+                 'celeryTasks.webTasks.classifyTask',
+                 'celeryTasks.webTasks.decafTask',
+                 'celeryTasks.webTasks.poiTask',
+                 'celeryTasks.webTasks.stitchTask',
+                 'celeryTasks.webTasks.trainTask',
+                 'celeryTasks.apiTasks.tasks'
              ])
 
 # Optional configuration, see the application user guide.
