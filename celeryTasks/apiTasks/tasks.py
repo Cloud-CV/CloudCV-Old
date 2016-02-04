@@ -18,15 +18,14 @@ import os
 import subprocess
 import json
 import re
-import traceback
 import os.path
 import redis
-import time
 import sys
 
 os.environ['OMP_NUM_THREADS'] = '4'
 r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 jobid = ''
+
 
 @app.task(ignore_result=True)
 def saveDropboxFiles(job_dict):
@@ -35,8 +34,9 @@ def saveDropboxFiles(job_dict):
 
 
 class CustomPrint():
+
     def __init__(self, socketid):
-        self.old_stdout=sys.stdout #save stdout
+        self.old_stdout = sys.stdout  # save stdout
         self.socketid = socketid
 
     def write(self, text):
@@ -45,7 +45,7 @@ class CustomPrint():
 
 def sendsMessageToRedis(userid, jobid, source_type, socketid, complete_output,
                         result_path=None, result_url=None, result_text=None, dropbox_token=None):
-    #logger.write('P', 'Inside send message to redis')
+    # logger.write('P', 'Inside send message to redis')
     from app.thirdparty import dropbox_upload as dbu
     try:
 
@@ -56,7 +56,7 @@ def sendsMessageToRedis(userid, jobid, source_type, socketid, complete_output,
             if result_url is not None:
                 r.hset(jobid, 'result_path', str(jobid) + '_resultdir')
                 for file_name in os.listdir(result_path):
-                    if os.path.isfile(os.path.join(result_path,file_name)):
+                    if os.path.isfile(os.path.join(result_path, file_name)):
                         r.lpush(str(jobid) + '_resultdir', os.path.join(result_url, str(file_name)))
             elif result_text is not None:
                 r.hset(jobid, 'output', result_text)
@@ -86,9 +86,10 @@ def run_matlab_code(mlab_inst, exec_path, task_args, socketid):
 
 def run_executable(list, live=True, socketid=None):
     try:
-        popen = subprocess.Popen(list, bufsize=1, stdin=open(os.devnull), stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        popen = subprocess.Popen(list, bufsize=1, stdin=open(os.devnull),
+                                 stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
         count = 0
-        complete_output=''
+        complete_output = ''
         line = ''
         errline = ''
         while True:
@@ -130,7 +131,7 @@ def parseParameters(params):
     end = 0
 
     for i in pat.finditer(str(params)):
-        decoded_params = decoded_params + params[end:i.start()] + '"' + params[i.start()+2:i.end()-1]+'"'
+        decoded_params = decoded_params + params[end:i.start()] + '"' + params[i.start() + 2:i.end() - 1] + '"'
         end = i.end()
 
     decoded_params += params[end:]
@@ -141,18 +142,19 @@ def createList(directory, parsed_dict):
     list_for_exec = list()
     try:
         if not os.path.exists(os.path.join(str(parsed_dict['result_path']), 'results')):
-                os.makedirs(os.path.join(str(parsed_dict['result_path']), 'results'))
-                os.chmod(os.path.join(str(parsed_dict['result_path']), 'results'), 0775)
+            os.makedirs(os.path.join(str(parsed_dict['result_path']), 'results'))
+            os.chmod(os.path.join(str(parsed_dict['result_path']), 'results'), 0775)
 
         if parsed_dict['exec'] == 'ImageStitch':
-            exec_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','webTasks','stitch_full')
+            exec_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'webTasks', 'stitch_full')
             list_for_exec = [exec_path, '--img',
                              os.path.join(str(parsed_dict['image_path'])), '--verbose', '1',
-                             '--output', os.path.join(str(parsed_dict['result_path']),'results/')]
+                             '--output', os.path.join(str(parsed_dict['result_path']), 'results/')]
 
         elif parsed_dict['exec'] == 'VOCRelease5':
             list_for_exec = ['/var/www/html/cloudcv/voc-release5/PascalImagenetBboxPredictor/distrib/run_PascalImagenetBboxPredictor.sh',
-                             '/usr/local/MATLAB/MATLAB_Compiler_Runtime/v81', str(parsed_dict['image_path']).rstrip('/'),
+                             '/usr/local/MATLAB/MATLAB_Compiler_Runtime/v81', str(
+                                 parsed_dict['image_path']).rstrip('/'),
                              '/var/www/html/cloudcv/voc-release5/models/',
                              str(parsed_dict['result_path']).rstrip('/') + '/results/', str('6')]
 
@@ -190,15 +192,14 @@ def createList(directory, parsed_dict):
             for name in list_of_names:
                 if 'decaf_center' in name:
                     flag |= 2       # add decaf_center option
-                    #list_of_names.remove('decaf_center')
+                    # list_of_names.remove('decaf_center')
 
                 elif 'decaf' in name:
                     flag |= 1       # add decaf option
-                    #list_of_names.remove('decaf')
+                    # list_of_names.remove('decaf')
 
                 else:
                     str_list_name += str(name) + ','
-
 
             str_list_name = str_list_name.rstrip(',')
 
@@ -211,7 +212,6 @@ def createList(directory, parsed_dict):
                 list_for_exec.append(str(param_dict['verbose']))
 
             dict_for_exec['verbosity'] = str(param_dict['verbose'])
-
 
             return {'dict': dict_for_exec, 'flag': flag, 'server': server}
 
@@ -232,25 +232,26 @@ def run_classification(userid, jobid, image_path, socketid, token, source_type, 
 
 
 def run_image_stitching(list, token, result_url, socketid, result_path, source_type):
-   # logger.write('P', 'Inside Image Stitching')
+    # logger.write('P', 'Inside Image Stitching')
     message = 'Image Stitching Completed'
     run_executable(list, token, result_url, socketid, message, result_path, source_type)
 
 
 def run_voc_release(list, token, result_url, socketid, result_path, source_type):
-    #logger.write('P', 'Inside run_voc_release')
+    # logger.write('P', 'Inside run_voc_release')
     try:
         message = 'Bounding Box Generated'
         run_executable(list, token, result_url, socketid, message, result_path, source_type)
     except Exception as e:
         raise e
 
+
 @app.task(ignore_result=True)
 def run(parsed_dict):
     socketid = str(parsed_dict['socketid'])
     r.publish('chat', json.dumps({'message': 'Coming in run', 'socketid': str(socketid)}))
     try:
-        if 'dropbox_token' not in parsed_dict or parsed_dict['dropbox_token']=='None':
+        if 'dropbox_token' not in parsed_dict or parsed_dict['dropbox_token'] == 'None':
             parsed_dict['dropbox_token'] = None
 
         global jobid
@@ -262,17 +263,15 @@ def run(parsed_dict):
         result_path = str(parsed_dict['result_path'])
 
         list = None
-        flag = None
-        server = None
 
         dict_of_param = createList(image_path, parsed_dict)
         if 'dict' in dict_of_param:
             list = dict_of_param['dict']
-        if 'flag' in dict_of_param:
-            flag = dict_of_param['flag']
-        if 'server' in dict_of_param:
-            server = dict_of_param['server']
-
+        # if 'flag' in dict_of_param:
+            # flag = dict_of_param['flag']
+        # if 'server' in dict_of_param:
+            # server = dict_of_param['server'] NOTE: This line is commented since 'server' variable is not used anywhere
+            pass
         token = parsed_dict['token']
 
         result_url = os.path.join(parsed_dict['url'], 'results')
@@ -285,27 +284,30 @@ def run(parsed_dict):
             output = run_executable(list, True, socketid)
             sendsMessageToRedis(userid, jobid, source_type, socketid, output, result_path, result_url,
                                 dropbox_token=db_token)
-            r.publish('chat', json.dumps({'done': str('Image Stitching done'), 'socketid': str(socketid), 'token': token, 'jobid': jobid}))
+            r.publish('chat', json.dumps({'done': str('Image Stitching done'),
+                                          'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
         elif(parsed_dict['exec'] == 'VOCRelease5'):
             # output = run_executable(list)
-            output = run_matlab_code(mlab_obj, '/var/www/html/cloudcv/voc-dpm-matlab-bridge/pascal_object_detection.m', list, parsed_dict['socketid'])
+            output = run_matlab_code(
+                mlab_obj, '/var/www/html/cloudcv/voc-dpm-matlab-bridge/pascal_object_detection.m', list, parsed_dict['socketid'])
             sendsMessageToRedis(userid, jobid, source_type, socketid, output, result_path, result_url,
                                 dropbox_token=db_token)
-            r.publish('chat', json.dumps({'message': str('Bounding Boxes Generated'), 'socketid': str(socketid), 'token': token, 'jobid': jobid}))
+            r.publish('chat', json.dumps({'message': str('Bounding Boxes Generated'),
+                                          'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
         elif(parsed_dict['exec'] == 'classify'):
             run_classification(parsed_dict['userid'], parsed_dict['jobid'], parsed_dict['image_path'],
-                               parsed_dict['socketid'], parsed_dict['token'], parsed_dict['source_type'],result_path,
+                               parsed_dict['socketid'], parsed_dict['token'], parsed_dict['source_type'], result_path,
                                db_token=db_token)
 
         elif(parsed_dict['exec'] == 'features'):
             tags = {}
-            matlabfilepath = decaf_cal_feature.calculate_decaf(parsed_dict['image_path'], result_path,3,socketid, tags)
+            decaf_cal_feature.calculate_decaf(parsed_dict['image_path'], result_path, 3, socketid, tags)
             sendsMessageToRedis(userid, jobid, source_type, socketid, '', result_path, result_url,
-                                    dropbox_token=db_token)
+                                dropbox_token=db_token)
             r.publish('chat', json.dumps({'done': str('Features Generated'),
                                           'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
-    except Exception as e:
+    except:
         pass

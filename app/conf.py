@@ -20,13 +20,13 @@ if not os.path.exists(LOCAL_CLASSIFY_JOB_DIR):
     os.makedirs(LOCAL_CLASSIFY_JOB_DIR)
 
 # directory for classification demo images
-LOCAL_DEMO_PIC_DIR = os.path.join(settings.MEDIA_ROOT,'pictures', 'demo')
+LOCAL_DEMO_PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'demo')
 
 # directory for classification demo images
-LOCAL_DEMO_POI_PIC_DIR = os.path.join(settings.MEDIA_ROOT,'pictures', 'poiDemo')
+LOCAL_DEMO_POI_PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'poiDemo')
 
 # directory for imagestitch demo images
-LOCAL_DEMO1_PIC_DIR = os.path.join(settings.MEDIA_ROOT,'pictures', 'demo1')
+LOCAL_DEMO1_PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'demo1')
 
 # directory where all the executables reside
 EXEC_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'executable')
@@ -34,7 +34,7 @@ EXEC_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'executable'
 # PIC_URL
 PIC_URL = '/media/pictures/cloudcv/'
 
-#CAFFE_DIR
+# CAFFE_DIR
 CAFFE_DIR = '/opt/caffe'
 
 LOG_DIR = os.path.join(settings.BASE_ABS_DIR, 'logs')

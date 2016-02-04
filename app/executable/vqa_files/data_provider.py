@@ -2,12 +2,7 @@ from collections import defaultdict
 
 import json
 import os
-import random
-import scipy.io
-import codecs
 import urllib2
-import pdb
-import time
 import numpy as np
 import sys
 
@@ -22,11 +17,11 @@ class DataProvider:
         dataset_path = os.path.join(self.dataset_root, 'mscoco_both_with_img.min.json')
         print 'BasicDataProvider: reading %s' % (dataset_path, )
         self.dataset = json.load(open(dataset_path, 'r'))
-        if IsBinary==1:
+        if IsBinary == 1:
             self.filterYesNo()
-        
+
         imgPair = self.genPair('img')
-        #self.withCaption = self.loadCaption()
+        # self.withCaption = self.loadCaption()
         self.imgPair = imgPair
         self.genSplit(imgPair)
 
@@ -34,7 +29,7 @@ class DataProvider:
         caption_path = os.path.join(self.dataset_root, 'coco_caption_new.json')
         print 'BasicDataProvider: reading %s' % (caption_path, )
         self.caption = json.load(open(caption_path, 'r'))
-        
+
         # multi-question answer path
         multiAnswer_path = os.path.join(self.dataset_root, 'mscoco_multiple_choice_answers_fullscale.json')
         print 'BasicDataProvider: reading %s' % (multiAnswer_path, )
@@ -43,7 +38,7 @@ class DataProvider:
         genCaption_path = os.path.join(self.dataset_root, 'genCaption.json')
         print 'BasicDataProvider: reading %s' % (genCaption_path, )
         self.genCaption = json.load(open(genCaption_path, 'r'))
-        
+
         list_train_path = os.path.join(self.dataset_root, 'list_train.json')
         self.list_train = json.load(open(list_train_path, 'r'))
         list_val_path = os.path.join(self.dataset_root, 'list_val.json')
@@ -56,11 +51,11 @@ class DataProvider:
 
             key1 = ' '.join(self.genTokens(img['quesStr'])) + img['img']
 
-            if img.has_key('multipleAns'):
+            if 'multipleAns' in img:
                 count += 1
                 self.multiAnswer[key1].append(img)
 
-        print 'Processing Multi choice answer from %d to %d' %(len(multiAnswer), count)
+        print 'Processing Multi choice answer from %d to %d' % (len(multiAnswer), count)
         dataset = []
         for img in imgPair:
             for idx in img:
@@ -70,20 +65,20 @@ class DataProvider:
         for img in dataset:
             self.split[img['split']].append(img)
 
-        print 'The training number is %d, and the testing number is %d' %(len(self.split['train']), 
-            len(self.split['test']))
+        print 'The training number is %d, and the testing number is %d' % (len(self.split['train']),
+                                                                           len(self.split['test']))
 
     def _getSentence(self, sent):
         return sent
 
     def loadCaption(self):
         print 'Loading the caption annotation'
-        caption_train_path =  os.path.join(self.dataset_root, 'captions_train2014.json')
-        caption_val_path =  os.path.join(self.dataset_root, 'captions_val2014.json')
+        caption_train_path = os.path.join(self.dataset_root, 'captions_train2014.json')
+        caption_val_path = os.path.join(self.dataset_root, 'captions_val2014.json')
 
         caption_train = json.load(open(caption_train_path, 'r'))
-        caption_val =  json.load(open(caption_val_path, 'r'))
-        
+        caption_val = json.load(open(caption_val_path, 'r'))
+
         # find the corresponding caption.
         pairTmp = defaultdict(list)
         for img in self.train:
@@ -93,7 +88,7 @@ class DataProvider:
 
         captionTmp = []
         count = 0
-        
+
         for key, value in pairTmp.iteritems():
             imgId = int(key[-10:-4])
             trainval = key[5:8]
@@ -101,11 +96,11 @@ class DataProvider:
             if trainval == 'val':
                 for cap in caption_val['annotations']:
                     if imgId == cap['image_id']:
-                        captionTmp.append({'img':key, 'caption': cap['caption']})
+                        captionTmp.append({'img': key, 'caption': cap['caption']})
             else:
                 for cap in caption_train['annotations']:
                     if imgId == cap['image_id']:
-                        captionTmp.append({'img':key, 'caption': cap['caption']})
+                        captionTmp.append({'img': key, 'caption': cap['caption']})
             print count
             count += 1
 
@@ -119,11 +114,11 @@ class DataProvider:
         dataset = []
         for img in self.dataset:
             tmp = ' '.join(img['ans'])
-            if  tmp == 'yes' or tmp =='no':
+            if tmp == 'yes' or tmp == 'no':
                 dataset.append(img)
             count += 1
         self.dataset = dataset
-        print 'After filtering Yes No, there are %d left' %(len(self.dataset))
+        print 'After filtering Yes No, there are %d left' % (len(self.dataset))
 
     def genTokens(self, sent):
         tokens = []
@@ -137,27 +132,27 @@ class DataProvider:
         pairTmp = defaultdict(list)
         for img in self.dataset:
             pairTmp[img[key]].append(img)
-        
-        #transform the imgPair dictionay to list
+
+        # transform the imgPair dictionay to list
         pair = []
         for key, value in pairTmp.iteritems():
             pair.append(value)
         return pair
-    
+
     def genQuestionPair(self, data1, data2):
         pairTmp1 = defaultdict(list)
         pairTmp2 = defaultdict(list)
         for i in range(len(data1)):
 
-            key1 = ''.join(data1[i]['img'])+''.join(data1[i]['ques'])
-            key2 = ''.join(data2[i]['img'])+''.join(data2[i]['ques'])
+            key1 = ''.join(data1[i]['img']) + ''.join(data1[i]['ques'])
+            key2 = ''.join(data2[i]['img']) + ''.join(data2[i]['ques'])
             if key1 == key2:
                 pairTmp1[key1].append(data1[i])
                 pairTmp2[key2].append(data2[i])
             else:
                 print "The sequence order between IA and NI is different.", sys.exc_info()[0]
                 raise
-        #transform the imgPair dictionay to list
+        # transform the imgPair dictionay to list
         pair1 = []
         for key, value in pairTmp1.iteritems():
             pair1.append(value)
@@ -180,10 +175,9 @@ class DataProvider:
             '''
             label = 'train'
             for j in range(len(pair[i])):
-                pair[i][j].update({'split':label})
+                pair[i][j].update({'split': label})
 
-
-    def genRandomSplit(self, pair, random, frac = 0.7):
+    def genRandomSplit(self, pair, random, frac=0.7):
         # generate the split of trainning set and testing set label.
         # pair could be image pair
         imgNum = len(pair)
@@ -194,11 +188,11 @@ class DataProvider:
 
         for i in range(imgNum):
             for j in range(len(pair[i])):
-                pair[i][j].update({'split':'test'})
+                pair[i][j].update({'split': 'test'})
 
         for i in randNum[range(int(round(imgNum * frac)))]:
             for j in range(len(pair[i])):
-                pair[i][j].update({'split':'train'})
+                pair[i][j].update({'split': 'train'})
         return pair
     '''
     def nlpGenLemmas(self, sent):
@@ -213,8 +207,8 @@ class DataProvider:
 
     def iterImgIdQuestion(self, split='train'):
         for img in self.split[split]:
-            yield ''.join(img['img'])+''.join(img['ques'])
-    
+            yield ''.join(img['img']) + ''.join(img['ques'])
+
     def iterAnswerPerQuestion(self, data):
         for ques in data:
             answer = []
@@ -229,24 +223,24 @@ class DataProvider:
 
     def iterImageId(self, split='train'):
         for img in self.split[split]:
-            yield img['img']    
+            yield img['img']
 
     def iterQuestion(self, split='train'):
-    # iter the question and get the tokens.
+        # iter the question and get the tokens.
         for img in self.split[split]:
             yield img['ques']
 
     def iterAnswer(self, split='train'):
-    # iter the answer and get the tokens.
+        # iter the answer and get the tokens.
         for img in self.split[split]:
             yield img['ans']
-    
+
     def iterCaption(self, split='train'):
         for img in self.split[split]:
             yield self.genTokens(self.caption[img['img']][0])
 
     def iterMultiAnswer(self, split='train'):
-        # we should transform the data and the index should be the image and question string 
+        # we should transform the data and the index should be the image and question string
         # in order to make it unique.
         for img in self.split[split]:
             key = ' '.join(img['ques']) + img['img']
@@ -257,11 +251,10 @@ class DataProvider:
 
     def iterGenCaption(self, split='test'):
         for img in self.split[split]:
-            if self.genCaption.has_key(img['img']):
+            if img['img'] in self.genCaption:
                 yield self.genTokens(self.genCaption[img['img']][0])
             else:
                 yield []
-
 
     def iterAll(self, split='test'):
         for img in self.split[split]:
@@ -276,29 +269,31 @@ class DataProvider:
             json.dump(data, outfile)
 
     def downloadImage(self):
-        # given the image name and download the image from server. 	
+        # given the image name and download the image from server.
         print 'Start to download the image'
         pairTmp = defaultdict(list)
         for img in self.dataset:
-            pairTmp[img['url']+img['img']].append(img)
+            pairTmp[img['url'] + img['img']].append(img)
         for img in pairTmp.values():
             URL = img[0]['url'] + img[0]['img']
             u = urllib2.urlopen(URL)
             h = u.info()
             totalSize = int(h["Content-Length"])
-            print 'Downloading image %s with %s bytes' % (img[0]['img'],totalSize,)
+            print 'Downloading image %s with %s bytes' % (img[0]['img'], totalSize,)
             fp = open(os.path.join(self.image_root, img[0]['img']), 'wb')
 
             blockSize = 8192
             count = 0
             while True:
                 chunk = u.read(blockSize)
-                if not chunk: break
+                if not chunk:
+                    break
                 fp.write(chunk)
                 count += 1
                 if totalSize > 0:
                     percent = int(count * blockSize * 100 / totalSize)
-                if percent > 100: percent = 100
+                if percent > 100:
+                    percent = 100
                 print "%2d%%" % percent,
                 if percent < 100:
                     print "\b\b\b\b\b",  # Erase "NN% "
@@ -310,5 +305,5 @@ class DataProvider:
 
 
 def getDataProvider(dataset, IsBinary=0):
-	assert dataset in ['coco'], 'dataset %s unknown' % (dataset, )
-	return DataProvider(dataset, IsBinary)
+    assert dataset in ['coco'], 'dataset %s unknown' % (dataset, )
+    return DataProvider(dataset, IsBinary)

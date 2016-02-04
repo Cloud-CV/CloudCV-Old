@@ -1,25 +1,20 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
-from app.models import CloudCV_Users, GoogleAccountInfo, DropboxAccount
+from app.models import CloudCV_Users, DropboxAccount
 from cloudcv17 import config
 
-import urllib
-import urlparse
 import requests
-import base64
-import os
 import json
-import dropbox
 
 
 def handleAuth(request, is_API, contains_UUID):
     APP_KEY = config.DROPBOX_APP_KEY
-    APP_SECRET = config.DROPBOX_APP_SECRET
+    # APP_SECRET = config.DROPBOX_APP_SECRET
     redirect_url = 'http://localhost:8000/dropbox_callback'
 
     if is_API:
-        #contains uuid
+        # contains uuid
         if contains_UUID:
             request_userid = request.GET['userid']
             user = CloudCV_Users.objects.get(userid=request_userid)
@@ -28,8 +23,8 @@ def handleAuth(request, is_API, contains_UUID):
                 if dropbox_account:
                     return json.dumps({'isValid': 'True', 'token': str(dropbox_account.access_token)})
             except ObjectDoesNotExist:
-                authorize_url = 'https://www.dropbox.com/1/oauth2/authorize?client_id='+ APP_KEY+ '&response_type=code' \
-                                                                                                  '&redirect_uri='+redirect_url+'&state='+str(request.GET['state'])
+                authorize_url = 'https://www.dropbox.com/1/oauth2/authorize?client_id=' + APP_KEY + '&response_type=code' \
+                    '&redirect_uri=' + redirect_url + '&state=' + str(request.GET['state'])
                 return json.dumps({'redirect': 'True', 'url': str(authorize_url)})
         else:
             return json.dumps({'isLoggedIn': 'False'})
@@ -45,12 +40,12 @@ def handleCallback(user_id, code, request):
     redirect_url = 'http://localhost:8000/dropbox_callback'
 
     data = requests.post('https://api.dropbox.com/1/oauth2/token',
-                data={
-                        'code': code,
-                        'grant_type': 'authorization_code',
-                        'redirect_uri': redirect_url
-                },
-                auth=(APP_KEY, APP_SECRET)).json()
+                         data={
+                             'code': code,
+                             'grant_type': 'authorization_code',
+                             'redirect_uri': redirect_url
+                         },
+                         auth=(APP_KEY, APP_SECRET)).json()
     token = data['access_token']
     dbuserid = data['uid']
 

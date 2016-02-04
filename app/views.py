@@ -1,6 +1,5 @@
 # encoding: utf-8
-from django.conf import settings
-from django.views.generic import CreateView, DeleteView
+from django.views.generic import CreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
@@ -8,22 +7,18 @@ from django.shortcuts import render
 from cloudcv17 import config
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize
-from app.models import Picture, RequestLog, Decaf
+from app.models import Picture, RequestLog
 from celeryTasks.webTasks.stitchTask import stitchImages
-from log import logger, log, log_to_terminal, log_and_exit
+from log import log_to_terminal, log_and_exit
 from app.core.job import Job
 from savefile import saveFilesAndProcess
 import app.thirdparty.dropbox_auth as dbauth
 import app.thirdparty.google_auth as gauth
-import decaf_views
 import app.conf as conf
 
 from PIL import Image
-from io import BytesIO
 from querystring_parser import parser
 
-import base64
-import StringIO
 import time
 import subprocess
 import os
@@ -32,7 +27,6 @@ import traceback
 import uuid
 import datetime
 import shortuuid
-import mimetypes
 import redis
 
 r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
@@ -76,7 +70,7 @@ class PictureCreateView(CreateView):
                 log_to_terminal(str('Saving file:' + file.name), request_obj.socketid)
                 a = Picture()
                 tick = time.time()
-                strtick = str(tick).replace('.','_')
+                strtick = str(tick).replace('.', '_')
                 fileName, fileExtension = os.path.splitext(file.name)
                 file.name = fileName + strtick + fileExtension
                 a.file.save(file.name, file)
@@ -87,26 +81,27 @@ class PictureCreateView(CreateView):
                 # img_file = Image.open(BytesIO(base64.b64decode(imgstr)))
                 # img_file.thumbnail(size, Image.ANTIALIAS)
                 imgfile = Image.open(os.path.join(old_save_dir, file.name))
-                size = (500,500)
-                imgfile.thumbnail(size,Image.ANTIALIAS)
+                size = (500, 500)
+                imgfile.thumbnail(size, Image.ANTIALIAS)
 
                 imgfile.save(os.path.join(save_dir, file.name))
                 thumbPath = os.path.join(folder_name, file.name)
                 data['files'].append({
-                    'url': conf.PIC_URL+thumbPath,
+                    'url': conf.PIC_URL + thumbPath,
                     'name': file.name,
                     'type': 'image/png',
-                    'thumbnailUrl': conf.PIC_URL+thumbPath,
+                    'thumbnailUrl': conf.PIC_URL + thumbPath,
                     'size': 0,
                 })
 
-            request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'), os.path.join(conf.PIC_URL, folder_name, 'results/result_stitch.jpg'))
+            request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'),
+                                       os.path.join(conf.PIC_URL, folder_name, 'results/result_stitch.jpg'))
 
             response = JSONResponse(data, mimetype=response_mimetype(self.request))
             response['Content-Disposition'] = 'inline; filename=files.json'
 
             return response
-        except Exception as e:
+        except:
             r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(self.socketid)}))
 
 
@@ -123,7 +118,7 @@ def ec2(request):
     emailid = request.GET['emailid']
 
     dirname = str(uuid.uuid4())
-    result_path ='/home/cloudcv/detection_executable/detection_output/' + dirname +'/'
+    result_path = '/home/cloudcv/detection_executable/detection_output/' + dirname + '/'
 
     list = ['starcluster', 'sshmaster', 'demoCluster',
             'cd /home/cloudcv/detection_executable/PascalImagenetDetector/distrib; '
@@ -179,7 +174,8 @@ def demoUpload(request, executable):
             save_dir = os.path.join(conf.LOCAL_DEMO1_PIC_DIR)
 
             request_obj.log_to_terminal(str('Images Processed. Starting Executable'))
-            request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'), '/app/media/pictures/demo1/results/result_stitch.jpg')
+            request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'),
+                                       '/app/media/pictures/demo1/results/result_stitch.jpg')
 
             data.append({'text': str('')})
             data.append({'result': '/app/media/pictures/demo/output/result_stitch.jpg'})
@@ -197,17 +193,17 @@ def log_every_request(job_obj):
     try:
         now = datetime.datetime.utcnow()
         req_obj = RequestLog(cloudcvid=job_obj.userid, noOfImg=job_obj.count,
-                          isDropbox = job_obj.isDropbox(), apiName=None,
-                          function=job_obj.executable, dateTime=now)
+                             isDropbox=job_obj.isDropbox(), apiName=None,
+                             function=job_obj.executable, dateTime=now)
         req_obj.save()
-    except Exception as e:
+    except:
         r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
         r.publish('chat', json.dumps({'error': str(traceback.format_exc()), 'socketid': job_obj.socketid}))
 
 
 @csrf_exempt
 def matlabReadRequest(request):
-    r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
+    redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
     if request.method == 'POST':
         post_dict = parser.parse(request.POST.urlencode())
@@ -217,7 +213,7 @@ def matlabReadRequest(request):
             log_to_terminal('Server: Post Request Recieved', job_obj.socketid)
             response = saveFilesAndProcess(request, job_obj)
 
-        except Exception as e:
+        except:
             log_and_exit(str(traceback.format_exc()), job_obj.socketid)
             return HttpResponse('Error at server side')
 
@@ -231,7 +227,7 @@ def matlabReadRequest(request):
 
 def authenticate(request, auth_name):
     if auth_name == 'dropbox':
-        is_API = 'type' in request.GET and request.GET['type']=='api'
+        is_API = 'type' in request.GET and request.GET['type'] == 'api'
         contains_UUID = 'userid' in request.GET
 
         str_response = dbauth.handleAuth(request, is_API, contains_UUID)
@@ -245,7 +241,7 @@ def authenticate(request, auth_name):
             return HttpResponseRedirect(str_response)
 
     if auth_name == 'google':
-        is_API = 'type' in request.GET and request.GET['type']=='api'
+        is_API = 'type' in request.GET and request.GET['type'] == 'api'
         contains_UUID = 'userid' in request.GET
 
         str_response = gauth.handleAuth(request, is_API, contains_UUID)
@@ -258,7 +254,7 @@ def authenticate(request, auth_name):
         else:
             return HttpResponseRedirect(str_response)
 
-    #Invalid URL if its not one of the above authentication system
+    # Invalid URL if its not one of the above authentication system
     return HttpResponse('Invalid URL')
 
 

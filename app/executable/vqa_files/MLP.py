@@ -1,8 +1,5 @@
 from logistic_sgd import LogisticRegression, load_data
 
-import os
-import sys
-import time
 import numpy
 import theano
 import theano.tensor as T
@@ -13,6 +10,7 @@ import utils
 
 # start-snippet-1
 class HiddenLayer(object):
+
     def __init__(self, rng, input, n_in, n_out, W=None, b=None,
                  activation=T.tanh):
         self.input = input
@@ -73,8 +71,8 @@ class MLP(object):
             input=input,
             n_in=n_in,
             n_out=n_hidden,
-            W = Model['hidden_W'],
-            b = Model['hidden_b'],
+            W=Model['hidden_W'],
+            b=Model['hidden_b'],
             activation=T.tanh
         )
 
@@ -82,8 +80,8 @@ class MLP(object):
             input=self.hiddenLayer.output,
             n_in=n_hidden,
             n_out=n_out,
-            W = Model['logRegression_W'],
-            b = Model['logRegression_b']
+            W=Model['logRegression_W'],
+            b=Model['logRegression_b']
         )
 
         self.L1 = (
@@ -102,14 +100,14 @@ class MLP(object):
         # same holds for the function computing the number of errors
         self.errors = self.logRegressionLayer.errors
         self.predict = self.logRegressionLayer.y_pred
-        
+
         self.predictAll = self.logRegressionLayer.p_y_given_x
         self.params = self.hiddenLayer.params + self.logRegressionLayer.params
         # end-snippet-3
 
 
 def test_mlp(train_set, valid_set, test_set, learning_rate=0.02, L1_reg=0.00, L2_reg=0.001, n_epochs=100,
-             batch_size=100, n_input = 1030, n_hidden=30, n_output = 1000):
+             batch_size=100, n_input=1030, n_hidden=30, n_output=1000):
 
     datasets = load_data(train_set, test_set, valid_set)
 
@@ -122,12 +120,11 @@ def test_mlp(train_set, valid_set, test_set, learning_rate=0.02, L1_reg=0.00, L2
     n_valid_batches = valid_set_x.get_value(borrow=True).shape[0] / batch_size
     n_test_batches = test_set_x.get_value(borrow=True).shape[0] / batch_size
 
-
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
     x = T.matrix('x')  # the data is presented as rasterized images
     y = T.ivector('y')  # the labels are presented as 1D vector of
-                        # [int] labels
+    # [int] labels
 
     rng = numpy.random.RandomState(1234)
 
@@ -210,28 +207,28 @@ def test_mlp(train_set, valid_set, test_set, learning_rate=0.02, L1_reg=0.00, L2
 
     # end-snippet-5
 
-    ###############
-    # TRAIN MODEL #
-    ###############
+    # # # # # # # # # # # # # # #
+    # TRAIN MODEL               #
+    # # # # # # # # # # # # # # #
     print '... training'
 
     # early-stopping parameters
     patience = 3000
-      # look as this many examples regardless
+    # look as this many examples regardless
     patience_increase = 2  # wait this much longer when a new best is
-                           # found
+    # found
     improvement_threshold = 0.997  # a relative improvement of this much is
-                                   # considered significant
+    # considered significant
     validation_frequency = min(n_train_batches, patience / 2)
-                                  # go through this many
-                                  # minibatche before checking the network
-                                  # on the validation set; in this case we
-                                  # check every epoch
+    # go through this many
+    # minibatche before checking the network
+    # on the validation set; in this case we
+    # check every epoch
 
     best_validation_loss = numpy.inf
     best_iter = 0
-    test_score = 0.
-    start_time = time.clock()
+    # test_score = 0.
+    # start_time = time.clock()
 
     epoch = 0
     done_looping = False
@@ -240,7 +237,7 @@ def test_mlp(train_set, valid_set, test_set, learning_rate=0.02, L1_reg=0.00, L2
         epoch = epoch + 1
         for minibatch_index in xrange(n_train_batches):
 
-            minibatch_avg_cost = train_model(minibatch_index)
+            train_model(minibatch_index)
             # iteration number
             iter = (epoch - 1) * n_train_batches + minibatch_index
 
@@ -262,7 +259,7 @@ def test_mlp(train_set, valid_set, test_set, learning_rate=0.02, L1_reg=0.00, L2
 
                 # if we got the best validation score until now
                 if this_validation_loss < best_validation_loss:
-                    #improve patience if loss improvement is good enough
+                    # improve patience if loss improvement is good enough
                     if (
                         this_validation_loss < best_validation_loss *
                         improvement_threshold
@@ -274,7 +271,6 @@ def test_mlp(train_set, valid_set, test_set, learning_rate=0.02, L1_reg=0.00, L2
 
                     # test it on the test set
 
-
             '''
             if patience <= iter:
                 done_looping = True
@@ -284,7 +280,6 @@ def test_mlp(train_set, valid_set, test_set, learning_rate=0.02, L1_reg=0.00, L2
     model_save['hidden_W'], model_save['hidden_b'] = classifier.hiddenLayer.__getstate__()
     model_save['logRegression_W'], model_save['logRegression_b'] = classifier.logRegressionLayer.__getstate__()
 
-
     utils.pickleSave('model', model_save)
     pdb.set_trace()
 
@@ -292,8 +287,8 @@ def test_mlp(train_set, valid_set, test_set, learning_rate=0.02, L1_reg=0.00, L2
     for i in xrange(n_test_batches):
         test_out = test_out + test_model(i).tolist()
     test_out += test_model_end(n_test_batches).tolist()
-    end_time = time.clock()
-    
+    # end_time = time.clock()
+
     print(('Optimization complete. Best validation score of %f %% '
            'obtained at iteration %i') %
           (best_validation_loss * 100., best_iter + 1))

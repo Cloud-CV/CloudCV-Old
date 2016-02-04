@@ -9,25 +9,23 @@ While editing please make sure:
    (See Docker/CPUWorker/Dockerfile)
 """
 
+import sys
 
-def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results, modelname = '', modelnet=None):
+
+def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results, modelname='', modelnet=None):
 
     import os
     import scipy.io as sio
     import caffe
-
     import redis
     import json
     import traceback
-    import sys
-    import os
-    import operator
     import numpy as np
     from cloudcv17 import config
 
     os.environ['OMP_NUM_THREADS'] = '4'
 
-    CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__),"..",".."))
+    CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
 
     r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
@@ -38,7 +36,7 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
     caffe.set_mode_cpu()
     net = caffe.Classifier(MODEL_FILE, PRETRAINED)
 
-    if modelnet == None:
+    if modelnet is None:
         modelnet = net
 
     def decaf_features(single_image, modelnet=net):
@@ -47,7 +45,7 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
             input_image = caffe.io.load_image(single_image)
             modelnet.predict([input_image])
             blobs = modelnet.blobs.items()
-            features = blobs[-3][1].data[:,:,0,0]
+            features = blobs[-3][1].data[:, :, 0, 0]
             return features
         except Exception as e:
             raise e
@@ -57,14 +55,15 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
         input_image = caffe.io.load_image(single_image)
         modelnet.predict([input_image])
         blobs = modelnet.blobs.items()
-        features = blobs[-3][1].data[4,:,0,0]
-        features = np.resize(features, (1,4096))
+        features = blobs[-3][1].data[4, :, 0, 0]
+        features = np.resize(features, (1, 4096))
         return decaf_features
 
     if modelnet is None:
-	modelnet=net
+        modelnet = net
 
-    r.publish('chat', json.dumps({'error': str('Using '+modelname+' model for calculating features'), 'socketid': socketid}))
+    r.publish('chat', json.dumps({'error': str('Using ' + modelname +
+                                               ' model for calculating features'), 'socketid': socketid}))
     try:
         if os.path.exists(resultpath + '/' + file + '.mat'):
             matfile = sio.loadmat(resultpath + '/' + file + '.mat')
@@ -85,7 +84,7 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
             if str(file) in all_results:
                 all_results[str(file)]['decaf_centre'] = results
             else:
-                all_results[str(file)] = {'decaf_centre':results}
+                all_results[str(file)] = {'decaf_centre': results}
             r.publish('chat', json.dumps({'error': str('Decaf-Centre Feature Calculated'), 'socketid': socketid}))
 
         sio.savemat(os.path.join(resultpath, file + '.mat'), matfile)
@@ -99,7 +98,7 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
 
 
 def calculate_decaf(imagepath, resultpath, flag, socketid, all_results):
-    import os 
+    import os
 
     mat_files_paths = {}
     for file in os.listdir(imagepath):
@@ -107,7 +106,6 @@ def calculate_decaf(imagepath, resultpath, flag, socketid, all_results):
             mat_file_path = calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results)
             mat_files_paths[file] = mat_file_path
     return mat_files_paths
-
 
 if __name__ == '__main__':
     calculate_decaf(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

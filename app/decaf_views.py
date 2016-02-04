@@ -5,27 +5,21 @@ from urlparse import urlparse
 from querystring_parser import parser
 from PIL import Image
 
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.conf import settings
+from django.views.generic import CreateView
 from django.views.decorators.csrf import csrf_exempt
 
-from app.models import Picture, RequestLog, Decaf, Decafmodel
+from app.models import Picture, Decaf, Decafmodel
 import app.conf as conf
 from .response import JSONResponse, response_mimetype
 from celeryTasks.webTasks.decafTask import decafImages
 from cloudcv17 import config
 
 import time
-import subprocess
 import os
 import json
 import traceback
-import operator
 import shortuuid
 import requests
-import traceback
 import redis
 import re
 
@@ -37,7 +31,7 @@ DEMO_IMAGE_PATH = '/srv/share/cloudcv/jobs/demo'
 
 
 def log_to_terminal(message, socketid):
-        redis_obj.publish('chat', json.dumps({'error': str(message), 'socketid': str(socketid)}))
+    redis_obj.publish('chat', json.dumps({'error': str(message), 'socketid': str(socketid)}))
 
 
 def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_file_name='', modelname=''):
@@ -50,8 +44,8 @@ def decaf_wrapper_local(src_path, output_path, socketid, result_path, single_fil
             result_url = os.path.dirname(urlparse(result_path).path)
             result_path = os.path.join(result_url, 'results')
         decafImages.delay(src_path, socketid, output_path, result_path)
-    except Exception as e:
-	log_to_terminal(str(traceback.format_exc()),socketid);
+    except:
+        log_to_terminal(str(traceback.format_exc()), socketid)
 
 
 class DecafCreateView(CreateView):
@@ -60,12 +54,12 @@ class DecafCreateView(CreateView):
     socketid = None
 
     def getThumbnail(self, image_url_prefix, name):
-        im = Image.open('/var/www/html/cloudcv/fileupload'+image_url_prefix+name)
+        im = Image.open('/var/www/html/cloudcv/fileupload' + image_url_prefix + name)
         size = 128, 128
         im.thumbnail(size, Image.ANTIALIAS)
         filename, fileext = splitext(basename(name))
         file = image_url_prefix + 'thumbnails/' + filename + '.' + fileext
-        im.save('/var/www/html/cloudcv/fileupload'+file)
+        im.save('/var/www/html/cloudcv/fileupload' + file)
         return file
 
     count_hits = 0
@@ -73,16 +67,15 @@ class DecafCreateView(CreateView):
     def form_valid(self, form):
 
         self.r = redis.StrictRedis(host='localhost', port=6379, db=0)
-        session = self.request.session.session_key
         socketid = self. request.POST['socketid-hidden']
         self.socketid = socketid
 
         try:
             self.object = form.save()
             all_files = self.request.FILES.getlist('file')
-            data = {'files':[]}
+            data = {'files': []}
 
-        except Exception as e:
+        except:
             log_to_terminal(str(traceback.format_exc()), self.socketid)
 
         old_save_dir = os.path.dirname(conf.PIC_DIR)
@@ -103,24 +96,24 @@ class DecafCreateView(CreateView):
             try:
                 a = Picture()
                 tick = time.time()
-                strtick = str(tick).replace('.','_')
+                strtick = str(tick).replace('.', '_')
                 fileName, fileExtension = os.path.splitext(file.name)
                 file.name = fileName + strtick + fileExtension
                 a.file.save(file.name, file)
                 file.name = a.file.name
                 imgfile = Image.open(os.path.join(old_save_dir, file.name))
-                size = (500,500)
-                imgfile.thumbnail(size,Image.ANTIALIAS)
+                size = (500, 500)
+                imgfile.thumbnail(size, Image.ANTIALIAS)
                 imgfile.save(os.path.join(save_dir, file.name))
                 thumbPath = os.path.join(folder_name, file.name)
                 data['files'].append({
-                    'url': conf.PIC_URL+thumbPath,
+                    'url': conf.PIC_URL + thumbPath,
                     'name': file.name,
                     'type': 'image/png',
-                    'thumbnailUrl': conf.PIC_URL+thumbPath,
+                    'thumbnailUrl': conf.PIC_URL + thumbPath,
                     'size': 0,
                 })
-            except Exception as e:
+            except:
                 log_to_terminal(str(traceback.format_exc()), self.socketid)
 
         if len(all_files) == 1:
@@ -134,7 +127,7 @@ class DecafCreateView(CreateView):
         decaf_wrapper_local(save_dir, output_path, socketid, os.path.join(conf.PIC_URL, folder_name))
 
         # This is for posting it on Redis - ie to Rosenblatt
-        #classify_wrapper_redis(job_directory, socketid, result_folder)
+        # classify_wrapper_redis(job_directory, socketid, result_folder)
 
         response = JSONResponse(data, {}, response_mimetype(self.request))
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -152,7 +145,6 @@ def demoDecaf(request):
     try:
         if 'src' not in post_dict:
             # Run on all images:
-            image_path = conf.LOCAL_DEMO_PIC_DIR
             imgname = ''
 
             img_url = os.path.join(os.path.dirname(urlparse(conf.PIC_URL.rstrip('/')).path), 'demo')
@@ -160,7 +152,6 @@ def demoDecaf(request):
             data = {'info': 'Processing'}
             img_url = post_dict['src']
             imgname = basename(urlparse(img_url).path)
-            image_path = os.path.join(conf.LOCAL_DEMO_PIC_DIR, imgname)
 
         output_path = os.path.join(conf.LOCAL_DEMO_PIC_DIR, 'results')
         if not os.path.exists(output_path):
@@ -172,7 +163,7 @@ def demoDecaf(request):
         decaf_wrapper_local(conf.LOCAL_DEMO_PIC_DIR, output_path, post_dict['socketid'], img_url, imgname)
 
         # This is for posting it on Redis - ie to Rosenblatt
-        #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
+        # classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
 
         data = {'info': 'Completed'}
 
@@ -180,7 +171,7 @@ def demoDecaf(request):
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
-    except Exception as e:
+    except:
         data = {'result': str(traceback.format_exc())}
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -190,16 +181,19 @@ def demoDecaf(request):
 def decafDemo(request):
     post_dict = parser.parse(request.POST.urlencode())
     log_to_terminal('Processing Demo Images Now', post_dict['socketid'])
-    if 'src' in post_dict and post_dict['src']!='':
+    if 'src' in post_dict and post_dict['src'] != '':
         file_name = basename(urlparse(post_dict['src']).path)
-        redis_obj.publish(decaf_channel_name, json.dumps({'dir': DEMO_IMAGE_PATH, 'flag': '2', 'socketid': post_dict['socketid'], 'demo':'True', 'filename': file_name}))
+        redis_obj.publish(decaf_channel_name, json.dumps(
+            {'dir': DEMO_IMAGE_PATH, 'flag': '2', 'socketid': post_dict['socketid'], 'demo': 'True', 'filename': file_name}))
     else:
-        redis_obj.publish(decaf_channel_name, json.dumps({'dir': DEMO_IMAGE_PATH, 'flag': '2', 'socketid': post_dict['socketid']}))
+        redis_obj.publish(decaf_channel_name, json.dumps(
+            {'dir': DEMO_IMAGE_PATH, 'flag': '2', 'socketid': post_dict['socketid']}))
+
 
 def downloadAndSaveImages(url_list, socketid):
     try:
         uuid = shortuuid.uuid()
-        directory = os.path.join(conf.PIC_DIR , str(uuid))
+        directory = os.path.join(conf.PIC_DIR, str(uuid))
         if not os.path.exists(directory):
             os.mkdir(directory)
 
@@ -210,24 +204,23 @@ def downloadAndSaveImages(url_list, socketid):
                 file = requests.get(url)
                 file_full_name_raw = basename(urlparse(url).path)
                 file_name_raw, file_extension = os.path.splitext(file_full_name_raw)
-                regex = re.compile('[^a-zA-Z0-9]')
-                #First parameter is the replacement, second parameter is your input string
+                # First parameter is the replacement, second parameter is your input string
                 file_name = re.sub('[^a-zA-Z0-9]+', '', file_name_raw)
 
-                f = open(os.path.join(conf.PIC_DIR, str(uuid)+file_name+file_extension), 'wb')
+                f = open(os.path.join(conf.PIC_DIR, str(uuid) + file_name + file_extension), 'wb')
                 f.write(file.content)
                 f.close()
 
-                imgFile = Image.open(os.path.join(conf.PIC_DIR, str(uuid)+file_name+file_extension))
+                imgFile = Image.open(os.path.join(conf.PIC_DIR, str(uuid) + file_name + file_extension))
                 size = (500, 500)
                 imgFile.thumbnail(size, Image.ANTIALIAS)
-                imgFile.save(os.path.join(conf.PIC_DIR, str(uuid), file_name+file_extension))
-                log_to_terminal('Saved Image: '+str(url), socketid)
+                imgFile.save(os.path.join(conf.PIC_DIR, str(uuid), file_name + file_extension))
+                log_to_terminal('Saved Image: ' + str(url), socketid)
             except Exception as e:
                 print str(e)
         return uuid, directory
-    except Exception as e:
-        print 'Exception'+str(traceback.format_exc())
+    except:
+        print 'Exception' + str(traceback.format_exc())
 
 
 @csrf_exempt
@@ -238,7 +231,7 @@ def decafDropbox(request):
             data = {'error': 'NoFileSelected'}
         else:
             data = {'info': 'ProcessingImages'}
-            #Download these images. Run Feature Extraction. Post results.
+            # Download these images. Run Feature Extraction. Post results.
             uuid, image_path = downloadAndSaveImages(post_dict['urls'], post_dict['socketid'])
 
             output_path = os.path.join(image_path, 'results')
@@ -251,7 +244,7 @@ def decafDropbox(request):
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
-    except Exception as e:
+    except:
         data = {'result': str(traceback.format_exc())}
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -264,12 +257,12 @@ class DecafModelCreateView(CreateView):
     socketid = None
 
     def getThumbnail(self, image_url_prefix, name):
-        im = Image.open('/var/www/html/cloudcv/fileupload'+image_url_prefix+name)
+        im = Image.open('/var/www/html/cloudcv/fileupload' + image_url_prefix + name)
         size = 128, 128
         im.thumbnail(size, Image.ANTIALIAS)
         filename, fileext = splitext(basename(name))
         file = image_url_prefix + 'thumbnails/' + filename + '.' + fileext
-        im.save('/var/www/html/cloudcv/fileupload'+file)
+        im.save('/var/www/html/cloudcv/fileupload' + file)
         return file
 
     count_hits = 0
@@ -277,7 +270,6 @@ class DecafModelCreateView(CreateView):
     def form_valid(self, form):
 
         self.r = redis.StrictRedis(host='localhost', port=6379, db=0)
-        session = self.request.session.session_key
         socketid = self. request.POST['socketid-hidden']
         modelname = ''
         if 'model-name' in self.request.POST:
@@ -289,9 +281,9 @@ class DecafModelCreateView(CreateView):
         try:
             self.object = form.save()
             all_files = self.request.FILES.getlist('file')
-            data = {'files':[]}
+            data = {'files': []}
 
-        except Exception as e:
+        except:
             log_to_terminal(str(traceback.format_exc()), self.socketid)
 
         old_save_dir = os.path.dirname(conf.PIC_DIR)
@@ -303,7 +295,7 @@ class DecafModelCreateView(CreateView):
             os.makedirs(save_dir)
             os.makedirs(os.path.join(save_dir, 'results'))
 
-        log_to_terminal(str('SocketID: '+str(self.socketid)), self.socketid)
+        log_to_terminal(str('SocketID: ' + str(self.socketid)), self.socketid)
         if len(all_files) == 1:
             log_to_terminal(str('Downloading Image...'), self.socketid)
         else:
@@ -313,24 +305,24 @@ class DecafModelCreateView(CreateView):
             try:
                 a = Picture()
                 tick = time.time()
-                strtick = str(tick).replace('.','_')
+                strtick = str(tick).replace('.', '_')
                 fileName, fileExtension = os.path.splitext(file.name)
                 file.name = fileName + strtick + fileExtension
                 a.file.save(file.name, file)
                 file.name = a.file.name
                 imgfile = Image.open(os.path.join(old_save_dir, file.name))
-                size = (500,500)
-                imgfile.thumbnail(size,Image.ANTIALIAS)
+                size = (500, 500)
+                imgfile.thumbnail(size, Image.ANTIALIAS)
                 imgfile.save(os.path.join(save_dir, file.name))
                 thumbPath = os.path.join(folder_name, file.name)
                 data['files'].append({
-                    'url': conf.PIC_URL+thumbPath,
+                    'url': conf.PIC_URL + thumbPath,
                     'name': file.name,
                     'type': 'image/png',
-                    'thumbnailUrl': conf.PIC_URL+thumbPath,
+                    'thumbnailUrl': conf.PIC_URL + thumbPath,
                     'size': 0,
                 })
-            except Exception as e:
+            except:
                 log_to_terminal(str(traceback.format_exc()), self.socketid)
 
         if len(all_files) == 1:
@@ -341,10 +333,11 @@ class DecafModelCreateView(CreateView):
         time.sleep(.5)
 
         # This is for running it locally ie on Godel
-        decaf_wrapper_local(save_dir, output_path, socketid, os.path.join(conf.PIC_URL, folder_name), modelname=modelname)
+        decaf_wrapper_local(save_dir, output_path, socketid, os.path.join(
+            conf.PIC_URL, folder_name), modelname=modelname)
 
         # This is for posting it on Redis - ie to Rosenblatt
-        #classify_wrapper_redis(job_directory, socketid, result_folder)
+        # classify_wrapper_redis(job_directory, socketid, result_folder)
 
         response = JSONResponse(data, {}, response_mimetype(self.request))
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -365,7 +358,7 @@ def decaf_train(request):
         else:
             data = {'info': 'ProcessingImages'}
 
-            #Download these images. Run Feature Extraction. Post results.
+            # Download these images. Run Feature Extraction. Post results.
             uuid, image_path = downloadAndSaveImages(post_dict['urls'], post_dict['socketid'])
 
             output_path = os.path.join(image_path, 'results')
@@ -377,7 +370,7 @@ def decaf_train(request):
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
-    except Exception as e:
+    except:
         data = {'result': str(traceback.format_exc())}
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'

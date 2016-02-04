@@ -38,11 +38,8 @@ the module imports, etc happen inside the function.
 
 # redis_obj = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-# ##
 # # LOG File
 # demo_log_file = conf.DEMO_VQA_LOG_FILE
-# ##
-
 
 
 # def log_to_terminal(message, socketid):
@@ -80,10 +77,10 @@ the module imports, etc happen inside the function.
 #         self.socketid = socketid
 
 #         try:
-#             #log_to_terminal('Logging user ip....', self.socketid)
+#             # log_to_terminal('Logging user ip....', self.socketid)
 #             client_address = self.request.META['REMOTE_ADDR']
-#             #client_address = self.request.environ.get('HTTP_X_FORWARDED_FOR')
-#             #log_to_terminal(client_address, self.socketid)
+#             # client_address = self.request.environ.get('HTTP_X_FORWARDED_FOR')
+#             # log_to_terminal(client_address, self.socketid)
 
 #             self.object = form.save()
 #             all_files = self.request.FILES.getlist('file')
@@ -156,7 +153,7 @@ the module imports, etc happen inside the function.
 #         vqa_wrapper_feat(save_dir, socketid, save_url, feat_folder)
 
 #         # This is for posting it on Redis - ie to Rosenblatt
-#         #classify_wrapper_redis(job_directory, socketid, result_folder)
+#         # classify_wrapper_redis(job_directory, socketid, result_folder)
 
 #         response = JSONResponse(data, {}, response_mimetype(self.request))
 #         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -233,7 +230,7 @@ the module imports, etc happen inside the function.
 #             vqa_wrapper_feat(image_path, socketid, result_prefix_url, feat_path)
 
 #             # This is for posting it on Redis - ie to Rosenblatt
-#             #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
+#             # classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
 
 #             data = {'info': 'Completed'}
 
@@ -287,7 +284,7 @@ the module imports, etc happen inside the function.
 #         vqa_wrapper_answer(feat_path, question, socketid, imageid)
 
 #         # This is for posting it on Redis - ie to Rosenblatt
-#         #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
+#         # classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
 
 #         data = {'info': 'Completed'}
 
@@ -295,7 +292,6 @@ the module imports, etc happen inside the function.
 #         #     client_address = request.META['REMOTE_ADDR']
 #         #     log_file.write('Demo classify request from IP:'+client_address)
 #         #     log_file.close()
-#         #
 #         # except Exception as e:
 #         #     log_file.write('Exception when finding client ip:'+str(traceback.format_exc())+'\n');
 #         #     log_file.close()
