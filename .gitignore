@@ -12,6 +12,5 @@ db
 *.pot
 *.pyc
 local_settings.py
-.*
 !/.gitignore
 Docker/CPUWorker/bvlc_reference_caffenet.caffemodel
