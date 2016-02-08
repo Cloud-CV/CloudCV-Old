@@ -56,7 +56,7 @@ def poiImages(src_path, socketid, result_path):
 
         face_cascade = cv2.CascadeClassifier(model_path)
         faces = face_cascade.detectMultiScale(img, scaleFactor=1.1,
-                                              minNeighbors=2, minSize=(0, 0), flags = CV_HAAR_SCALE_IMAGE)
+                                              minNeighbors=2, minSize=(0, 0), flags=CV_HAAR_SCALE_IMAGE)
 
         total_gradient = 0
         face_features = []
