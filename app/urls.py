@@ -8,9 +8,9 @@ from app.poi_views import PoiCreateView
 from app.trainaclass_views import TrainaclassCreateView
 
 urlpatterns = patterns('',
-                       url(r'^image-stitch/$', PictureCreateView.as_view(), name='upload-new'),
+                       url(r'^image-stitch/$', PictureCreateView.as_view(), name='image-stitching'),
                        url(r'^basicplus/$', BasicPlusVersionCreateView.as_view(), name='upload-basic-plus'),
-                       (r'^decaf-server/$', DecafCreateView.as_view(), {}, 'decaf'),
+                       url(r'^decaf-server/$', DecafCreateView.as_view(), name='decaf-server'),
                        (r'^decaf-server-new/$', DecafModelCreateView.as_view(), {}, 'decaf'),
                        (r'^classify/$', ClassifyCreateView.as_view(), {}, 'classify'),
                        (r'^vip/$', PoiCreateView.as_view(), {}, 'poi'),
