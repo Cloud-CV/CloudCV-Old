@@ -172,7 +172,7 @@ class CloudCV_Users(models.Model):
     last_name = models.CharField(max_length=20)
     userid = models.CharField(max_length=100, primary_key=True)
     emailid = models.EmailField(max_length=254, unique=True)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=False)
 
 
 class GoogleAccountInfo(models.Model):
@@ -192,5 +192,5 @@ class RequestLog(models.Model):
     noOfImg = models.IntegerField()
     function = models.CharField(max_length=50)
     dateTime = models.DateTimeField()
-    isDropbox = models.BooleanField()
+    isDropbox = models.BooleanField(default=False)
     apiName = models.CharField(max_length=20, null=True)
