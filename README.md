@@ -42,7 +42,7 @@ Steps for setting the development environment
 
         ./worker-cpu
 
-7. Its time to rock. Visit [http://127.0.0.1][localhost] in your browser and you should be all set.
+7. Its time to rock. Visit [http://127.0.0.1](http://127.0.0.1) in your browser and you should be all set.
 
 Additional Information
 -----------------------
