@@ -20,7 +20,7 @@ class Picture(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('upload-new', )
+        return ('image-stitching', )
 
     def save(self, *args, **kwargs):
         self.slug = self.file.name

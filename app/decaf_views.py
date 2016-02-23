@@ -67,8 +67,7 @@ class DecafCreateView(CreateView):
     def form_valid(self, form):
 
         self.r = redis.StrictRedis(host='localhost', port=6379, db=0)
-        socketid = self. request.POST['socketid-hidden']
-        self.socketid = socketid
+        self.socketid = self.request.POST['socketid-hidden']
 
         try:
             self.object = form.save()
