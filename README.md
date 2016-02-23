@@ -1,9 +1,7 @@
 CloudCV
 =======
 
-.. image:: https://badges.gitter.im/batra-mlp-lab/CloudCV_Server.svg
-   :alt: Join the chat at https://gitter.im/batra-mlp-lab/CloudCV_Server
-   :target: https://gitter.im/batra-mlp-lab/CloudCV_Server?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+[![Join the chat at https://gitter.im/batra-mlp-lab/CloudCV](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/batra-mlp-lab/CloudCV?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Large-Scale Distributed Computer Vision As A Cloud Service
 -----------------------------------------------------------
