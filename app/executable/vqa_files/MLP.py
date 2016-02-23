@@ -85,13 +85,11 @@ class MLP(object):
         )
 
         self.L1 = (
-            abs(self.hiddenLayer.W).sum()
-            + abs(self.logRegressionLayer.W).sum()
+            abs(self.hiddenLayer.W).sum() + abs(self.logRegressionLayer.W).sum()
         )
 
         self.L2_sqr = (
-            (self.hiddenLayer.W ** 2).sum()
-            + (self.logRegressionLayer.W ** 2).sum()
+            (self.hiddenLayer.W ** 2).sum() + (self.logRegressionLayer.W ** 2).sum()
         )
 
         self.negative_log_likelihood = (
@@ -142,9 +140,7 @@ def test_mlp(train_set, valid_set, test_set, learning_rate=0.02, L1_reg=0.00, L2
     # the model plus the regularization terms (L1 and L2); cost is expressed
     # here symbolically
     cost = (
-        classifier.negative_log_likelihood(y)
-        + L1_reg * classifier.L1
-        + L2_reg * classifier.L2_sqr
+        classifier.negative_log_likelihood(y) + L1_reg * classifier.L1 + L2_reg * classifier.L2_sqr
     )
     # end-snippet-4
 
