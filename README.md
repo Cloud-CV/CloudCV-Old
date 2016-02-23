@@ -1,6 +1,10 @@
 CloudCV
 =======
 
+.. image:: https://badges.gitter.im/batra-mlp-lab/CloudCV_Server.svg
+   :alt: Join the chat at https://gitter.im/batra-mlp-lab/CloudCV_Server
+   :target: https://gitter.im/batra-mlp-lab/CloudCV_Server?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 Large-Scale Distributed Computer Vision As A Cloud Service
 -----------------------------------------------------------
 
@@ -42,7 +46,7 @@ Steps for setting the development environment
 
         ./worker-cpu
 
-7. Its time to rock. Visit [http://127.0.0.1](http://127.0.0.1) in your browser and you should be all set.
+7. Now, visit [http://127.0.0.1](http://127.0.0.1) in your browser and you should be all set.
 
 Additional Information
 -----------------------
