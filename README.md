@@ -54,3 +54,5 @@ Additional Information
   * To make yourself familiar with the codebase, check the file [DirectoryDocumentation.txt](https://github.com/batra-mlp-lab/CloudCV/blob/master/DirectoryDocumentation.txt)
 
   * For any other queries, open issues or you can chat with developers at our [gitter]() channel.
+
+  * Official Documentation available at [this link](http://batra-mlp-lab.github.io/CloudCV/).
