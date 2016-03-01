@@ -31,6 +31,7 @@
 
   
     <link rel="top" title="CloudCV 1.1 documentation" href="index.html"/>
+        <link rel="next" title="Summer of Code 2015" href="gsoc_2015.html"/>
         <link rel="prev" title="CloudCV" href="home.html"/> 
 
   
@@ -99,7 +100,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#id1">Pre-requisites</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#writing-tutorials-and-implementing-popular-deep-learning-architectures-in-cloudcv">3: Writing tutorials and implementing popular deep learning architectures in CloudCV.</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#writing-tutorials-and-implementing-popular-deep-learning-architectures-in-cloudcv">3: Writing tutorials and implementing popular deep learning architectures in CloudCV</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id2">Pre-requisites</a></li>
 </ul>
 </li>
@@ -107,6 +108,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="gsoc_2015.html">Summer of Code 2015</a></li>
 </ul>
 
             
@@ -168,11 +170,10 @@
 <h2>Current status as of February 2016<a class="headerlink" href="#current-status-as-of-february-2016" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="data-sharing">
 <h3>Data Sharing<a class="headerlink" href="#data-sharing" title="Permalink to this headline">¶</a></h3>
-<p>We have released 16 &#8220;industry standard&#8221; pre-computed features for all 1.2 million images in the ImageNet Challenge [7], as a resource that others in the community can build on.
-<strong>Web Services and Demos</strong>: cloudcv.org hosts the following services:
-Image Classification: A Convolutional Neural Network (CNN) based image auto-tagging web-service. Allows a user to upload an image. Outputs names of categories present in the image.
-<strong>Training a New Category</strong>: Giving a user the capability to train a visual classifier for a new user-defined category (not already present in the model). User is able to provide training examples for each of these new categories, and test against an updated CNN.
-<strong>Visual Question Answering</strong>: A web-service where a user may upload any image, and ask any free-form natural language question about the image (“How many people are in this image?”,  “What are the people doing?”) and receive a natural language answer back (“5”, “playing frisbee”).</p>
+<p>We have released 16 &#8220;industry standard&#8221; pre-computed features for all 1.2 million images in the ImageNet Challenge [7], as a resource that others in the community can build on.Web Services and Demos: cloudcv.org hosts the following services:</p>
+<p><strong>Image Classification</strong>: A Convolutional Neural Network (CNN) based image auto-tagging web-service. Allows a user to upload an image. Outputs names of categories present in the image.</p>
+<p><strong>Training a New Category</strong>: Giving a user the capability to train a visual classifier for a new user-defined category (not already present in the model). User is able to provide training examples for each of these new categories, and test against an updated CNN.</p>
+<p><strong>Visual Question Answering</strong>: A web-service where a user may upload any image, and ask any free-form natural language question about the image (“How many people are in this image?”,  “What are the people doing?”) and receive a natural language answer back (“5”, “playing frisbee”).</p>
 </div>
 <div class="section" id="python-apis">
 <h3>Python APIs<a class="headerlink" href="#python-apis" title="Permalink to this headline">¶</a></h3>
@@ -203,8 +204,9 @@ Here are some ideas:</p>
 <blockquote>
 <div><p><strong>Goal:</strong></p>
 <blockquote>
-<div><strong>Input</strong>: the path to a github page with some demo code.
-<strong>Output</strong>: create <a class="reference external" href="http://cloudcv.org/username/demo_name">http://cloudcv.org/username/demo_name</a></div></blockquote>
+<div><p><strong>Input</strong>: the path to a github page with some demo code.</p>
+<p><strong>Output</strong>: create <a class="reference external" href="http://cloudcv.org/username/demo_name">http://cloudcv.org/username/demo_name</a></p>
+</div></blockquote>
 <p>Automatically create a pull request on the github repository that contains the wrappers around the code. This pull request can contain code to run a web-server, and docker containers so that setting up the demo online is as simple as pulling this branch and running a command or a bash script.</p>
 <p>CloudCV should be able to host some of these more popular models on their own - server. Users can either decide to create their own profile and upload such a model or we should be able to do it automatically for open-source contributions.</p>
 </div></blockquote>
@@ -243,7 +245,7 @@ Here are some ideas:</p>
 </div>
 </div>
 <div class="section" id="writing-tutorials-and-implementing-popular-deep-learning-architectures-in-cloudcv">
-<h3>3: Writing tutorials and implementing popular deep learning architectures in CloudCV.<a class="headerlink" href="#writing-tutorials-and-implementing-popular-deep-learning-architectures-in-cloudcv" title="Permalink to this headline">¶</a></h3>
+<h3>3: Writing tutorials and implementing popular deep learning architectures in CloudCV<a class="headerlink" href="#writing-tutorials-and-implementing-popular-deep-learning-architectures-in-cloudcv" title="Permalink to this headline">¶</a></h3>
 <p>This project is aimed at students who are looking for a more research-oriented experience during CloudCV GSoC. This will involve reading and implementing popular deep learning papers and integrating them with CloudCV. This project will complement the other two projects such that at the end of summers we have a few example architecture already CloudCV-fied. This will also help us identifying potential caveats in building a CloudCV-fy your code like system.</p>
 <p>The student will also be responsible for building an interface where users can share their code and write a corresponding tutorial. The page will essentially be a one stop resource from finding relevant papers, their open source code, an online demo to showcase the capability and short tutorial.</p>
 <p><strong>Difficulty:</strong> Medium</p>
@@ -280,6 +282,8 @@ Here are some ideas:</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gsoc_2015.html" class="btn btn-neutral float-right" title="Summer of Code 2015" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="home.html" class="btn btn-neutral" title="CloudCV" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

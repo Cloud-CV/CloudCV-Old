@@ -1,0 +1,96 @@
+Summer of Code 2015
+======================
+
+Ideas List
+------------
+
+0) Title: Crowdsource computer vision computation on web-scale data
+--------------------------------------------------------------------
+
+**Mentor**: Harsh Agrawal
+
+**Skills**: Python, Javascript, Distributed Computing
+
+Computer Vision datasets are huge and often require months of data computation to publish relevant research findings on these datasets. One of the major problems is that not everybody has in-house infrastructural capability to process such large amounts of data. And cloud services right now might be too expensive for research purposes. We want to be able to crowdsource such efforts such that multiple people can hook up their local desktops/ laptops and can run these tasks automatically using the CloudCV system. Whenever the computer is idle(say during the night) - these tasks can be run in background . The key goal is to make this task distribution very reliable and consistent. The data will be synced with the server and the cloudcv server will be responsible for making sure that all this computation is happening properly. 
+
+1.) Title: Develop the Matlab and Python API for CloudCV
+---------------------------------------------------------------------
+
+**Mentor**: Harsh Agrawal
+
+**Skills**: Python, Javascript, Matlab, Java
+
+**Difficulty**: Moderate
+
+We have APIs written for Python and Matlab that allows user to access the features of CloudCV from within their own code. This is important because it allows the users to incorporate CloudCV functionality without having to worry about learning a new framework. The idea is to keep the API simple and very user friendly. Currently the API lack a few functionality which is essential for the success of the API: 
+
+a.) Resumable Jobs and Monitoring: The user should be able to resume the job in case of loss of internet connection, laptop crash, server crash etc. We have the basic infrastructure in place for this : each job is assigned a unique job-id that we can utilize to log all the important piece of data and information to support resumability. The user should be able to come back and query the server with this job-id to monitor the progress of the job and in case of incomplete transfer of data, resume from where it left. 
+
+b.) Creating a visualization interface: The research community process a lot of data and a standard visualization toolbox that allows basic visualizations of data processed by cloudcv will be convenient. There should be an option to convert these visualizations into latex or export them into an HTML page. 
+
+c.) Documentation and Test cases: The student will be responsible for improving the documentation of the API and writing test cases for these functionalities. 
+
+2.) Title: Integrating Dropbox and Google Drive, Github and other relevant third party services to the web-interface:
+--------------------------------------------------------------------------------------------------------------------------
+
+**Mentor**: Harsh Agrawal
+
+**Skills**: Django, Web-Development skills
+
+**Difficulty**: Moderate
+
+Currently, the web-interface only supports instantaneous uploads of data from user’s computer and in some case using dropbox chooser plugin. However there is no account integration. The goal of this project is to allow user authentication on CloudCV using dropbox and google accounts using OAuth2.0 protocol. The backend is majorly written in Django and there are a lot of open source libraries that integrates these services with Django. We will be using these libraries and writing additional functionalities that allow us to access data from dropbox . 
+
+We have integrated dropbox with cloudCV via the Python and Matlab API so we know how it works. We just need to do it for web-interface. 
+
+Apart from this, in the proposal we expect the students to come up with interesting ways we can use dropbox and google drive storage for our purposes.
+
+3.) Processing web-scale data with CloudCV to solve interesting computer vision problems
+------------------------------------------------------------------------------------------
+
+**Mentor**: Dr. Dhruv Batra
+
+**Skills**: Python , Matlab, D3.js, Knowledge about computer vision
+
+**Difficulty**: Difficult
+
+This project will specially be fun because you are independent to chose interesting computer vision problem that requires processing a lot of images and therefore need Cloud Infrastructure. Examples include: Training a classifier for unknown category and keep updating the model as new categories are added. Our team has an initial implementation that allows you to do the same and one project can be to improve it.
+
+Interesting projects in this field that work on web-scale data: NEIL, LEVAN. 
+This is a very open topic. Think about a cool idea and we will implement it together.
+We have calculated 16 popular features for all 1.2 million images of Imagenet, however these implementations were written on Matlab and is therefore quite slow. 
+Some (all) of these features have been ported to C++/Python and improves the speed tremendously. Importing these 16 features to Python can be an interesting problem to solve and will be useful to the vision community. 
+
+Vision is feature extraction + Machine Learning afterall :)
+http://cloudcv.org/objdetect/
+
+4.) Repository of computer vision tutorials and a go-to knowledge base for all things related to vision.
+---------------------------------------------------------------------------------------------------------
+
+**Mentor**: Dr. Dhruv Batra
+
+**Skills**: Python , Matlab, D3.js, Knowledge about computer vision
+
+**Difficulty**: Difficult
+
+The goal for this project is simple: Create a list of important computer vision concepts and write tutorials for them. The reason that this is not trivial because CloudCV might not have that computer vision implemented. Therefore the task will be to implement that feature and then write a tutorial. The end product will be a a full tutorial section on CloudCV that can serve as a basic introduction to Computer Vision course.  
+
+Computer Vision community has in all these years collected a lot of interesting datasets. We are capable of hosting all these nice datasets and having a collection of vision algorithms will be super-useful for somebody new to computer vision to try and learn in an interactive setting.
+
+5.) Scheduling and Load Balancing data on EC2 and Virginia Tech Servers and Building portable version of CloudCV
+------------------------------------------------------------------------------------------------------------------------
+
+**Mentor**: Clint Solomon
+
+**Skills**: Knowledge about distributed computing, multiprocessor programming, celery, docker
+
+**Difficulty**: Hard
+
+Currently, we distribute jobs using an implementation based on Celery. However, we now have research grants from Amazon, Azure , NVIDIA which means now we have to integrate various cloud services into one system. The task for this project is to optimally distribute jobs between these machines based on their CPU capability. Celery is a very popular framework and the student will spend the rest of the summer understanding celery and using it to implement a system that tries to finish a given task with minimum cost. 
+
+Another problem that the community faces is that they often work on problems whose data they cannot share. Therefore, if they have a system that they can easily set up on their infrastructure, then its a huge help. The task will require the user to automate the process of building CloudCV on a new machine. There are various framework like puppet, docker that can be used for this. 
+
+Computer Vision is a huge community and there are tons of use-cases for using cloud computing to solve computer vision problems. Therefore, we are open to new ideas. If you think you have an idea that will help hundreds of researchers in their research, and  developers in using these functionality to design cool applications, feel free to discuss the idea with us. 
+CloudCV has three major components: Web-Interface, Python and Matlab APIs, and the backend system. Although you are not restricted to proposing ideas related to these three components, our priority will be to focus on these three components for this year’s GSOC. 
+
+We have decided to keep these ideas very rough so that the students can brainstorm and discuss these idea with us . We want students to take ownership of these projects and involving them in nailing down the idea to greater detail will help us understand the thought process and their relavant skill set. 
