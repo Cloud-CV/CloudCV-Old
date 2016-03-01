@@ -5,7 +5,7 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
-BUILDDIR      = ../../cloudcvDocs
+BUILDDIR      = ../../cloudcvdoc
 PDFBUILDDIR   = /tmp
 
 # User-friendly check for sphinx-build
