@@ -4,8 +4,6 @@ Summer of Code 2016
 Our Vision and Goal
 --------------------
 
-CloudCV: Large Scale Distributed Computer Vision as a Cloud Service
-
 We are witnessing a proliferation of massive visual data. Unfortunately scaling existing computer vision algorithms to large datasets leaves researchers repeatedly solving the same algorithmic and infrastructural problems. 
 
 Our goal is to democratize computer vision; one should not have to be a computer vision, deep learning, and distributed computing expert to have access to state-of-the-art distributed computer vision algorithms. We provide access to state-of-art distributed computer vision algorithms as a cloud service through Web Interface & APIs. Researchers, Students and Developers will be able to access these distributed computer vision algorithms and the computation power through small number of clicks and minimal lines of code. 
@@ -22,7 +20,8 @@ Designing and implementing efficient and provably correct parallel computer visi
 Current status as of February 2016 
 ------------------------------------
 
-#### Data Sharing 
+Data Sharing
+^^^^^^^^^^^^^ 
 
 We have released 16 "industry standard" pre-computed features for all 1.2 million images in the ImageNet Challenge [7], as a resource that others in the community can build on.
 **Web Services and Demos**: cloudcv.org hosts the following services:
@@ -30,7 +29,8 @@ Image Classification: A Convolutional Neural Network (CNN) based image auto-tagg
 **Training a New Category**: Giving a user the capability to train a visual classifier for a new user-defined category (not already present in the model). User is able to provide training examples for each of these new categories, and test against an updated CNN. 
 **Visual Question Answering**: A web-service where a user may upload any image, and ask any free-form natural language question about the image (“How many people are in this image?”,  “What are the people doing?”) and receive a natural language answer back (“5”, “playing frisbee”). 
 
-#### Python APIs
+Python APIs
+^^^^^^^^^^^^^
 
 We have released Python APIs that allow users to "call" CloudCV web-services and functions. In all cases, the images are sent to our servers at Virginia Tech and EC2 instances, and and results of the executables are made available to the users' running Python and Matlab instances when ready.
 All demos utilize the Caffe Deep Learning framework, and run on NVIDIA Tesla K40s, courtesy of the NVIDIA Academic Hardware Donation Program (NVIDIA contact: Stephen Jones).
@@ -38,10 +38,11 @@ Beta Features
 Dockerized version of CloudCV to make CloudCV more portable and easier to install on AWS instances or in-house servers. 
 A user-authentication system that allows the user to sign-up on CloudCV with Google / Dropbox authentication and allows them to upload images from Dropbox / Google Drive. This allows them to run jobs on large number of images without worrying about having to stay connected with the CloudCV servers. 
 
-GSOC 2016 Ideas:
+GSOC 2016 Ideas
 -----------------
 
-### 1: CloudCV-fy your vision/deep-learning code
+1: CloudCV-fy your vision/deep-learning code
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Deep learning and its application in AI-subfields (computer vision, natural language processing) has seen a tremendous growth in the recent years. Driven in part by code, data, and manuscript sharing on github and arxiv, we are witnessing increasing public access to state-of-the-art deep learning models for object detection, classification, image captioning, and visual question answering. 
 
@@ -60,7 +61,6 @@ Here are some ideas:
  **Goal:**
 
    **Input**: the path to a github page with some demo code.
-   
    **Output**: create http://cloudcv.org/username/demo_name
  
  Automatically create a pull request on the github repository that contains the wrappers around the code. This pull request can contain code to run a web-server, and docker containers so that setting up the demo online is as simple as pulling this branch and running a command or a bash script. 
@@ -71,7 +71,8 @@ Here are some ideas:
 
 **Difficulty**: Difficult (Almost at the verge of being ambitious)
 
-#### Pre-requisites:
+Pre-requisites
+***************
 
  - Familiarity with Docker containers, javascript and bash scripts. 
  - Expertise in using python based web-servers like Flask and Django. 
@@ -82,13 +83,15 @@ Here are some ideas:
 
 **Number of Students:** 2
 
-### 2: Build Deep Learning models online
+2: Build Deep Learning models online
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Difficulty**: Difficult 
 
 One of the other problems facing young researchers who want to learn more about deep learning models is the amount of effort it takes to learn these new frameworks. Here is a small list of 64 deep learning frameworks that are available. Each framework is good at different purposes. The goal of this project is to provide an online platform for trying deep learning algorithms / models that will reduce the barrier of entry to the world of deep learning and applications in computer vision. We want to build a “drag-and-drop” interface which will consist of various modules like Convolution, Max-Pool, ReLU, LSTM unit, Soft-Max unit that will allow users to plug together a system for training/testing their deep learning model. This allow for rapid, interactive experience without having to worry about setting up infrastructure. 
 
-#### Pre-requisites: 
+Pre-requisites 
+***************
 
  - Expertise in Javascript and familiarity with existing frameworks that can help building this online tool.
  - Expertise in using python based web-servers like Flask. 
@@ -97,7 +100,8 @@ One of the other problems facing young researchers who want to learn more about 
 
 **Number of Students:** 1
 
-### 3: Writing tutorials and implementing popular deep learning architectures in CloudCV. 
+3: Writing tutorials and implementing popular deep learning architectures in CloudCV. 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This project is aimed at students who are looking for a more research-oriented experience during CloudCV GSoC. This will involve reading and implementing popular deep learning papers and integrating them with CloudCV. This project will complement the other two projects such that at the end of summers we have a few example architecture already CloudCV-fied. This will also help us identifying potential caveats in building a CloudCV-fy your code like system.
 
@@ -112,10 +116,11 @@ Some Relevant Resource:
  - https://github.com/kjw0612/awesome-deep-vision
  - http://meta-guide.com/software-meta-guide/100-best-github-deep-learning
 
-#### Pre-requisites: 
+Pre-requisites
+***************
 
-Expertise in Javascript and familiarity with existing frameworks that can help building this online tool.
-Expertise with deep learning models and algorithms. Familiarity with deep learning frameworks like Caffe / Theano / Keras / TensorFlow etc. Students are expected to have played around with these tools
+ - Expertise in Javascript and familiarity with existing frameworks that can help building this online tool.
+ - Expertise with deep learning models and algorithms. Familiarity with deep learning frameworks like Caffe / Theano / Keras / TensorFlow etc. Students are expected to have played around with these tools
 
 **Number of Students**: 1
 
