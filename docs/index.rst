@@ -1,18 +1,15 @@
-.. CloudCV-Server documentation master file, created by
-   sphinx-quickstart on Wed May 20 18:26:43 2015.
+.. CloudCV documentation master file, created by
+   sphinx-quickstart on Sun Feb 28 17:34:09 2016.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to CloudCV-Server's documentation!
-==========================================
+Welcome to CloudCV's documentation!
+===================================
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
-
-   home
-   gsoc_2016
 
 
 
