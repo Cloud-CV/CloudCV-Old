@@ -24,9 +24,12 @@ Data Sharing
 ^^^^^^^^^^^^^ 
 
 We have released 16 "industry standard" pre-computed features for all 1.2 million images in the ImageNet Challenge [7], as a resource that others in the community can build on.
+
 **Web Services and Demos**: cloudcv.org hosts the following services:
 Image Classification: A Convolutional Neural Network (CNN) based image auto-tagging web-service. Allows a user to upload an image. Outputs names of categories present in the image. 
+
 **Training a New Category**: Giving a user the capability to train a visual classifier for a new user-defined category (not already present in the model). User is able to provide training examples for each of these new categories, and test against an updated CNN. 
+
 **Visual Question Answering**: A web-service where a user may upload any image, and ask any free-form natural language question about the image (“How many people are in this image?”,  “What are the people doing?”) and receive a natural language answer back (“5”, “playing frisbee”). 
 
 Python APIs
@@ -61,6 +64,7 @@ Here are some ideas:
  **Goal:**
 
    **Input**: the path to a github page with some demo code.
+
    **Output**: create http://cloudcv.org/username/demo_name
  
  Automatically create a pull request on the github repository that contains the wrappers around the code. This pull request can contain code to run a web-server, and docker containers so that setting up the demo online is as simple as pulling this branch and running a command or a bash script. 

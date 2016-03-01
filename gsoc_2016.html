@@ -168,11 +168,11 @@
 <h2>Current status as of February 2016<a class="headerlink" href="#current-status-as-of-february-2016" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="data-sharing">
 <h3>Data Sharing<a class="headerlink" href="#data-sharing" title="Permalink to this headline">¶</a></h3>
-<p>We have released 16 &#8220;industry standard&#8221; pre-computed features for all 1.2 million images in the ImageNet Challenge [7], as a resource that others in the community can build on.
-<strong>Web Services and Demos</strong>: cloudcv.org hosts the following services:
-Image Classification: A Convolutional Neural Network (CNN) based image auto-tagging web-service. Allows a user to upload an image. Outputs names of categories present in the image.
-<strong>Training a New Category</strong>: Giving a user the capability to train a visual classifier for a new user-defined category (not already present in the model). User is able to provide training examples for each of these new categories, and test against an updated CNN.
-<strong>Visual Question Answering</strong>: A web-service where a user may upload any image, and ask any free-form natural language question about the image (“How many people are in this image?”,  “What are the people doing?”) and receive a natural language answer back (“5”, “playing frisbee”).</p>
+<p>We have released 16 &#8220;industry standard&#8221; pre-computed features for all 1.2 million images in the ImageNet Challenge [7], as a resource that others in the community can build on.</p>
+<p><strong>Web Services and Demos</strong>: cloudcv.org hosts the following services:
+Image Classification: A Convolutional Neural Network (CNN) based image auto-tagging web-service. Allows a user to upload an image. Outputs names of categories present in the image.</p>
+<p><strong>Training a New Category</strong>: Giving a user the capability to train a visual classifier for a new user-defined category (not already present in the model). User is able to provide training examples for each of these new categories, and test against an updated CNN.</p>
+<p><strong>Visual Question Answering</strong>: A web-service where a user may upload any image, and ask any free-form natural language question about the image (“How many people are in this image?”,  “What are the people doing?”) and receive a natural language answer back (“5”, “playing frisbee”).</p>
 </div>
 <div class="section" id="python-apis">
 <h3>Python APIs<a class="headerlink" href="#python-apis" title="Permalink to this headline">¶</a></h3>
@@ -203,8 +203,9 @@ Here are some ideas:</p>
 <blockquote>
 <div><p><strong>Goal:</strong></p>
 <blockquote>
-<div><strong>Input</strong>: the path to a github page with some demo code.
-<strong>Output</strong>: create <a class="reference external" href="http://cloudcv.org/username/demo_name">http://cloudcv.org/username/demo_name</a></div></blockquote>
+<div><p><strong>Input</strong>: the path to a github page with some demo code.</p>
+<p><strong>Output</strong>: create <a class="reference external" href="http://cloudcv.org/username/demo_name">http://cloudcv.org/username/demo_name</a></p>
+</div></blockquote>
 <p>Automatically create a pull request on the github repository that contains the wrappers around the code. This pull request can contain code to run a web-server, and docker containers so that setting up the demo online is as simple as pulling this branch and running a command or a bash script.</p>
 <p>CloudCV should be able to host some of these more popular models on their own - server. Users can either decide to create their own profile and upload such a model or we should be able to do it automatically for open-source contributions.</p>
 </div></blockquote>
