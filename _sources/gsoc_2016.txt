@@ -155,7 +155,7 @@ Here are more details about the first task:
 
 Again, we will happy to have a chat or discuss over email if you need help / directions in case you get stuck. There are obviously some missing details which we can answer on the forum or on the gitter channel.
 
-If I were you, I would proudly blog about the process/various hacks that I tried to get it running for other people to see. :-)
+**If I were you, I would proudly blog about the process/various hacks that I tried to get it running for other people to see.** :-)
 
 Looking forward to all the cool things you people do.
 
@@ -163,7 +163,24 @@ Looking forward to all the cool things you people do.
 TOY-TASK #2
 ^^^^^^^^^^^^
 
-We will be uploading the details about the task 2 very soon.
+The second task is relevant to the second idea. This is more web-development oriented and if you are not familiar with deep learning tools like Caffe / Keras / Torch etc. then you will enjoy this task. The aim is to build a toy computer vision IDE for OpenCV. You should build a web-page where the user can interactively select OpenCV modules to build a computer vision pipeline. Based on the components of the pipeline, the system will run the relevant algorithms at the backend and send a response.
+
+The motivation of this task is reducing the barrier of entry to the field of computer vision. If as a young student, I want to learn more about computer vision but doesn't know OpenCV then using such an IDE will help me play around with algorithms having to worry about implementing all these algorithms or using through a SDK. It also abstract away the complexity of programming in a language. 
+
+For instance, think of a page that looks like this: https://slack-files.com/T0519UBJQ-F0PRQEE1W-341d337e21
+
+Here are some more details about the second task:
+
+1. Choose a small set of OpenCV modules that you will support in your online toy-IDE. You can look at the documentation to choose some easy functions
+http://docs.opencv.org/2.4/modules/imgproc/doc/imgproc.html
+
+2. Design a simple webpage that allows you to add these modules into a pipeline interactively, and for each module in the pipeline you should be able to set the relevant parameters.
+
+3. Once the pipeline is finalized and submitted, run that pipeline on the server and return intermediate results. Note that the task is to build this end-to-end system and not worry about having a scalable, complete system. Anything that works is fine. Don’t build complicated UIs or web-servers at first.
+
+4. We understand that hosting the server can be a problem, so as long as you share with us a video of the server running locally, we are fine. For this task, you won’t need machines with GPU etc so it should easily be doable on your own machine.
+
+Again, we will happy to have a chat or discuss over email if you need help / directions in case you get stuck. There are obviously some missing details which we can answer on the forum or on the gitter channel.
 
 ----------
 
