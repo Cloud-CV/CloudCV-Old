@@ -106,6 +106,11 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#tasks-for-students-participating-in-gsoc-2016">Tasks for Students participating in GSOC 2016</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#toy-task-1">TOY-TASK #1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#toy-task-2">TOY-TASK #2</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="gsoc_2015.html">Summer of Code 2015</a></li>
@@ -267,11 +272,43 @@ Here are some ideas:</p>
 </ul>
 </div></blockquote>
 <p><strong>Number of Students</strong>: 1</p>
+</div>
+</div>
+</div>
+<div class="section" id="tasks-for-students-participating-in-gsoc-2016">
+<h2>Tasks for Students participating in GSOC 2016<a class="headerlink" href="#tasks-for-students-participating-in-gsoc-2016" title="Permalink to this headline">¶</a></h2>
+<p>To make sure that we have a lot of interesting things to talk about during the application process, we have designed some toy tasks for you that you will hopefully find exciting and somewhat challenging.</p>
+<p>To put things in perspective as to why are we giving these toy-tasks and what are our motivations behind this. We like to prototype quickly (in a very hacky way). It often involves integrating a bunch of technologies / libraries to get stuff done. None of us in the team will call ourselves expert of a particular technology but often just knowing the bare minimum to figure out the puzzle is sufficient. Also most of you are new contributors to CloudCV, therefore instead of trying to learn our code-base it would be best if everyone tries to do a task that is relevant to the three main project ideas. These tasks are very similar to the kind of things CloudCV team does and if you get a kick out of doing these tasks then we can promise that the summer will be a lot of fun and will be an amazing learning experience. It also acts as a good way for us to evaluate all the proposals fairly. Everybody will have the same time to complete a task, everybody will work on the same task and progress on this task is a good indicator of the skill set. We will typically look at the progress on this task and will “design” ramp-up courses for the selected students before the coding period so that they are familiar with the relevant technologies to start working on the major project idea.</p>
+<div class="section" id="toy-task-1">
+<h3>TOY-TASK #1<a class="headerlink" href="#toy-task-1" title="Permalink to this headline">¶</a></h3>
+<p>We hope you have tried the <a class="reference external" href="http://cloudcv.org/vqa/">http://cloudcv.org/vqa/</a></p>
+<p>The first task is to build a similar demo. The task is fairly open ended and you are only required to do the bare minimum of setting up simple webpage that accepts an image and a question and generates an answer. This can feel intimidating at first and that is where we come into the picture. The mentors are there to help you along the way and feel free to ask us any questions. At the very least, the next few weeks will be learning experience for all of us.</p>
+<p>Here are more details about the first task:</p>
+<ol class="arabic simple">
+<li>Train a VQA model using a subset of VQA dataset (feel free to train on the entire dataset if you have enough computational resources). Here is an awesome resource that might be helpful:</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://avisingh599.github.io/deeplearning/visual-qa/">http://avisingh599.github.io/deeplearning/visual-qa/</a> (Implemented in Keras, might be the easiest to start with)</li>
+<li><a class="reference external" href="https://github.com/abhshkdz/neural-vqa">https://github.com/abhshkdz/neural-vqa</a></li>
+<li><a class="reference external" href="https://github.com/VT-vision-lab/VQA_LSTM_CNN">https://github.com/VT-vision-lab/VQA_LSTM_CNN</a> (These two are torch based models, might be a bit difficult if you are not already familiar with Torch)</li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>Build a web demo that takes as input an image, and question and uses the VQA model you trained to predict answers. So this will require you to build a full end-to-end system, that will take an image and a question through a web interface, send it to a server , process the image ( extract features, send it through the VQA pipeline, get predictions) and finally display the top-k predictions on the webpage.</li>
+<li>We understand that hosting the server can be a problem, so as long as you share with us a video of the server running locally, we are fine.</li>
+</ol>
+<p>Again, we will happy to have a chat or discuss over email if you need help / directions in case you get stuck. There are obviously some missing details which we can answer on the forum or on the gitter channel.</p>
+<p>If I were you, I would proudly blog about the process/various hacks that I tried to get it running for other people to see. :-)</p>
+<p>Looking forward to all the cool things you people do.</p>
+</div>
+<div class="section" id="toy-task-2">
+<h3>TOY-TASK #2<a class="headerlink" href="#toy-task-2" title="Permalink to this headline">¶</a></h3>
+<p>We will be uploading the details about the task 2 very soon.</p>
 <hr class="docutils" />
 <p><strong>Disclaimer:</strong> It’s okey if you are not an expert but are willing to learn. We will be releasing a couple of toy tasks to make you familiar with the relevant technologies so feel free to ping us about your doubts.</p>
 <p>Do you have doubts, ask us on gitter at <a class="reference external" href="https://gitter.im/batra-mlp-lab/CloudCV">https://gitter.im/batra-mlp-lab/CloudCV</a></p>
 <hr class="docutils" />
-</div>
 </div>
 </div>
 </div>
