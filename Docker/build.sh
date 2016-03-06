@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Server setup script
-# Author: Prashant Jalan
+# Author: Harsh Agrawal
 
 echo "Creating base image"
 cp ../requirements.txt ./Base/
@@ -14,24 +14,19 @@ sudo docker create -v /CloudCV_Server --name cloudcv_code cloudcv/code /bin/true
 
 echo "Pulling the image and starting redis server."
 sudo docker pull redis:3.0
-sudo docker run -d --name cloudcv_redis redis
 
 echo "Pulling the image and starting rabbitmq server."
 sudo docker pull rabbitmq
-sudo docker run -d --name cloudcv_rabbitmq rabbitmq
 
 echo "Pulling the image and starting the node.js server"
 cp ../nodejs/chat.js ./Node/
 sudo docker build -t cloudcv/node ./Node/
-sudo docker run -d --link cloudcv_redis:redis --name cloudcv_node cloudcv/node
 rm ./Node/chat.js
 
 echo "Pulling the image and starting django server"
 sudo docker build -t cloudcv/django ./Django/
-sudo docker run -d --volumes-from cloudcv_code --link cloudcv_rabbitmq:rabbitmq --link cloudcv_redis:redis --name cloudcv_django cloudcv/django uwsgi --emperor /CloudCV_Server/
 
 echo "Pulling the image and starting nginx server"
 cp ../fileupload_nginx.conf ./Nginx/default.conf
 sudo docker build -t cloudcv/nginx ./Nginx/
-sudo docker run -d -p 80:80 -p 443:443 --volumes-from cloudcv_code --name cloudcv_nginx --link cloudcv_node:node --link cloudcv_redis:redis --link cloudcv_django:django cloudcv/nginx
 rm Nginx/default.conf

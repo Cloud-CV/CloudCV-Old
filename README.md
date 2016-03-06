@@ -51,6 +51,8 @@ Additional Information
 
   * Whenever you want to stop the docker containers, then run the command `./stopContainer`
 
+  * To remove all the images, run the command `docker rm $(docker ps -a -q)`
+
   * To make yourself familiar with the codebase, check the file [DirectoryDocumentation.txt](https://github.com/batra-mlp-lab/CloudCV/blob/master/DirectoryDocumentation.txt)
 
   * For any other queries, open issues or you can chat with developers at our [gitter]() channel.
