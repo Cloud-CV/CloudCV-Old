@@ -65,4 +65,4 @@ RUN pip install celery redis
 # Starting celery worker
 ENV C_FORCE_ROOT TRUE
 WORKDIR /CloudCV_Server
-CMD ["celery","-A","celeryTasks","worker","--loglevel=info"]
+CMD ["celery","-A","celeryTasks","worker","--loglevel=debug", "--logfile=/CloudCV_Server/celery.log"]

@@ -5,16 +5,32 @@
 
 
 echo "Running the image and starting redis server."
-sudo docker run -d --name cloudcv_redis redis
+if [ "$1" == "run" ] 
+then
+    sudo docker $1 -d --name cloudcv_redis redis
 
-echo "Running the image and starting rabbitmq server."
-sudo docker run -d --name cloudcv_rabbitmq rabbitmq
+    echo "Running the image and starting rabbitmq server."
+    sudo docker $1 -d --name cloudcv_rabbitmq rabbitmq
 
-echo "Running the image and starting the node.js server"
-sudo docker run -d --link cloudcv_redis:redis --name cloudcv_node cloudcv/node
+    echo "Running the image and starting the node.js server"
+    sudo docker $1 -d --link cloudcv_redis:redis --name cloudcv_node cloudcv/node
 
-echo "Running the image and starting django server"
-sudo docker run -d --volumes-from cloudcv_code --link cloudcv_rabbitmq:rabbitmq --link cloudcv_redis:redis --name cloudcv_django cloudcv/django uwsgi --emperor /CloudCV_Server/
+    echo "Running the image and starting django server"
+    sudo docker $1 -d --volumes-from cloudcv_code --link cloudcv_rabbitmq:rabbitmq --link cloudcv_redis:redis --name cloudcv_django cloudcv/django uwsgi --emperor /CloudCV_Server/
 
-echo "Running the image and starting nginx server"
-sudo docker run -d -p $1:80 -p $2:443 --volumes-from cloudcv_code --name cloudcv_nginx --link cloudcv_node:node --link cloudcv_redis:redis --link cloudcv_django:django cloudcv/nginx
+    echo "Running the image and starting nginx server"
+    sudo docker $1 -d -p $2:80 -p $3:443 --volumes-from cloudcv_code --name cloudcv_nginx --link cloudcv_node:node --link cloudcv_redis:redis --link cloudcv_django:django cloudcv/nginx
+else
+    sudo docker restart cloudcv_redis
+
+    echo "Running the image and starting rabbitmq server."
+    sudo docker restart cloudcv_rabbitmq
+
+    echo "Running the image and starting the node.js server"
+    sudo docker restart cloudcv_node
+
+    echo "Running the image and starting django server"
+    sudo docker restart cloudcv_django  
+    echo "Running the image and starting nginx server"
+    sudo docker restart cloudcv_nginx 
+fi

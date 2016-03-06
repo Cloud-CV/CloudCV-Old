@@ -36,15 +36,18 @@ Steps for setting the development environment
 
 5. Change directory to Docker and run the bash script to create Docker containers:
 
-        cd Docker && ./server
+        cd Docker && ./build.sh
 
+6. Change directory to Docker and run the bash script to create Docker containers:
+
+        ./run_server.sh run 80 443
   When the image building completes then you can visit [127.0.0.1](http://127.0.0.1) and check if CloudCV server is running or not. 
 
-6. Now, for setting up workers, just run the command:
+7. Now, for setting up workers, just run the command:
 
         ./worker-cpu
 
-7. Now, visit [http://127.0.0.1](http://127.0.0.1) in your browser and you should be all set.
+8. Now, visit [http://127.0.0.1](http://127.0.0.1) in your browser and you should be all set.
 
 Additional Information
 -----------------------
