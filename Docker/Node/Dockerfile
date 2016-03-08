@@ -21,6 +21,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 	&& npm install node-fs@0.1 \
 	&& npm install cookie@0.1 \
 	&& npm install forever@0.13 \
+        && npm install pm2 \
 	&& npm cache clear
 
 EXPOSE 5000
