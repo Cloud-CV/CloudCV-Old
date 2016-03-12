@@ -15,7 +15,8 @@ install:
 - pip install python-coveralls
 - pip install flake8
 before_script:
-  - ./scripts/travis/cpu-worker-installation.sh
+  - ./scripts/travis/install-opencv.sh $(pwd)/deps/opencv
+  - ./scripts/travis/install-caffe.sh $(pwd)/deps/caffe
 script:
   - flake8 ./
 
