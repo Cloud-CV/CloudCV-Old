@@ -9,21 +9,17 @@ env:
 cache:
   pip: true
   custom_install: true
-services:
-  - docker
-  - redis-server
 install:
 - pip install --upgrade pip
 - pip install -r requirements.txt
 - pip install python-coveralls
 - pip install flake8
-- sudo apt-get update
+before_script:
+  - ./scripts/travis/install-caffe.sh $(pwd)/deps/caffe
+  - ./scripts/travis/install-opencv.sh $(pwd)/deps/opencv
 script:
   - flake8 ./
-  - cd Docker
-  - ./build.sh
-  - ./run_server.sh run 80 443
-  - ./worker-cpu.sh
+
 notifications:
   email:
     on_success: change
