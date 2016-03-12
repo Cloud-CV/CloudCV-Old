@@ -9,14 +9,15 @@ env:
 cache:
   pip: true
   custom_install: true
+services:
+  - docker
+  - redis-server
 install:
 - pip install --upgrade pip
 - pip install -r requirements.txt
 - pip install python-coveralls
 - pip install flake8
 - sudo apt-get update
-- sudo apt-get install docker-engine
-- sudo service docker start
 script:
   - flake8 ./
   - cd Docker
