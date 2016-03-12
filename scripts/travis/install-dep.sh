@@ -5,10 +5,8 @@ INSTALL_DIR=$(pwd)/dep
 mkdir -p $INSTALL_DIR/caffe
 mkdir -p $INSTALL_DIR/opencv
 
-# Download source code
-# git clone https://github.com/graphlab-code/graphlab.git
 cd $INSTALL_DIR
-wget https://github.com/BVLC/caffe/archive/rc2.zip && unzip -qq rc2 && mv caffe-rc2/* caffe && rm rc2.zip
+# Download source code
 wget -O OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.11/opencv-2.4.11.zip/download && unzip -qq OpenCV-2.4.11.zip && mv opencv-2.4.11 opencv && rm OpenCV-2.4.11.zip
 
 # OpenCV Installation
@@ -23,6 +21,11 @@ cd $INSTALL_DIR/opencv && \
     make -j 4 && \
     make install
 
+
+wget https://github.com/BVLC/caffe/archive/rc2.zip && unzip -qq rc2 && mv caffe-rc2/* caffe && rm rc2.zip
+
+# Build source
+
 # Caffe installation
 # Caffe dependencies
 sudo apt-get install -y libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev
@@ -34,16 +37,17 @@ do
     pip install $req
 done
 
-cd $INSTALL_DIR/caffe && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    make -j 4 all
+cd $INSTALL_DIR/caffe
+cp Makefile.config.example Makefile.config
+sed -i 's/# CPU_ONLY/CPU_ONLY/g' Makefile.config
+sed -i 's/USE_CUDNN/#USE_CUDNN/g' Makefile.config
+mkdir build && cd build && cmake .. && make -j 4 all
 
 # In order to import caffe in python
 export PYTHONPATH=$PYTHONPATH:$INSTALL_DIR/caffe/python
 
 # Copying the required caffe model
+mkdir -p $INSTALL_DIR/caffe/models/bvlc_reference_caffenet
 wget -nc -P $INSTALL_DIR/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel http://dl.caffe.berkeleyvision.org/bvlc_reference_caffenet.caffemodel
 
 export C_FORCE_ROOT=TRUE
