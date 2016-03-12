@@ -44,7 +44,7 @@ cd $INSTALL_DIR/caffe && \
 export PYTHONPATH=$PYTHONPATH:$INSTALL_DIR/caffe/python
 
 # Copying the required caffe model
-cp $INSTALL_DIR/caffe/build/bvlc_reference_caffenet.caffemodel $INSTALL_DIR/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
+wget -nc -P $INSTALL_DIR/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel http://dl.caffe.berkeleyvision.org/bvlc_reference_caffenet.caffemodel
 
 export C_FORCE_ROOT=TRUE
 # CMD ["celery","-A","celeryTasks","worker","--loglevel=debug", "--logfile=/CloudCV_Server/celery.log"]
