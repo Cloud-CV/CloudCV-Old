@@ -11,7 +11,7 @@ INSTALL_DIR=$1
 mkdir -p $INSTALL_DIR
 
 # Download source code
-wget -O $INSTALL_DIR/caffe.zip https://github.com/BVLC/caffe/archive/rc2.zip && unzip $INSTALL_DIR/caffe
+wget -O $INSTALL_DIR/rc2.zip https://github.com/BVLC/caffe/archive/rc2.zip && unzip $INSTALL_DIR/rc2 && mv $INSTALL_DIR/caffe-rc2 $INSTALL_DIR/caffe && rm $INSTALL_DIR/rc2.zip
 
 # Caffe installation
 # Caffe dependencies

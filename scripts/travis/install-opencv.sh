@@ -14,7 +14,7 @@ mkdir -p $INSTALL_DIR
 sudo apt-get install -y gfortran git wget unzip build-essential
 
 # Download source code
-wget -O $INSTALL_DIR/opencv.zip http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.11/opencv-2.4.11.zip/download && unzip $INSTALL_DIR/opencv.zip
+wget -O $INSTALL_DIR/OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.11/opencv-2.4.11.zip/download && unzip $INSTALL_DIR/OpenCV-2.4.11.zip && mv $INSTALL_DIR/opencv-2.4.11 $INSTALL_DIR/opencv && rm $INSTALL_DIR/OpenCV-2.4.11.zip
 
 # OpenCV Installation
 # OpenCV dependencies
