@@ -3,25 +3,52 @@ sudo: true
 language: python
 python:
   - "2.7"
+
 compiler: gcc
+
 env:
+  matrix:
+    - WITH_CUDA=false WITH_CMAKE=false WITH_IO=true
+    - WITH_CUDA=false WITH_CMAKE=true WITH_IO=true PYTHON_VERSION=3
+    - WITH_CUDA=true WITH_CMAKE=false WITH_IO=true
+    - WITH_CUDA=true WITH_CMAKE=true WITH_IO=true
+    - WITH_CUDA=false WITH_CMAKE=false WITH_IO=false
+    - WITH_CUDA=false WITH_CMAKE=true WITH_IO=false PYTHON_VERSION=3
   global: 
   - DJANGO_SETTINGS_MODULE="cloudcv17.settings"
+  - NUM_THREADS=4
   # Caffe
   - WITH_CUDA=false
+  - WITH_CMAKE=false
+
 cache:
   pip: true
   custom_install: true
+  apt: true
+  directories:
+  - /home/travis/miniconda
+  - /home/travis/miniconda2
+  - /home/travis/miniconda3
+
 before_install:
-  - export PATH=/home/travis/miniconda/bin:$PATH
+  - export SCRIPTS=./scripts/travis
+  - export CONDA_DIR="/home/travis/miniconda$PYTHON_VERSION"
+
 install:
 - pip install --upgrade pip
 - pip install -r requirements.txt
 - pip install python-coveralls
 - pip install flake8
 - sudo apt-get update
+- sudo -E $SCRIPTS/caffe/travis_install.sh
+
 before_script:
-  - ./scripts/travis/install-dep.sh
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/cuda/lib64:$CONDA_DIR/lib
+  - export PATH=$CONDA_DIR/bin:$PATH
+  - if ! $WITH_CMAKE; then $SCRIPTS/caffe/travis_setup_makefile_config.sh; fi
+  - $SCRIPTS/caffe/travis_build_and_test.sh
+  - ./scripts/travis/install-opencv.sh
+
 script:
   - flake8 ./
 
