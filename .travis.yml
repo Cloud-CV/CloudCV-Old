@@ -15,7 +15,7 @@ install:
 - pip install python-coveralls
 - pip install flake8
 before_script:
-  - ./scripts/travis/install-dev.sh
+  - ./scripts/travis/install-dep.sh
 script:
   - flake8 ./
 
