@@ -14,12 +14,12 @@ install:
 - pip install -r requirements.txt
 - pip install python-coveralls
 - pip install flake8
-before_script:
-  - ./scripts/travis/install-opencv.sh $(pwd)/deps/opencv
-  - ./scripts/travis/install-caffe.sh $(pwd)/deps/caffe
 script:
   - flake8 ./
-
+  - cd Docker
+  - ./build.sh
+  - ./run_server.sh run 80 443
+  - ./worker-cpu
 notifications:
   email:
     on_success: change
