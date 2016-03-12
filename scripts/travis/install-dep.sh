@@ -1,14 +1,15 @@
 # Install dependencies
 sudo apt-get install -y gfortran git wget unzip build-essential
-mkdir -p $(pwd)/dep/caffe
-mkdir -p $(pwd)/dep/opencv
 
 INSTALL_DIR=$(pwd)/dep
+mkdir -p $INSTALL_DIR/caffe
+mkdir -p $INSTALL_DIR/opencv
+
 # Download source code
 # git clone https://github.com/graphlab-code/graphlab.git
 cd $INSTALL_DIR
-wget -O rc2.zip https://github.com/BVLC/caffe/archive/rc2.zip && unzip rc2 && mv caffe-rc2 caffe && rm rc2.zip
-wget -O OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.11/opencv-2.4.11.zip/download && unzip OpenCV-2.4.11.zip && mv opencv-2.4.11 opencv && rm OpenCV-2.4.11.zip
+wget https://github.com/BVLC/caffe/archive/rc2.zip && unzip -qq rc2 && mv caffe-rc2/* caffe && rm rc2.zip
+wget -O OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.11/opencv-2.4.11.zip/download && unzip -qq OpenCV-2.4.11.zip && mv opencv-2.4.11 opencv && rm OpenCV-2.4.11.zip
 
 # OpenCV Installation
 # OpenCV dependencies
