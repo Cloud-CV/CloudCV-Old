@@ -3,14 +3,9 @@ sudo: false
 language: python
 python:
   - "2.7"
-compiler: gcc   # for Caffe
+compiler: gcc
 env:
   global: DJANGO_SETTINGS_MODULE="cloudcv17.settings"
-      # Make
-      - NUM_THREADS=4
-      # Caffe
-      - WITH_CUDA=false
-      - WITH_CMAKE=false
 cache:
   pip: true
   custom_install: true
