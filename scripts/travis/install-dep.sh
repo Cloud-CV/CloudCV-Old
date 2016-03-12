@@ -1,6 +1,7 @@
 # Install dependencies
 sudo apt-get install -y gfortran git wget unzip build-essential
-
+mkdir -p $(pwd)/dep/caffe
+mkdir -p $(pwd)/dep/opencv
 # Download source code
 # git clone https://github.com/graphlab-code/graphlab.git
 wget -O $(pwd)/dep/rc2.zip https://github.com/BVLC/caffe/archive/rc2.zip && unzip $(pwd)/dep/rc2 && mv $(pwd)/dep/caffe-rc2 $(pwd)/dep/caffe && rm $(pwd)/dep/rc2.zip
