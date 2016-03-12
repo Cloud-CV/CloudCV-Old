@@ -12,6 +12,8 @@ env:
 cache:
   pip: true
   custom_install: true
+before_install:
+  - export PATH=/home/travis/miniconda/bin:$PATH
 install:
 - pip install --upgrade pip
 - pip install -r requirements.txt
