@@ -204,7 +204,7 @@ def svm_predict(y, x, m, options=""):
             i += 1
             predict_probability = int(argv[i])
         elif argv[i] == '-q':
-            info = print_null
+            info = print_null   # NOQA
         else:
             raise ValueError("Wrong options")
         i += 1

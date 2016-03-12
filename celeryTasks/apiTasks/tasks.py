@@ -287,14 +287,15 @@ def run(parsed_dict):
             r.publish('chat', json.dumps({'done': str('Image Stitching done'),
                                           'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
-        elif(parsed_dict['exec'] == 'VOCRelease5'):
-            # output = run_executable(list)
-            output = run_matlab_code(
-                mlab_obj, '/var/www/html/cloudcv/voc-dpm-matlab-bridge/pascal_object_detection.m', list, parsed_dict['socketid'])
-            sendsMessageToRedis(userid, jobid, source_type, socketid, output, result_path, result_url,
-                                dropbox_token=db_token)
-            r.publish('chat', json.dumps({'message': str('Bounding Boxes Generated'),
-                                          'socketid': str(socketid), 'token': token, 'jobid': jobid}))
+        # Legacy code. DPM Object Detection is no longer supported. Need to remove this and replace with the current state of the art
+        # elif(parsed_dict['exec'] == 'VOCRelease5'):
+        #     # output = run_executable(list)
+        #     output = run_matlab_code(
+        #         mlab_obj, '/var/www/html/cloudcv/voc-dpm-matlab-bridge/pascal_object_detection.m', list, parsed_dict['socketid'])
+        #     sendsMessageToRedis(userid, jobid, source_type, socketid, output, result_path, result_url,
+        #                         dropbox_token=db_token)
+        #     r.publish('chat', json.dumps({'message': str('Bounding Boxes Generated'),
+        #                                   'socketid': str(socketid), 'token': token, 'jobid': jobid}))
 
         elif(parsed_dict['exec'] == 'classify'):
             run_classification(parsed_dict['userid'], parsed_dict['jobid'], parsed_dict['image_path'],

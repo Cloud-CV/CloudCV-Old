@@ -123,7 +123,7 @@ class DecafCreateView(CreateView):
         time.sleep(.5)
 
         # This is for running it locally ie on Godel
-        decaf_wrapper_local(save_dir, output_path, socketid, os.path.join(conf.PIC_URL, folder_name))
+        decaf_wrapper_local(save_dir, output_path, self.socketid, os.path.join(conf.PIC_URL, folder_name))
 
         # This is for posting it on Redis - ie to Rosenblatt
         # classify_wrapper_redis(job_directory, socketid, result_folder)

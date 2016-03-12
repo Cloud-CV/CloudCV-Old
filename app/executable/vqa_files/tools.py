@@ -1,4 +1,7 @@
 import numpy as np
+from sklearn import svm
+from sklearn.clusters import KMeans
+from sklearn.metrics.pairwise import euclidean_distances
 
 
 class LinearSVM():

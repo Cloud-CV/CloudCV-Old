@@ -1,30 +1,37 @@
 from __future__ import absolute_import
 from celeryTasks.celery import app
+from cloudcv17 import config
+
+# Module imports
+import os
+import redis
+import numpy as np
+import leveldb
+import caffe
+import time
+import math
+import scipy.io as sio
+import shutil
+import json
+import traceback
+import operator
+
+from caffe.proto import caffe_pb2
+from glob import glob
+from app.conf import conf
+
+# Caffe root directory
+caffe_root = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
+
+matWNID = sio.loadmat(os.path.join(conf.EXEC_DIR, 'WNID.mat'))
+WNID_cells = matWNID['wordsortWNID']
 
 
 # The functions are mostly copied from app.executable.LDA_files.train_fast
 @app.task(ignore_result=True)
 def trainImages(jobPath, socketid):
     # Establishing connection to send results and write messages
-    import redis
-    import json
-    from cloudcv17 import config
     rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
-
-    # Module imports
-    import os
-    import numpy as np
-    import leveldb
-    import caffe
-    import time
-    import math
-    import scipy.io as sio
-    import shutil
-    from caffe.proto import caffe_pb2
-    from glob import glob
-
-    # Caffe root directory
-    caffe_root = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
 
     def trainaclass(Imagepath):
 
@@ -135,23 +142,37 @@ def trainImages(jobPath, socketid):
         rs.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
 
 
+def caffe_classify_image(net, single_image, new_labels_cells):
+    topresults = []
+    try:
+        input_image = caffe.io.load_image(single_image)
+        prediction = net.predict([input_image])
+        map = {}
+        for i, j in enumerate(prediction[0]):
+            map[i] = j
+
+            predsorted = sorted(map.iteritems(), key=operator.itemgetter(1), reverse=True)
+            top5 = predsorted[0:5]
+
+            for i in top5:
+                if (i[0] >= 1000):
+                    topresults.append([str(new_labels_cells[0, i[0]-1000][0]), str(i[1])])
+                else:
+                    topresults.append([str(WNID_cells[i, 0][0][0]), str(i[1])])
+    except Exception as e:
+        print(str(e))
+
+    return topresults
+
+
 # The functions are mostly copied from app.executable.test
 # and classify_wrapper_local in trainaclass_views
 @app.task(ignore_result=True)
 def customClassifyImages(jobPath, socketid, result_path):
     # Establishing connection to send results and write messages
-    import redis
-    import json
-    from cloudcv17 import config
     rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
 
     try:
-        # Module import
-        import caffe
-        import numpy as np
-        import os
-        import scipy.io as sio
-
         ImagePath = os.path.join(jobPath, 'test')
         modelPath = os.path.join(jobPath, 'util')
 
@@ -188,5 +209,4 @@ def customClassifyImages(jobPath, socketid, result_path):
             {'message': 'Classification completed. Thank you for using CloudCV', 'socketid': str(socketid)}))
 
     except:
-        import traceback
         rs.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(socketid)}))
