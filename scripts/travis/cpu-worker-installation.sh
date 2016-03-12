@@ -24,7 +24,10 @@ sudo apt-get install -y libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-d
 sudo apt-get install -y --no-install-recommends libboost-all-dev
 sudo apt-get install -y libatlas-base-dev
 sudo apt-get install -y libgflags-dev libgoogle-glog-dev liblmdb-dev protobuf-compiler
-sudo for req in $(cat $(pwd)/dep/caffe/python/requirements.txt); do pip install $req; done
+sudo for req in $(cat $(pwd)/dep/caffe/python/requirements.txt)
+do 
+	pip install $req
+done
 
 sudo cd $(pwd)/dep/caffe && \
     mkdir build && \
