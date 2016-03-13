@@ -10,13 +10,13 @@ NUM_THREADS=${NUM_THREADS-4}
 CAFFE_BRANCH="master"
 CAFFE_URL="https://github.com/BVLC/caffe.git"
 
+# Install dependencies
+./scripts/travis/travis_install_caffe.sh
 
 # Get source
 git clone --depth 1 --branch $CAFFE_BRANCH $CAFFE_URL $INSTALL_DIR
 cd $INSTALL_DIR
 
-# Install dependencies
-./scripts/travis/travis_install_caffe.sh
 
 # change permissions for installed python packages
 sudo chown $USER -R ~/miniconda
