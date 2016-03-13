@@ -27,13 +27,6 @@ if $WITH_CMAKE; then
   fi
   cmake -DBUILD_python=ON -DCMAKE_BUILD_TYPE=Release $CPU_ONLY $PYTHON_ARGS -DCMAKE_INCLUDE_PATH="$CONDA_DIR/include/" -DCMAKE_LIBRARY_PATH="$CONDA_DIR/lib/" $IO_ARGS ..
   $MAKE
-  $MAKE pytest
-  if ! $WITH_CUDA; then
-    $MAKE runtest
-    $MAKE lint
-  fi
-  $MAKE clean
-  cd -
 else
   if ! $WITH_CUDA; then
     export CPU_ONLY=1
@@ -43,16 +36,6 @@ else
     export USE_LEVELDB=1
     export USE_OPENCV=1
   fi
-  $MAKE all test pycaffe warn lint || true
-  if ! $WITH_CUDA; then
-    $MAKE runtest
-  fi
   $MAKE all
-  $MAKE test
   $MAKE pycaffe
-  $MAKE pytest
-  $MAKE warn
-  if ! $WITH_CUDA; then
-    $MAKE lint
-  fi
 fi
