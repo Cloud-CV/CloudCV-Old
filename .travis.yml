@@ -33,14 +33,13 @@ install:
 - pip install python-coveralls
 - pip install flake8
 - sudo apt-get update
-- sudo -E $SCRIPTS/caffe/travis_install.sh
+- sudo -E $SCRIPTS/install-caffe.sh
+- sudo -E $SCRIPTS/install-opencv.sh
 
 before_script:
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/cuda/lib64:$CONDA_DIR/lib
+  - export PYTHONPATH=$PYTHONPATH:$(pwd)/dep/caffe/python
   - export PATH=$CONDA_DIR/bin:$PATH
-  - if ! $WITH_CMAKE; then $SCRIPTS/caffe/travis_setup_makefile_config.sh; fi
-  - sudo -E $SCRIPTS/caffe/travis_build_and_test.sh
-  - sudo -E $SCRIPTS/install-opencv.sh
 
 script:
   - flake8 ./

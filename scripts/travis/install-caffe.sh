@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 set -x
 
@@ -7,36 +9,48 @@ then
     exit 1
 fi
 
-INSTALL_DIR=$1
+INSTALL_DIR=$(pwd)/deps/caffe
 mkdir -p $INSTALL_DIR
 
-# Download source code
-wget -O $INSTALL_DIR/bvlc_reference_caffenet.caffemodel http://dl.caffe.berkeleyvision.org/bvlc_reference_caffenet.caffemodel
-wget -O $INSTALL_DIR/rc2.zip https://github.com/BVLC/caffe/archive/rc2.zip && unzip $INSTALL_DIR/rc2 && mv $INSTALL_DIR/caffe-rc2 $INSTALL_DIR && rm $INSTALL_DIR/rc2.zip
+NUM_THREADS=${NUM_THREADS-4}
 
-# Caffe installation
-# Caffe dependencies
-sudo apt-get install -y libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev
-sudo apt-get install -y --no-install-recommends libboost-all-dev
-sudo apt-get install -y libatlas-base-dev
-sudo apt-get install -y libgflags-dev libgoogle-glog-dev liblmdb-dev protobuf-compiler
+CAFFE_BRANCH="master"
+CAFFE_URL="https://github.com/BVLC/caffe.git"
 
-for req in $(cat $INSTALL_DIR/python/requirements.txt)
-do
+# Get source
+git clone --depth 1 --branch $CAFFE_BRANCH $CAFFE_URL $INSTALL_DIR
+cd $INSTALL_DIR
+
+# Install dependencies
+sudo -E ./scripts/travis/travis_install_caffe.sh
+# change permissions for installed python packages
+sudo chown $USER -R ~/miniconda
+sudo chown $USER -R ~/.cache
+
+# Build source
+cp Makefile.config.example Makefile.config
+sed -i 's/# CPU_ONLY/CPU_ONLY/g' Makefile.config
+sed -i 's/USE_CUDNN/#USE_CUDNN/g' Makefile.config
+sed -i 's/# WITH_PYTHON_LAYER/WITH_PYTHON_LAYER/g' Makefile.config
+
+# Use miniconda
+sed -i 's/# ANACONDA_HOME/ANACONDA_HOME/' Makefile.config
+sed -i 's/# PYTHON_INCLUDE/PYTHON_INCLUDE/' Makefile.config
+sed -i 's/# $(ANACONDA_HOME)/$(ANACONDA_HOME)/' Makefile.config
+sed -i 's/# PYTHON_LIB/PYTHON_LIB/' Makefile.config
+sed -i 's/ANACONDA/MINICONDA/g' Makefile.config
+sed -i 's/Anaconda/Miniconda/g' Makefile.config
+sed -i 's/anaconda/miniconda/g' Makefile.config
+echo 'LINKFLAGS += -Wl,-rpath,/home/travis/miniconda/lib' >> Makefile.config
+
+# compile
+make --jobs=$NUM_THREADS all
+make --jobs=$NUM_THREADS pycaffe
+
+# Install python dependencies
+# conda (fast)
+conda install --yes cython nose ipython h5py pandas python-gflags
+# pip (slow)
+for req in $(cat python/requirements.txt); do
     pip install $req
 done
-
-cd $INSTALL_DIR && \
-    mkdir build && \
-    cd build && \
-    cmake .. && \
-    make -j 4 all
-
-# In order to import caffe in python
-export PYTHONPATH=$PYTHONPATH:$INSTALL_DIR/python
-
-# Copying the required caffe model
-mv $INSTALL_DIR/bvlc_reference_caffenet.caffemodel $INSTALL_DIR/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
-
-export C_FORCE_ROOT=TRUE
-# CMD ["celery","-A","celeryTasks","worker","--loglevel=debug", "--logfile=/CloudCV_Server/celery.log"]

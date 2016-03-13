@@ -1,5 +1,6 @@
 #!/bin/bash
 # This script must be run with sudo.
+
 set -e
 
 MAKE="make --jobs=$NUM_THREADS"
@@ -69,7 +70,7 @@ if [ ! -d $CONDA_DIR ]; then
   fi
   chmod +x miniconda.sh
   ./miniconda.sh -b -p $CONDA_DIR
-
+  
   conda update --yes conda
   # The version of boost we're using for Python 3 depends on 3.4 for now.
   if [ "$PYTHON_VERSION" -eq "3" ]; then
@@ -94,7 +95,7 @@ if [ "$PYTHON_VERSION" -eq "3" ] && [ ! -e "$CONDA_DIR/bin/protoc" ]; then
 fi
 
 if [ "$PYTHON_VERSION" -eq "3" ]; then
-  pip install --pre protobuf==3.0.0b2
+  pip install --pre protobuf
 else
   pip install protobuf
 fi
