@@ -10,7 +10,7 @@ apt-get install -y gfortran git wget unzip build-essential
 apt-get install -y cmake libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
 apt-get install -y python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
 
-INSTALL_DIR=$(pwd)/dep
+INSTALL_DIR=$(pwd)/deps
 mkdir -p $INSTALL_DIR/opencv
 
 # Install dependencies
