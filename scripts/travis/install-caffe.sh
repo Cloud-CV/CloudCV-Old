@@ -3,12 +3,6 @@
 set -e
 set -x
 
-if [ "$#" -ne 1 ];
-then
-    echo "Usage: $0 INSTALL_DIR"
-    exit 1
-fi
-
 INSTALL_DIR=$(pwd)/deps/caffe
 mkdir -p $INSTALL_DIR
 
