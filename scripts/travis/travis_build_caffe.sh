@@ -3,6 +3,10 @@
 # Travis CI tests are CPU-only for lack of compatible hardware.
 
 set -e
+
+INSTALL_DIR=$(pwd)/deps/caffe
+cd $INSTALL_DIR
+
 MAKE="make --jobs=$NUM_THREADS --keep-going"
 
 if $WITH_CMAKE; then
