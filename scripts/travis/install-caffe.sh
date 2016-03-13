@@ -15,7 +15,7 @@ git clone --depth 1 --branch $CAFFE_BRANCH $CAFFE_URL $INSTALL_DIR
 cd $INSTALL_DIR
 
 # Install dependencies
-.$(pwd)/scripts/travis/travis_install_caffe.sh
+../../scripts/travis/travis_install_caffe.sh
 
 # change permissions for installed python packages
 sudo chown $USER -R ~/miniconda
