@@ -4,6 +4,8 @@
 set -e
 
 # Install dependencies
+sudo apt-get update
+sudo apt-get upgrade
 sudo apt-get install build-essential cmake git pkg-config
 sudo apt-get install libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
 sudo apt-get install libgtk2.0-dev
@@ -39,15 +41,8 @@ cmake -DCMAKE_BUILD_TYPE=RELEASE \
  -DPYTHON_EXECUTABLE=$(which python) \
  -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
  -DPYTHON_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
- <strong><span style="color: #ff0000;">..</span></strong>
+ -DCMAKE_INSTALL_PREFIX=/usr/local \ #specify any location you want to install
 
 make -j4
 sudo make install
 sudo ldconfig
-
-# check if .so are installed in your specified location
-# ex. cv2.so should be installed into
-# /home/wew57/anaconda/lib/python2.7/site-packages/cv2.so
-
-# CMD ["celery","-A","celeryTasks","worker","--loglevel=debug", "--logfile=/CloudCV_Server/celery.log"]
-
