@@ -33,6 +33,7 @@ install:
 - pip install python-coveralls
 - pip install flake8
 - sudo apt-get update
+- sudo -E $SCRIPTS/install-opencv.sh
 - sudo -E $SCRIPTS/travis_install_caffe.sh
 
 before_script:
