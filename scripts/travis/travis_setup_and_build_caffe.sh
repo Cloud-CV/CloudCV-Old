@@ -81,5 +81,5 @@ if [ ! -d "$(pwd)/deps/caffe" ]; then
   fi
 
 else
-  echo 'Using cached directoryfor OpenCV Installation.';
+  echo 'Using cached directory for Caffe Installation.';
 fi

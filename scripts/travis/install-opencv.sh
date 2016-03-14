@@ -17,12 +17,12 @@ if [ ! -d "$HOME/opencv/release" ]; then
   wget -O OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.11/opencv-2.4.11.zip/download && unzip -qq OpenCV-2.4.11.zip && mv opencv-2.4.11 opencv && rm OpenCV-2.4.11.zip
 
   # OpenCV Installation
-  cd opencv
-  mkdir release
-  cd release
-  cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
-  make -j 4
-  make install
+  cd opencv && \
+      mkdir release && \
+      cd release && \
+      cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
+      make -j 4 && \
+      make install
 else
-  echo 'Using cached directoryfor OpenCV Installation.';
+  echo 'Using cached directory for OpenCV Installation.';
 fi
