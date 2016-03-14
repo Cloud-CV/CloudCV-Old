@@ -19,8 +19,8 @@ cache:
   apt: true
   directories:
   - /home/travis/miniconda
-  - /home/travis/miniconda2
-  - /home/travis/miniconda3
+  - $HOME/opencv
+  - $(pwd)/deps/caffe
 
 before_install:
   - export NUM_THREADS=4
@@ -39,8 +39,7 @@ install:
 before_script:
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/cuda/lib64:$CONDA_DIR/lib
   - export PATH=$CONDA_DIR/bin:$PATH
-  - if ! $WITH_CMAKE; then $SCRIPTS/travis_setup_makefile_config_caffe.sh; fi
-  - $SCRIPTS/travis_build_caffe.sh
+  - $SCRIPTS/travis_setup_and_build_caffe.sh
   - export PYTHONPATH=$PYTHONPATH:$(pwd)/deps/caffe/python
 
 script:
