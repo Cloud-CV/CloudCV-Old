@@ -21,12 +21,19 @@ if [ ! -d "opencv/release" ]; then
   wget -O OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.11/opencv-2.4.11.zip/download && unzip -qq OpenCV-2.4.11.zip && mv opencv-2.4.11 opencv && rm OpenCV-2.4.11.zip
 
   # OpenCV Installation
-  cd opencv && \
-      mkdir release && \
-      cd release && \
-      cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
-      make -j 4 && \
-      make install
+  echo "Error Catch Point: 1"
+  cd opencv
+  echo "Error Catch Point: 2"
+  mkdir release
+  echo "Error Catch Point: 3"
+  cd release
+  echo "Error Catch Point: 4"
+  cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+  echo "Error Catch Point: 5"
+  make -j 4
+  echo "Error Catch Point: 6"
+  make install
+  echo "Error Catch Point: 7"
 else
   echo 'Using cached directory for OpenCV Installation.';
 fi
