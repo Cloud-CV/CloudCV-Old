@@ -8,3 +8,6 @@ DROPBOX_APP_SECRET = ''
 
 # Redis Configuration
 REDIS_HOST = 'redis'
+
+# Secret key for Django settings
+SECRET_KEY = 'xyz-secret-key'
