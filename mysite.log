@@ -1,0 +1,585 @@
+[18/Jan/2015 17:18:20] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 24, in <module>
+    from savefile import saveFilesAndProcess
+  File "./app/savefile.py", line 6, in <module>
+    from django.utils import simplejson
+ImportError: cannot import name simplejson
+[18/Jan/2015 17:18:57] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 24, in <module>
+    from savefile import saveFilesAndProcess
+  File "./app/savefile.py", line 8, in <module>
+    import core.execute as core_execute
+  File "./app/core/execute.py", line 8, in <module>
+    import cloudcvMaster as ccvM
+  File "./app/core/cloudcvMaster.py", line 14, in <module>
+    from cloudcvWorker import cvWorker
+  File "./app/core/cloudcvWorker.py", line 7, in <module>
+    from pymatbridge import Matlab
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/pymatbridge/__init__.py", line 1, in <module>
+    from .pymatbridge import *
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/pymatbridge/pymatbridge.py", line 12, in <module>
+    import numpy as np
+ImportError: No module named numpy
+[18/Jan/2015 17:21:34] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 24, in <module>
+    from savefile import saveFilesAndProcess
+  File "./app/savefile.py", line 8, in <module>
+    import core.execute as core_execute
+  File "./app/core/execute.py", line 8, in <module>
+    import cloudcvMaster as ccvM
+  File "./app/core/cloudcvMaster.py", line 14, in <module>
+    from cloudcvWorker import cvWorker
+  File "./app/core/cloudcvWorker.py", line 7, in <module>
+    from pymatbridge import Matlab
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/pymatbridge/__init__.py", line 1, in <module>
+    from .pymatbridge import *
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/pymatbridge/pymatbridge.py", line 12, in <module>
+    import numpy as np
+ImportError: No module named numpy
+[18/Jan/2015 17:24:23] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 24, in <module>
+    from savefile import saveFilesAndProcess
+  File "./app/savefile.py", line 8, in <module>
+    import core.execute as core_execute
+  File "./app/core/execute.py", line 8, in <module>
+    import cloudcvMaster as ccvM
+  File "./app/core/cloudcvMaster.py", line 14, in <module>
+    from cloudcvWorker import cvWorker
+  File "./app/core/cloudcvWorker.py", line 7, in <module>
+    from pymatbridge import Matlab
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/pymatbridge/__init__.py", line 1, in <module>
+    from .pymatbridge import *
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/pymatbridge/pymatbridge.py", line 14, in <module>
+    import zmq
+ImportError: No module named zmq
+[18/Jan/2015 17:31:25] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 24, in <module>
+    from savefile import saveFilesAndProcess
+  File "./app/savefile.py", line 8, in <module>
+    import core.execute as core_execute
+  File "./app/core/execute.py", line 8, in <module>
+    import cloudcvMaster as ccvM
+  File "./app/core/cloudcvMaster.py", line 14, in <module>
+    from cloudcvWorker import cvWorker
+  File "./app/core/cloudcvWorker.py", line 8, in <module>
+    import run_executables as re
+  File "./app/core/run_executables.py", line 14, in <module>
+    from app.thirdparty import dropbox_upload as dbu
+  File "./app/thirdparty/dropbox_upload.py", line 2, in <module>
+    import dropbox
+ImportError: No module named dropbox
+[18/Jan/2015 17:32:36] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 24, in <module>
+    from savefile import saveFilesAndProcess
+  File "./app/savefile.py", line 10, in <module>
+    import thirdparty.ccv_dropbox as ccvdb
+  File "./app/thirdparty/ccv_dropbox.py", line 14, in <module>
+    import log
+ImportError: No module named log
+[18/Jan/2015 17:33:45] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 24, in <module>
+    from savefile import saveFilesAndProcess
+  File "./app/savefile.py", line 10, in <module>
+    import thirdparty.ccv_dropbox as ccvdb
+  File "./app/thirdparty/ccv_dropbox.py", line 157, in <module>
+    dbscheduler = DBConnectionScheduler()
+  File "./app/thirdparty/ccv_dropbox.py", line 137, in __init__
+    logger.open('P','a')
+  File "./app/log.py", line 17, in open
+    self._fi_process = open(self._path + 'log_process.txt', type)
+IOError: [Errno 2] No such file or directory: '/var/www/html/cloudcv/fileupload/logs/log_process.txt'
+[18/Jan/2015 17:35:03] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 24, in <module>
+    from savefile import saveFilesAndProcess
+  File "./app/savefile.py", line 10, in <module>
+    import thirdparty.ccv_dropbox as ccvdb
+  File "./app/thirdparty/ccv_dropbox.py", line 156, in <module>
+    dbscheduler = DBConnectionScheduler()
+  File "./app/thirdparty/ccv_dropbox.py", line 136, in __init__
+    logger.open('P','a')
+  File "./app/log.py", line 17, in open
+    self._fi_process = open(self._path + 'log_process.txt', type)
+IOError: [Errno 2] No such file or directory: '/var/www/html/cloudcv/fileupload/logs/log_process.txt'
+[18/Jan/2015 17:55:08] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 27, in <module>
+    import decaf_views
+  File "./app/decaf_views.py", line 15, in <module>
+    from django.utils import simplejson
+ImportError: cannot import name simplejson
+[18/Jan/2015 17:58:27] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 98, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 343, in resolve
+    for pattern in self.url_patterns:
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 372, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 366, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./cloudcv17/urls.py", line 12, in <module>
+    url(r'^$', include('app.urls')),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 28, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "./app/urls.py", line 3, in <module>
+    from app.views import (
+  File "./app/views.py", line 27, in <module>
+    import decaf_views
+  File "./app/decaf_views.py", line 15, in <module>
+    from django.utils import simplejson
+ImportError: cannot import name simplejson
+[18/Jan/2015 17:59:15] WARNING [django.request:143] Not Found: /upload/view/
+[18/Jan/2015 17:59:56] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 17:59:56] DEBUG [django.db.backends:91] (0.001) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/1_6rIU2VC.jpg', u'1.jpg'); args=[u'pictures/1_6rIU2VC.jpg', u'1.jpg']
+[18/Jan/2015 17:59:56] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(7,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 17:59:56] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 17:59:56] DEBUG [django.db.backends:91] (0.001) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/2_ZISRylM.jpg', u'2.jpg'); args=[u'pictures/2_ZISRylM.jpg', u'2.jpg']
+[18/Jan/2015 17:59:56] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(8,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 17:59:56] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 17:59:56] DEBUG [django.db.backends:91] (0.000) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/3_VGa162O.jpeg', u'3.jpeg'); args=[u'pictures/3_VGa162O.jpeg', u'3.jpeg']
+[18/Jan/2015 17:59:56] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(9,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 18:01:46] WARNING [django.request:143] Not Found: /upload/view/
+[18/Jan/2015 18:01:51] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 18:01:51] DEBUG [django.db.backends:91] (0.000) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/1_GBDCdBR.jpg', u'1.jpg'); args=[u'pictures/1_GBDCdBR.jpg', u'1.jpg']
+[18/Jan/2015 18:01:51] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(10,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 18:01:51] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 18:01:51] DEBUG [django.db.backends:91] (0.000) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/2_qdd3V8t.jpg', u'2.jpg'); args=[u'pictures/2_qdd3V8t.jpg', u'2.jpg']
+[18/Jan/2015 18:01:51] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(11,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 18:01:51] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 18:01:51] DEBUG [django.db.backends:91] (0.000) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/3_IYlIqbS.jpeg', u'3.jpeg'); args=[u'pictures/3_IYlIqbS.jpeg', u'3.jpeg']
+[18/Jan/2015 18:01:51] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(12,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 18:02:22] WARNING [django.request:143] Not Found: /upload/view/
+[18/Jan/2015 18:02:32] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 18:02:32] DEBUG [django.db.backends:91] (0.000) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/1_B1UiLDE.jpg', u'1.jpg'); args=[u'pictures/1_B1UiLDE.jpg', u'1.jpg']
+[18/Jan/2015 18:02:32] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(13,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 18:02:32] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 18:02:32] DEBUG [django.db.backends:91] (0.000) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/2_hFIFlj2.jpg', u'2.jpg'); args=[u'pictures/2_hFIFlj2.jpg', u'2.jpg']
+[18/Jan/2015 18:02:32] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(14,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 18:02:32] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 18:02:32] DEBUG [django.db.backends:91] (0.000) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/3_v5zMAlX.jpeg', u'3.jpeg'); args=[u'pictures/3_v5zMAlX.jpeg', u'3.jpeg']
+[18/Jan/2015 18:02:32] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(15,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 18:11:56] WARNING [django.request:143] Not Found: /upload/view/
+[18/Jan/2015 18:12:23] WARNING [django.request:143] Not Found: /upload/view/
+[18/Jan/2015 18:12:36] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 18:12:36] DEBUG [django.db.backends:91] (0.000) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/1_vsnQ1xy.jpg', u'1.jpg'); args=[u'pictures/1_vsnQ1xy.jpg', u'1.jpg']
+[18/Jan/2015 18:12:36] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(16,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 18:12:36] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 18:12:36] DEBUG [django.db.backends:91] (0.001) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/2_FEhBqQT.jpg', u'2.jpg'); args=[u'pictures/2_FEhBqQT.jpg', u'2.jpg']
+[18/Jan/2015 18:12:36] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(17,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []
+[18/Jan/2015 18:12:36] DEBUG [django.db.backends:91] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[18/Jan/2015 18:12:36] DEBUG [django.db.backends:91] (0.000) QUERY = u'INSERT INTO "app_picture" ("file", "slug") VALUES (%s, %s)' - PARAMS = (u'pictures/3_w1AIVT1.jpeg', u'3.jpeg'); args=[u'pictures/3_w1AIVT1.jpeg', u'3.jpeg']
+[18/Jan/2015 18:12:36] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 207, in post
+    return super(BaseCreateView, self).post(request, *args, **kwargs)
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/views/generic/edit.py", line 173, in post
+    return self.form_valid(form)
+  File "./app/views.py", line 125, in form_valid
+    files = [serialize(self.object)]
+  File "./app/serialize.py", line 40, in serialize
+    'deleteUrl': reverse('upload-delete', args=[instance.pk]),
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/home/parallels/CloudCV/ccv/local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'upload-delete' with arguments '(18,)' and keyword arguments '{}' not found. 0 pattern(s) tried: []

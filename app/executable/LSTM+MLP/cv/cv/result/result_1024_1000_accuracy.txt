@@ -1,0 +1,27 @@
+Overall Accuracy is: 46.44
+
+what brand : 30.29
+are : 73.87
+is the : 72.55
+is there : 83.37
+what sport : 43.42
+does : 76.10
+which : 31.01
+do : 75.66
+what type : 29.66
+what are : 21.32
+what color : 37.80
+who : 15.56
+what time : 13.19
+what kind : 27.28
+why : 10.42
+none of the above : 45.81
+is this : 74.46
+what is : 22.06
+how many : 36.93
+what does : 15.85
+where : 14.77
+what animal : 19.06
+other : 27.16
+number : 31.39
+yes/no : 77.27

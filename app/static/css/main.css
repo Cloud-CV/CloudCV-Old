@@ -29,7 +29,7 @@ padding-bottom: 20px;
     box-shadow: 0 0 8px rgba(0, 0, 0, .8);
 	-webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
 	-moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
-    width: 70%;
+    width: 42%;
  }
 
 .past_team_picture {
@@ -39,7 +39,7 @@ padding-bottom: 20px;
     box-shadow: 0 0 8px rgba(0, 0, 0, .8);
     -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
     -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
-    width: 50%;
+    width:32%;
 }
 
 .alert-box{font-size:15px; font-family: 'Source Sans Pro', sans-serif;position:fixed; }

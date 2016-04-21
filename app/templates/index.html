@@ -6,10 +6,10 @@
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width">
             <title>CloudCV</title>
-            <link href='http://fonts.googleapis.com/css?family=Raleway:400,100,200,300,500,600,700,800,900' rel='stylesheet' type='text/css'>
-            <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic' rel='stylesheet' type='text/css'>
+            <link href='https://fonts.googleapis.com/css?family=Raleway:400,100,200,300,500,600,700,800,900' rel='stylesheet' type='text/css'>
+            <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic' rel='stylesheet' type='text/css'>
 
-
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
             <link rel="stylesheet" href="{{STATIC_URL}}css/foundation.css"></link>
 
             <link rel="stylesheet" href="{{STATIC_URL}}css/main.css">
@@ -42,7 +42,7 @@
                     <li class="divider"></li>
                     <li><a href="/vip">VIP</a></li>
                     <li><a href="/trainaclass">Train a new category</a></li>
-
+                    <li id="vqa"><a href="/vqa">VQA</a></li>
                 </ul>
                 </section>
                 </nav>	
@@ -62,12 +62,35 @@
 
             <div class="row">
                 <div class="small-6 large-centered columns">
-                    <iframe src="http://prezi.com/embed/txskvdzady1u/?bgcolor=ffffff&amp;lock_to_path=0&amp;autoplay=0&amp;autohide_ctrls=0&amp;features=undefined&amp;disabled_features=undefined" width="550" height="400" frameBorder="0"></iframe>
+                    <iframe src="https://prezi.com/embed/txskvdzady1u/?bgcolor=ffffff&amp;lock_to_path=0&amp;autoplay=0&amp;autohide_ctrls=0&amp;features=undefined&amp;disabled_features=undefined" width="550" height="400" frameBorder="0"></iframe>
                 </div>	
             </div>
+	    <div class="row">
+		<hr>
+		<p> We are witnessing a proliferation of massive visual data. Unfortunately scaling existing computer vision algorithms to large datasets leaves researchers repeatedly solving the same algorithmic, logistical, and infrastructural problems. Our goal is to democratize computer vision; one should not have to be a computer vision, big data and distributed computing expert to have access to state-of-the-art distributed computer vision algorithms. We present CloudCV, a comprehensive system to provide access to state-of-the-art distributed computer vision algorithms as a cloud service through a Web Interface and APIs. </p>
+	
+	    <div class="large-2 columns">
+            <a href="http://arxiv.org/abs/1506.04130"><img src="{{STATIC_URL}}img/Page-1.jpg" style="border : 2px solid #b3b3b3; border-radius : 0px;"></a><br>
+        </div>
+        <div class="large-10 columns">
+            <a href="http://arxiv.org/abs/1506.04130" style="font-size: 18px;">ArXiv paper</a><br><br>
+            <p style="font-size:18px; margin-top:0px;" align=left>Bibtex</p>
+            <p style="margin-top:-23px;"></p>
+            <tt>
+                @ARTICLE{CloudCV, </br>
+                author = {Harsh Agrawal and Clint Solomon Mathialagan and Yash Goyal and Neelima Chavali and Prakriti Banik and Akrit Mohapatra and Ahmed Osman and Dhruv Batra}, </br>
+                title = "{CloudCV: Large Scale Distributed Computer Vision as a Cloud Service", </br>
+                journal = {arXiv preprint arXiv:1506.04130}, </br>
+                year = {2015}, </br>
+                } </br>
+            </tt><br><br><br>
+        </div>
+        <hr>
 
+
+	    </div>
+		
             <div class="row use-homepage">
-                <hr>
                 <div class="twelve columns">
                     <h3>Try CloudCV API with:</h3>
 
@@ -86,27 +109,7 @@
                             <a href="https://github.com/batra-mlp-lab/pcloudcv/wiki/" class="medium button large-6">Documentation</a>
                         </div>
                     </div>
-                    <div class="row">
-                        <p>
-                        Bibtex entry for citing our system is provided for your convenience.</br>
-                        <tt>
-                            @ONLINE{CloudCV,</br>
-
-                            author = {Agrawal, H. and Chavali, N. and Mathialagan C. and Goyal, Y. and Alfadda, A. and and Banik., P and Batra, D.},</br>
-
-                            title = {CloudCV: Large-Scale Distributed Computer Vision as a Cloud Service},</br>
-
-                            month = sept,</br>
-
-                            year = {2013},</br>
-
-                            url = {http://cloudcv.org}</br>
-
-                            } </br>
-                        </tt>
-                        </p>
                     </div>            
-                    <hr>
 
                 </div>
             </div>
@@ -117,6 +120,7 @@
 		  	
 		<div class="large-12 columns">
 		    <ul>
+		    <li> <b>3/3/2015: </b> CloudCV selected as a mentoring organisation for GSOC 2015. </li>
 		    <li> <b>1/31/2014:</b> NVIDIA supports CloudCV with a GPU hardware donation.</li>
 		    <li> <b>1/17/2014:</b> CloudCV recieves Microsoft Azure Research Award </li>
 		    <li> <b>10/15/2013:</b> CloudCV has been awarded Amazon Web Services (AWS) in Education: Machine Learning Research Grant. </li>
@@ -151,7 +155,7 @@
                     <div class="row">
                         <div class="large-3 columns">
                             <img src = "{{STATIC_URL}}img/DP.JPG" class = "home_team_picture"><br>
-                            Harsh Agrawal:<br><a href="mailto:h.agrawal092@gmail.com?Subject=CloudCV"> h.agrawal092@gmail.com</a><br><br><br>
+                            Harsh Agrawal:<br><a href="mailto:harsh92@vt.edu?Subject=CloudCV"> harsh92@vt.edu</a><br><br><br>
                         </div>
 
                         <div class="large-3 columns">
@@ -164,11 +168,50 @@
                             Yash Goyal: <br><a hre="mailto:ygoyal@vt.edu?Subject=CloudCV">ygoyal@vt.edu</a><br><br><br>
                         </div>
 
+			<div class="large-3 columns">
+                            <img src = "{{STATIC_URL}}img/ahmed.jpg" class = "home_team_picture"><br>
+                            Ahmed Osman:<br><a href="mailto:ahmed.osman99@gmail.com?Subject=CloudCV"> ahmed.osman99@gmail.com</a><br><br><br>
+                        </div>
+
+                        <div class="large-3 large-offset-3 columns">
+                            <img src = "{{STATIC_URL}}img/akrit.jpg" class = "home_team_picture"><br>
+                            Akrit Mohapatra: <br><a hre="mailto:akrit@vt.edu?Subject=CloudCV">akrit@vt.edu</a><br><br><br>
+                        </div>
+
                         <div class="large-3 columns">
                             <img src = "{{STATIC_URL}}img/dhruv_batra_200.jpg" class = "home_team_picture"><br>
                             Prof. Dhruv Batra:<br> <a href="http://filebox.ece.vt.edu/~dbatra/"> Webpage</a><br><br><br>
                         </div>
+			<div class="large-3 columns">
+			</div>
                         <hr>
+                    </div>
+                </div>
+                <div class="team">
+                    <h1>GSOC 2015 Participants and Other Interns
+                    </h1>
+
+                    <div class="row">
+                        <div class="large-3 columns">
+                            <img src = "{{STATIC_URL}}img/deshraj.jpg" class = "home_team_picture"><br>
+                            Deshraj Yadav <br><br><br>
+                        </div>
+
+                        <div class="large-3 columns">
+                            <img src = "{{STATIC_URL}}img/prashant.jpg" class = "home_team_picture"><br>
+                            Prashant Jalan <br><br><br>
+                        </div>
+
+                        <div class="large-3 columns">
+                            <img src = "{{STATIC_URL}}img/shubham.jpg" class = "home_team_picture"><br>
+                            Shubham Desale <br> <br><br>
+                        </div>
+
+                        <div class="large-3 columns">
+                            <img src = "{{STATIC_URL}}img/mohit.jpg" class = "home_team_picture"><br>
+                            Mohit Jain <br> <br><br>
+                        </div>
+			<hr>
                     </div>
                 </div>
                 <div class="team">
