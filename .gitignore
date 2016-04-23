@@ -12,4 +12,8 @@ npm-debug.log
 *.hdf5
 cloudcv17/logs/
 app/executable/LSTM+MLP
-static/bower_components/
+app/static/voice-elements-gh-pages/
+app/static/bower_components/
+static/
+logs/
+
