@@ -8,3 +8,8 @@ nodejs/
 .idea/
 env/
 npm-debug.log
+*.pkl
+*.hdf5
+cloudcv17/logs/
+app/executable/LSTM+MLP
+static/bower_components/

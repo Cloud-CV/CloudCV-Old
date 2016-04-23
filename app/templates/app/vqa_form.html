@@ -3,12 +3,14 @@
 
 {% block content %}
 <style>
-
+    .hiddenDiv{
+        display: none;
+    }
     .button_link {
     cursor: pointer;
     }
     .demo_img{
-    height: 300px;
+    height: 300px !important;
         padding: 6px;
 
     }
@@ -17,9 +19,16 @@
         padding: 0px;
     cursor: pointer;
     }
+    #show-demo-images-btn{
+        text-align: right;
+    }
+    @media(max-width: 540px){
+        #show-demo-images-btn{
+          text-align: center;
 
+        }
+    }
 </style>
-
 <!-- Modal 
 <div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -74,31 +83,33 @@
     <div class="page-header">
         <h2>Try CloudCV VQA: Sample Images</h2>
         <br>
-        <font size="4">Click on one of these images to send it to our servers (Or <a class="button_link"
-                                                                                    onclick="scrollToElement($('#userImages'))">upload</a>
-            your own images below)</font>
-        <br>
-        <br>
-        {% if demo_time %}
-         <div class="row">
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000493102.jpg"
+        <div class="row">
+            <div class="col-md-8 col-xs-12">
+                <font size="4">Click on one of these images to send it to our servers (Or <a class="button_link" onclick="scrollToElement($('#userImages'))">upload</a>
+                    your own images below)</font>
+            </div>
+            <div id="show-demo-images-btn" class="col-md-4">
+            <button  class="btn btn-info">Show Demo Images</button>
+            </div>
+        </div>
+         <div class="row hiddenDiv" id="vqaDemoImages1">
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_0000004518761453763791_36.jpg"
                   onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000389273.jpg"
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_000000466411.jpg"
                   onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000075494.jpg"
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_000000492835.jpg"
                   onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
          </div>
-         <div class="row">
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000018224.jpg"
+         <div class="row hiddenDiv" id="vqaDemoImages2">
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_000000446323.jpg"
                   onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000438226.jpg"
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_000000448192.jpg"
                   onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000247838.jpg"
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_0000005399791453769534_01.jpg"
                   onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
              <br>
          </div>
-        {% else %}
-        <div class="row">
+        <div class="row" id="vqaDemoImages3">
             <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.0}}"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
             <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.1}}"
@@ -106,7 +117,7 @@
             <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.2}}"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
         </div>
-        <div class="row">
+        <div class="row" id="vqaDemoImages4">
             <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.3}}"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
             <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.4}}"
@@ -115,7 +126,6 @@
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
             <br>
         </div>
-        {% endif%}
         Note: nothing is pre-computed for these images. They are treated as a fresh upload with every click.
     </div>
 </div>
@@ -132,7 +142,7 @@
         <div class="col-sm-12"><h3 align="center">OR</h3></div>
         <form id="fileupload" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
             <input type="hidden" name="socketid-hidden" value="test" id="socketid" value="$csrf_token"/>
-
+            <input type="hidden" id="rotate" name="rotate" value="0">
             <div class="fileupload-buttonbar">
                 <div class="span7">
                 <span class="btn btn-primary fileinput-button">
@@ -780,5 +790,40 @@
     $('#image_url').on('paste', function () {
         $("#image_url_submit_btn").click();
     });
+
+function rotateImageClockwise() {
+    var angle = document.getElementById("rotate");
+    $('#clockWiseBtn').on('click', function() {
+        angle.value += 90;
+        $("#image").rotate(angle);
+    });
+}
+
+function rotateImageClockwise() {
+    var angle = document.getElementById("rotate");
+    $('#antiClockwiseBtn').on('click', function() {
+        angle.value += 90;
+        $("#image").rotate(angle);
+    });
+}
+$(document).ready(function() {
+    $("#show-demo-images-btn button").click(function() {
+        if($(this).text() == "Show Demo Images") {
+            $(this).text("Show Random Images");
+            $('#vqaDemoImages3').hide();
+            $('#vqaDemoImages4').hide();
+            $('#vqaDemoImages1').show();
+            $('#vqaDemoImages2').show();
+        } else if($(this).text() == "Show Random Images") {
+            $(this).text("Show Demo Images");
+            $('#vqaDemoImages1').hide();
+            $('#vqaDemoImages2').hide();
+            $('#vqaDemoImages3').show();
+            $('#vqaDemoImages4').show();
+        } else {
+            alert("Some error occured. We will fix it soon.");
+        }
+    });
+});
 </script>
 {% endblock %}
