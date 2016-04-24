@@ -14,6 +14,5 @@ cloudcv17/logs/
 app/executable/LSTM+MLP
 app/static/voice-elements-gh-pages/
 app/static/bower_components/
-static/
 logs/
-
+app/database/._vqa_database.py

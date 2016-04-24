@@ -16,6 +16,7 @@ import pdb
 import time
 import utils
 
+
 def preProBuildWordVocabAll(question_iterator, caption_iterator, word_count_threshold):
     # count all word counts and threshold
     print 'preprocessing word counts and creating vocab based on word count threshold %d' % (word_count_threshold, )
@@ -82,6 +83,7 @@ def preProBuildWordVocab(iterator, dic_size, word_order=0):
         ixtoword[ix] = w
         ix += 1
     return wordtoix, ixtoword, vocab
+
 
 def preProBuildAnswerVocab(iterator, dic_size=1000):
     print 'preprocessing answer counts and creating vocab based on dictionary size %d' % (dic_size, )
