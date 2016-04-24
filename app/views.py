@@ -202,6 +202,25 @@ def log_every_request(job_obj):
 
 
 @csrf_exempt
+def pass1(request):
+    try:
+        data = {'success': 'false'}
+        if request.method == 'POST':
+            post_dict = parser.parse(request.POST.urlencode())
+            print post_dict
+            if post_dict['pass'] == 'Passphrase#123!':
+                data = {'success': 'true'}
+        response = JSONResponse(data, {}, response_mimetype(request))
+        response['Content-Disposition'] = 'inline; filename=files.json'
+        return response
+    except:
+        # print str(traceback.format_exc())
+        data['error'] = 'Error'
+        response = JSONResponse(data, {}, response_mimetype(request))
+        return response
+
+
+@csrf_exempt
 def matlabReadRequest(request):
     redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 

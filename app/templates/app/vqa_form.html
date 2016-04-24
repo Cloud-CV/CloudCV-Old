@@ -3,12 +3,14 @@
 
 {% block content %}
 <style>
-
+    .hiddenDiv{
+        display: none;
+    }
     .button_link {
     cursor: pointer;
     }
     .demo_img{
-    height: 300px;
+    height: 300px !important;
         padding: 6px;
 
     }
@@ -17,8 +19,35 @@
         padding: 0px;
     cursor: pointer;
     }
+    #show-demo-images-btn{
+        text-align: right;
+    }
+    @media(max-width: 540px){
+        #show-demo-images-btn{
+          text-align: center;
 
+        }
+    }
 </style>
+<!-- Modal 
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Enter pass key</h4>
+      </div>
+      <div class="modal-body">
+        <input type="password" class="form-control" id="pass" placeholder="Password">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="submitPass">Submit</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+-->
 
 <div id="socket-error" class="modal hide fade" tabindex="-1" data-width="760">
   <div class="modal-header">
@@ -38,6 +67,8 @@
 <div class="container">
     <div class="page-header">
         <h1 align="center">CloudCV: Visual Question Answering (VQA)</h1>
+        <h3 align="center">More details about the VQA dataset can be found <a href="http://visualqa.org/">here.</a></h3>
+        <h3 align="center">State-of-the-art VQA model and code available <a href="https://github.com/VT-vision-lab/VQA_LSTM_CNN">here</a></h3>
         <br>
         <font size="4">
             <p style="text-align:center;"><font size="4">CloudCV can answer questions you ask about an image</font><br><br>
@@ -52,26 +83,46 @@
     <div class="page-header">
         <h2>Try CloudCV VQA: Sample Images</h2>
         <br>
-        <font size="4">Click on one of these images to send it to our servers (Or <a class="button_link"
-                                                                                    onclick="scrollToElement($('#userImages'))">upload</a>
-            your own images below)</font>
-        <br>
-        <br>
-
         <div class="row">
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000493102.jpg"
+            <div class="col-md-8 col-xs-12">
+                <font size="4">Click on one of these images to send it to our servers (Or <a class="button_link" onclick="scrollToElement($('#userImages'))">upload</a>
+                    your own images below)</font>
+            </div>
+            <div id="show-demo-images-btn" class="col-md-4">
+            <button  class="btn btn-info">Show Demo Images</button>
+            </div>
+        </div>
+         <div class="row hiddenDiv" id="vqaDemoImages1">
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_0000004518761453763791_36.jpg"
+                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_000000466411.jpg"
+                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_000000492835.jpg"
+                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+         </div>
+         <div class="row hiddenDiv" id="vqaDemoImages2">
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_000000446323.jpg"
+                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_000000448192.jpg"
+                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+            <img src="/app/media/pictures/vqaDemo/test2014/COCO_test2014_0000005399791453769534_01.jpg"
+                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
+             <br>
+         </div>
+        <div class="row" id="vqaDemoImages3">
+            <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.0}}"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000389273.jpg"
+            <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.1}}"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000075494.jpg"
+            <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.2}}"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
         </div>
-        <div class="row">
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000018224.jpg"
+        <div class="row" id="vqaDemoImages4">
+            <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.3}}"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000438226.jpg"
+            <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.4}}"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
-            <img src="/app/media/pictures/vqaDemo/COCO_val2014_000000247838.jpg"
+            <img src="/app/media/pictures/vqaDemo/test2014/{{ sample_images.5}}"
                  onclick="submitDemoImage(this.src)" class="demo_img col-md-4"></img>
             <br>
         </div>
@@ -80,12 +131,19 @@
 </div>
 
 <div class="container">
-    <div class="page-header">
+        <div class="page-header">
         <h2 id="userImages">Try CloudCV VQA On Your Images</h2>
+        </div>
+        <input type="hidden" name="socketid-hidden" value="test" id="socketid" value="$csrf_token"/>
+        <div class="form-group">
+            <input type="url" class="form-control col-sm-6" id="image_url" placeholder="Enter Image URL">
+        </div>  
+        <button onclick="submitImageUsingUrl();" id="image_url_submit_btn" class="btn btn-default btn-primary" style="margin-top: 5px;">Submit</button>
+        <div class="col-sm-12"><h3 align="center">OR</h3></div>
         <form id="fileupload" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
             <input type="hidden" name="socketid-hidden" value="test" id="socketid" value="$csrf_token"/>
-
-            <div class="row fileupload-buttonbar">
+            <input type="hidden" id="rotate" name="rotate" value="0">
+            <div class="fileupload-buttonbar">
                 <div class="span7">
                 <span class="btn btn-primary fileinput-button">
                     <i class="icon-plus icon-white"></i>
@@ -146,18 +204,17 @@
 
         <div id="underTheHood">
             <p><h3>How it works</h3></p>
-	    <p><h4><span style="color:#FF0000;"> For testing purposes, we have currently only included naive baselines in CloudCV VQA </span></h4></p>
-            <font size="4">
+	        <font size="4">
                 <ol>
                     <li>You upload an image.</li>
                     <li>Your request is sent to our servers with GPUs courtesy NVIDIA.</li>
-                    <li>Our servers run a simple <a class="button_link" onclick="scrollToElement($('#creditSection'))">VQA algorithm.</a></li>
-                    <li>Results and updates are shown in real-time.</li>
+                    <li>Our servers run our deep-learning based <a class="button_link" onclick="scrollToElement($('#creditSection'))">VQA algorithm.</a></li>
+                    <li>Results and updates are shown in real-time.</li>    
                 </ol>
             </font><br><br>
         </div>
 
-        <h3>Results </h3><br>
+        <h3>VQA: Ask any question about this image </h3><br>
 
         <div id="ResultImage" class="row" style="padding-bottom:100px;">
         </div>
@@ -165,9 +222,10 @@
         <div id="creditSection">
 	   <h3> Credits </h3>
             <font size="4">
-		<a href="http://arxiv.org/abs/1505.00468">VQA: Visual Question Answering</a><br>
+		<a href="http://visualqa.org">VQA: Visual Question Answering</a><br>
             Stanislaw Antol, Aishwarya Agrawal, Jiasen Lu, Margaret Mitchell, Dhruv Batra, C. Lawrence Zitnick, Devi Parikh
-	    </font><br><br>
+	    <br><br>
+       </font><br>
         </div>
 
         <div id="statcounter" style="display: none;">
@@ -206,6 +264,9 @@
         </a>
     </div>
 </div>
+<div>
+    <voice-player id="voice-player-answer" ></voice-player>
+</div>  
 {% upload_js %}
 
 <script>
@@ -251,17 +312,82 @@
 <script src="{{ STATIC_URL }}js/cors/jquery.xdr-transport.js"></script>
 
 <![endif]-->
-    <script src="/node/socket.io/socket.io.js"></script>
+<script src="/node/socket.io/socket.io.js"></script>
+<link rel="import" href="{{ STATIC_URL }}bower_components/webcomponentsjs/src/voice-player.html">
+<link rel="import" href="{{ STATIC_URL }}bower_components/webcomponentsjs/src/voice-recognition.html">
 <script>
+    var password = "";
+        // Opera 8.0+
+    var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+        // Firefox 1.0+
+    var isFirefox = typeof InstallTrigger !== 'undefined';
+        // At least Safari 3+: "[object HTMLElementConstructor]"
+    var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+        // Internet Explorer 6-11
+    var isIE = /*@cc_on!@*/false || !!document.documentMode;
+        // Edge 20+
+    var isEdge = !isIE && !!window.StyleMedia;
+        // Chrome 1+
+    var isChrome = !!window.chrome && !!window.chrome.webstore;
+        // Blink engine detection
+    var isBlink = (isChrome || isOpera) && !!window.CSS;
 
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    };
+
+    var tech = getUrlParameter('useVoice');
+    var isListen = getUrlParameter('listenAnswer');
+
+    if(tech) {
+        tech = parseInt(tech);
+    }
+    if(isListen) {
+        isListen = parseInt(isListen);
+    }
     $(document).ready(function()
     {
-
+	
         var host = location.origin;
         console.log(host);
-        var socket = io.connect(host,{transports: ["websocket"]});
+        
+	var socket = io.connect(host,{transports: ["websocket"]});
+    /*
+	$('#myModal').modal({
+	    keyboard: false,
+	    backdrop: 'static',
+	    show: true
+	});    
+    $("#pass").keyup(function (e) {
+	    if (e.keyCode == 13) {
+		$('#submitPass').click();
+	    }
+	});
+	$('#submitPass').click(function(){
+	    var pass = $('#pass').val();
+	    $.ajax({
+			type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+			url 		: '/app/pass/', // the url where we want to POST
+			data 		: {'pass':pass, 'socketid': window.socketid} // our data object
+		})// using the done promise callback
+			.done(function(data) {
+				 if (data['success'] == 'true')	{ $('#myModal').modal('hide'); password = pass;}
+		}
+	);
 
-
+	});
+    */	
         socket.on('connect', function(){
             console.log("connect");
         });
@@ -313,9 +439,6 @@
 
     window.onload= function()
     {
-//        var li_vqa = document.getElementById("vqa");
-//        li_vqa.className = "active";
-        // Append trailing slash at the end of the URL
         var url = window.location.pathname;
         console.log(url);
         var urlParts = url.split("/")
@@ -394,11 +517,54 @@
             $.ajax({
 			type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
 			url 		: '/app/vqa_qn/', // the url where we want to POST
-			data 		: {'src':src, 'socketid': window.socketid, 'imageid': id, 'qn':txtArea.value} // our data object
+			data 		: {'src':src, 'socketid': window.socketid, 'imageid': id, 'qn':txtArea.value, 'pass':password} // our data object
 		})// using the done promise callback
 			.done(function(data) {
-                console.log(data);
+                                data = JSON.parse(data);
+				if('passworderror' in data) {
+				    alert("You didn't enter the password correctly");
+				}
+                if('questionid' in data) {
+                    $('#txt'+id).attr("questionid", data['questionid']);
+                }
+                		console.log(data);
 			});
+    }
+    
+    function submitCorrectAnswer(id, questionid) {
+        console.log("Submitted correct answer");
+        $('#comments').prepend('<li>' + "Providing feedback through correct answer." + '</li>');
+       
+        var txtArea = document.getElementById("answertxt"+id);
+
+        $.ajax({
+            type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+            url         : '/app/vqa_answer/', // the url where we want to POST
+            data        : {'questionid': questionid, 'socketid': window.socketid, 'imageid': id, 'answer':txtArea.value} // our data object
+        })// using the done promise callback
+            .done(function(data) {
+                data = JSON.parse(data);
+                console.log(data);
+            });
+    }
+
+    function runVoiceRecognition(imageid){
+        var element = document.querySelector('#vr'+imageid);
+        element.imageid = imageid;
+        $('#vr'+imageid).continuous = false;
+        
+        element.addEventListener('result', function(e) {
+            console.log(e.detail.result);
+            $('#txt'+e.target.imageid).val(e.detail.result + '?');
+            this.continuous = false;
+            this.stop();
+        });
+
+        element.addEventListener('end', function(e) {
+            console.log('stop event');
+            this.text = '';
+        })
+        element.start();
     }
 
     function createButton(context, imgsrc, imageid){
@@ -415,9 +581,35 @@
         $(button).attr("id","bt"+imageid);
         $(button).addClass("btn");
         $(button).addClass("btn-primary");
+
+        
         context.appendChild(textArea);
-	context.appendChild(document.createElement("br"));
+	    
+        context.appendChild(document.createElement("br"));
+
+        // Adding the voice recognition button
+        if(tech === 1 && isChrome) {
+            console.log("Adding voice Recognition button");
+            var voiceRecognition = document.createElement("voice-recognition");
+            $(voiceRecognition).attr("id", "vr"+imageid);
+            $(voiceRecognition).attr('x-webkit-speech');
+            var vrbutton = document.createElement('a');
+            $(vrbutton).click(function() {
+                runVoiceRecognition(imageid)
+            });
+
+            $(vrbutton).attr("id","vrbt"+imageid);
+            $(vrbutton).addClass("btn");
+            $(vrbutton).addClass("btn-primary");
+            $(vrbutton).css({ "margin-right": "10px" });
+            $(vrbutton).html('<i class="fa fa-microphone fa-lg"></i> Ask Question') 
+            context.appendChild(voiceRecognition);
+            context.appendChild(vrbutton);
+        }
+        
         context.appendChild(button);
+        //console.log(imageid)
+
         $(textArea).keypress(function(e){
             var btId = $(this).attr("btid");
             if(e.keyCode==13) {
@@ -425,6 +617,28 @@
                 $("#" + btId).click();
             }
         });
+    }
+
+    function createFeedBack(tableDiv, imageid, questionid) {
+        var feedbackText = document.createTextNode('Incorrect Answer? Please provide correct answer: ');
+        var textArea = document.createElement("textarea");
+        $(textArea).attr("rows","1");
+        $(textArea).attr("id","answertxt"+imageid);
+        $(textArea).attr("btid","answerbt"+imageid);
+        $(textArea).addClass("form-control");
+        $(textArea).attr("questionid", questionid);
+
+        var button = document.createElement("input");
+        button.type = "button";
+        button.value = "Submit";
+        $(button).attr("onclick","submitCorrectAnswer('"+imageid+"',"+questionid+")");
+        $(button).attr("id","answerbt"+imageid);
+        $(button).addClass("btn");
+        $(button).addClass("btn-primary");
+
+        tableDiv.append(feedbackText);
+        tableDiv.append(textArea);
+        tableDiv.append(button);
     }
 
     function processResult(webResult){
@@ -438,7 +652,6 @@
             $('#comments').prepend('<li>' + "Rendering results..." + '</li>');
             var parentDiv = document.getElementById("ResultImage");
             var imageDiv = document.createElement("div");
-
             var tableDiv = document.createElement("div");
 
             imageDiv.className = "col-md-5";
@@ -451,7 +664,7 @@
 
             var newImage = document.createElement("img");
             newImage.style.height = "300px";
-	    newImage.className = "img-responsive";
+	        newImage.className = "img-responsive";
 
             var newImageURL = webResult[firstKey];
             var imID = "imDiv"+imCount;
@@ -510,19 +723,107 @@
 
                 var listItem = document.createElement("td");
                 listItem.innerHTML = tag_list[0];
+
+                if(key == 0 && isListen == 1) {
+                    console.log("Tag 0: " + tag_list[0])
+                    var element = document.querySelector('#voice-player-answer');
+                    element.setAttribute('text', tag_list[0]);
+                    element.speak();    
+                }
+                
                 tableRow.appendChild(listItem);
 
                 listItem = document.createElement("td");
-                listItem.innerHTML = parseFloat(tag_list[1]).toFixed(4);
+        		var progress_div = document.createElement("div");
+        		progress_div.className = "progress";
+        		progress_div.style.textAlign = 'left';
+        		var progress_bar_div = document.createElement("div");
+        		progress_bar_div.className = "progress-bar progress-bar-info";
+        		progress_bar_div.setAttribute('aria-valuemin', 0);
+        		progress_bar_div.setAttribute('aria-valuemax', 1);
+        		progress_bar_div.setAttribute('aria-valuenow', parseFloat(tag_list[1]).toFixed(4));
+        		progress_bar_div.setAttribute('role', 'progressbar');
+        		progress_bar_div.style.width =  (parseFloat(tag_list[1]).toFixed(4)*100).toString()+'%';
+        		progress_bar_div.style.textAlign = 'left';
+        		progress_bar_div.innerHTML = "<span style='color:black; text-align: left;'>" + parseFloat(tag_list[1]).toFixed(4).toString() + '</span>';
+        		progress_div.appendChild(progress_bar_div);
+        		listItem.appendChild(progress_div);
+                //listItem.innerHTML = parseFloat(tag_list[1]).toFixed(4);
                 listItem.style.textAlign="right";
                 tableRow.appendChild(listItem);
                 tableBody.appendChild(tableRow);
             }
             tableElement.appendChild(tableBody);
             tableDiv.append(tableElement);
+            createFeedBack(tableDiv, imageID, $('#txt'+imageID).attr('questionid'));
 //            scrollToElement($(tableDiv));
         }
     }
 
+</script>
+
+<script>
+    function submitImageUsingUrl(){
+        src = document.getElementById('image_url').value;
+        $('#comments').prepend('<br>');
+        $('#comments').prepend('<li>' + "Starting the Image download process" + '</li>');
+        console.log(src);
+
+        scrollToElement($("#termstart"));
+
+            $.ajax({
+            type        : 'POST',
+            url         : '{% url "demo-vqa-using-image-url" %}',
+            data        : {'src':src, 'socketid': window.socketid}
+        })
+            .done(function(data) {
+                console.log(data);
+            });
+    }
+
+    $("#image_url").keydown(function(e){
+        if(e.which === 13){
+            $("#image_url_submit_btn").click();
+        }
+    });
+
+    $('#image_url').on('paste', function () {
+        $("#image_url_submit_btn").click();
+    });
+
+function rotateImageClockwise() {
+    var angle = document.getElementById("rotate");
+    $('#clockWiseBtn').on('click', function() {
+        angle.value += 90;
+        $("#image").rotate(angle);
+    });
+}
+
+function rotateImageClockwise() {
+    var angle = document.getElementById("rotate");
+    $('#antiClockwiseBtn').on('click', function() {
+        angle.value += 90;
+        $("#image").rotate(angle);
+    });
+}
+$(document).ready(function() {
+    $("#show-demo-images-btn button").click(function() {
+        if($(this).text() == "Show Demo Images") {
+            $(this).text("Show Random Images");
+            $('#vqaDemoImages3').hide();
+            $('#vqaDemoImages4').hide();
+            $('#vqaDemoImages1').show();
+            $('#vqaDemoImages2').show();
+        } else if($(this).text() == "Show Random Images") {
+            $(this).text("Show Demo Images");
+            $('#vqaDemoImages1').hide();
+            $('#vqaDemoImages2').hide();
+            $('#vqaDemoImages3').show();
+            $('#vqaDemoImages4').show();
+        } else {
+            alert("Some error occured. We will fix it soon.");
+        }
+    });
+});
 </script>
 {% endblock %}

@@ -30,6 +30,11 @@
     </script>
     <!-- Shim to make HTML5 elements usable in older Internet Explorer versions -->
     <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <!-- Importing Web Component's Polyfill -->
+    <script src="/static/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top">
@@ -50,6 +55,7 @@
                 <li id = "classification" ><a href="/classify">Classification</a></li>
                 <li id = "poi" ><a href="/vip">VIP</a></li>
                 <li id="trainaclass"><a href="/trainaclass">Train a new category</a></li>
+                <li id="vqa"><a href="/vqa">VQA</a></li>
             </ul>
         </div>
     </div>
