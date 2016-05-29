@@ -18,7 +18,7 @@ import operator
 
 from caffe.proto import caffe_pb2
 from glob import glob
-from app.conf import conf
+import app.conf as conf
 
 # Caffe root directory
 caffe_root = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
