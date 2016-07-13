@@ -1,12 +1,13 @@
 FROM ubuntu:14.04
 
-MAINTAINER Prashant Jalan
+MAINTAINER Deshraj
 
 # We will install opencv, graphlab and caffe in this container
 # This container will run the CPU worker which handles the image classification,
 # decaf, POI, image stitching and training a new model.
 
 # Basics
+RUN sudo apt-get update
 RUN apt-get install -y gfortran git wget unzip python-dev build-essential
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 
@@ -18,9 +19,8 @@ RUN wget -O OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/file
 # OpenCV Installation
 
 # OpenCV dependencies
-RUN sudo apt-get update
 RUN apt-get install -y cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-RUN apt-get install -y python-dev libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+RUN apt-get install -y python-dev libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev zlib1g-dev
 
 RUN cd /opencv && \
     mkdir release && \
