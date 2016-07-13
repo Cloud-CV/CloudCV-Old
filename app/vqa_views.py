@@ -1,38 +1,49 @@
 __author__ = 'clint'
 
-from django.views.generic import CreateView, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
-from django.core.files import File
-
-from cloudcv17.settings import BASE_DIR
-from app.models import Picture, Classify, Vqa
-from app.celery.web_tasks.VqaFeatTask import featExtraction
-from app.celery.web_tasks.VqaTask import answerQuestion2
-from app.database.vqa_database import *
-import app.conf as conf
-
-from os.path import basename
-from urlparse import urlparse
-from PIL import Image
-from querystring_parser import parser
-
-
-import redis
 import time
+import subprocess
 import os
 import json
 import traceback
+import uuid
+import shortuuid
+import datetime
+import json
+import threading
+import operator
+import sys
 import requests
 import shutil
 import random
 
+from urlparse import urlparse
+from django.views.generic import CreateView, DeleteView
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files import File
+
+from PIL import Image
+from querystring_parser import parser
+from os.path import splitext, basename
+import redis
+
+from cloudcv17.settings import BASE_DIR
+from app.models import Picture, RequestLog, Decaf, Classify, Vqa
+from celeryTasks.apiTasks.caffe_classify import caffe_classify, caffe_classify_image
+import app.conf as conf
+from celeryTasks.webTasks.VqaFeatTask import featExtraction
+from celeryTasks.webTasks.VqaTask import answerQuestion, answerQuestion2
+
+from app.database.vqa_database import *
+
+
 redis_obj = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-##
 # LOG File
 demo_log_file = conf.DEMO_VQA_LOG_FILE
-##
+
+PAGE_ACCESS_TOKEN = 'CAADjZBqDFZAC0BAIspyQp6YIrKbHedWSVFk1kpHatGk0fgSf2kZCFbFt7aj74Kg9dGGwzZBNuX7z7YYoenKEvGS7EjPxxkCsMDCvYBMWwe81DrzlVG6ZAwsIIFy2nOtJXAs5UH1100c2fTDXihmkpJfG3VbPz1u1zjJQFi2Uh3X6iQNBOQMDtKt5rx1K3jBqLtz3HPtyrqgZDZD'
 
 
 def log_to_terminal(message, socketid):
@@ -41,7 +52,7 @@ def log_to_terminal(message, socketid):
 
 def vqa_wrapper_feat(src_path, socketid, result_url_prefix, feat_folder):
 
-    featExtraction(src_path, socketid, result_url_prefix, feat_folder)
+    featExtraction(src_path, socketid, result_url_prefix,  feat_folder)
 
 
 def vqa_wrapper_answer(feat_path, question, socketid, imageid):
@@ -65,18 +76,19 @@ class VqaCreateView(CreateView):
 
     def form_valid(self, form):
         self.r = redis_obj
+        session = self.request.session.session_key
         socketid = self.request.POST['socketid-hidden']
         self.socketid = socketid
 
         try:
-            # log_to_terminal('Logging user ip....', self.socketid)
-            # client_address = self.request.META['REMOTE_ADDR']
-            # client_address = self.request.environ.get('HTTP_X_FORWARDED_FOR')
-            # log_to_terminal(client_address, self.socketid)
+            #log_to_terminal('Logging user ip....', self.socketid)
+            client_address = self.request.META['REMOTE_ADDR']
+            #client_address = self.request.environ.get('HTTP_X_FORWARDED_FOR')
+            #log_to_terminal(client_address, self.socketid)
 
             self.object = form.save()
             all_files = self.request.FILES.getlist('file')
-            data = {'files': []}
+            data = {'files':[]}
 
             fcountfile = open(os.path.join(conf.LOG_DIR, 'log_count.txt'), 'a')
             fcountfile.write(str(self.request.META.get('REMOTE_ADDR')) + '\n')
@@ -84,7 +96,7 @@ class VqaCreateView(CreateView):
 
             self.count_hits += 1
 
-        except:
+        except Exception as e:
             log_to_terminal(str(traceback.format_exc()), self.socketid)
 
         old_save_dir = os.path.dirname(conf.PIC_DIR)
@@ -101,12 +113,14 @@ class VqaCreateView(CreateView):
             os.makedirs(save_dir)
             os.makedirs(feat_folder)
 
+
         log_to_terminal(str('VQA Phase 1...'), self.socketid)
 
         if len(all_files) == 1:
             log_to_terminal(str('Downloading Image...'), self.socketid)
         else:
             log_to_terminal(str('Downloading Images...'), self.socketid)
+
 
         for file in all_files:
             try:
@@ -129,7 +143,7 @@ class VqaCreateView(CreateView):
                     'thumbnailUrl': thumbPath,
                     'size': 0,
                 })
-            except:
+            except Exception as e:
                 log_to_terminal(str(traceback.format_exc()), self.socketid)
 
         if len(all_files) == 1:
@@ -143,7 +157,7 @@ class VqaCreateView(CreateView):
         vqa_wrapper_feat(save_dir, socketid, save_url, feat_folder)
 
         # This is for posting it on Redis - ie to Rosenblatt
-        # classify_wrapper_redis(job_directory, socketid, result_folder)
+        #classify_wrapper_redis(job_directory, socketid, result_folder)
 
         response = JSONResponse(data, {}, response_mimetype(self.request))
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -183,7 +197,6 @@ class JSONResponse(HttpResponse):
         content = json.dumps(obj, **json_opts)
         super(JSONResponse, self).__init__(content, mimetype, *args, **kwargs)
 
-
 @csrf_exempt
 def demoVqa(request):
     post_dict = parser.parse(request.POST.urlencode())
@@ -220,21 +233,21 @@ def demoVqa(request):
             vqa_wrapper_feat(image_path, socketid, result_prefix_url, feat_path)
 
             # This is for posting it on Redis - ie to Rosenblatt
-            # classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
+            #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
 
             data = {'info': 'Completed'}
 
         try:
-            request.META['REMOTE_ADDR']
+            client_address = request.META['REMOTE_ADDR']
 
-        except:
+        except Exception as e:
             print str(traceback.format_exc())
             log_to_terminal(str(traceback.format_exc()), socketid)
             response = JSONResponse(data, {}, response_mimetype(request))
             response['Content-Disposition'] = 'inline; filename=files.json'
             return response
 
-    except:
+    except Exception as e:
         data = {'result': str(traceback.format_exc())}
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -266,11 +279,11 @@ def demo_vqa_using_image_url(request):
 
                 log_to_terminal(str('Downloading Image...'), socketid)
 
-                with open(os.path.join(save_dir, img_name), 'wb') as f:
+                with open(os.path.join(save_dir,img_name),'wb') as f:
                     r.raw.decode_content = True
                     shutil.copyfileobj(r.raw, f)
                 try:
-                    file = File(open(os.path.join(save_dir, img_name)))
+                    file = File(open(os.path.join(save_dir,img_name)))
                     a = Picture()
                     tick = time.time()
                     strtick = str(tick).replace('.', '_')
@@ -284,7 +297,7 @@ def demo_vqa_using_image_url(request):
                     imgfile.save(os.path.join(save_dir, file.name))
                     thumbPath = os.path.join(save_url, file.name)
                     # remove the temporary downloaded image
-                    os.remove(os.path.join(save_dir, img_name))
+                    os.remove(os.path.join(save_dir,img_name))
                     data['file'] = {
                         'url': thumbPath,
                         'name': a.file.name,
@@ -292,7 +305,7 @@ def demo_vqa_using_image_url(request):
                         'thumbnailUrl': thumbPath,
                         'size': 0,
                     }
-                except:
+                except Exception as e:
                     log_to_terminal(str(traceback.format_exc()), socketid)
 
                 log_to_terminal(str('Processing Image...'), socketid)
@@ -303,12 +316,12 @@ def demo_vqa_using_image_url(request):
             vqa_wrapper_feat(save_dir, socketid, save_url, feat_folder)
 
             # This is for posting it on Redis - ie to Rosenblatt
-            # classify_wrapper_redis(job_directory, socketid, result_folder)
+            #classify_wrapper_redis(job_directory, socketid, result_folder)
 
             response = JSONResponse(data, {}, response_mimetype(request))
             response['Content-Disposition'] = 'inline; filename=files.json'
             return response
-        except:
+        except Exception as e:
             log_to_terminal(str(traceback.format_exc()), socketid)
     else:
         return HttpResponse("Invalid request Method")
@@ -356,8 +369,8 @@ def handleQuestion(request):
         vqa_wrapper_answer(feat_path, question, socketid, imageid)
 
         # This is for posting it on Redis - ie to Rosenblatt
-        # classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
-
+        #classify_wrapper_redis(image_path, post_dict['socketid'], result_path)
+    
         data = {'info': 'Completed', 'questionid': "1"}
 
         response = JSONResponse(data, {}, response_mimetype(request))
@@ -370,9 +383,7 @@ def handleQuestion(request):
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
-
 def handleCorrectAnswer(request):
-
     post_dict = parser.parse(request.POST.urlencode())
     try:
         socketid = post_dict['socketid']
@@ -380,7 +391,8 @@ def handleCorrectAnswer(request):
         questionid = post_dict['questionid']
         answer = post_dict['answer']
         question = VQA_Question.select().where(VQA_Question.id == questionid).get()
-        VQA_CorrectAnswer.create(socketid=socketid, answer=answer, imageName=imageid, question=question)
+        data_row = VQA_CorrectAnswer.create(socketid = socketid, answer = answer, 
+            imageName = imageid, question = question)
 
         data = {'info': 'Answer Saved'}
 
@@ -388,8 +400,9 @@ def handleCorrectAnswer(request):
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
-    except:
+    except Exception as e:
         data = {'result': 'Error'}
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
+

@@ -7,29 +7,32 @@ import os
 import redis
 import numpy as np
 import leveldb
-import caffe
 import time
 import math
-import scipy.io as sio
 import shutil
 import json
 import traceback
 import operator
 
-from caffe.proto import caffe_pb2
 from glob import glob
-import app.conf as conf
 
 # Caffe root directory
-caffe_root = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
 
-matWNID = sio.loadmat(os.path.join(conf.EXEC_DIR, 'WNID.mat'))
-WNID_cells = matWNID['wordsortWNID']
 
 
 # The functions are mostly copied from app.executable.LDA_files.train_fast
 @app.task(ignore_result=True)
 def trainImages(jobPath, socketid):
+    from app.conf import EXEC_DIR
+    from caffe.proto import caffe_pb2
+
+    import caffe
+    import scipy.io as sio
+
+    matWNID = sio.loadmat(os.path.join(EXEC_DIR, 'WNID.mat'))
+    WNID_cells = matWNID['wordsortWNID']
+    caffe_root = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
+    
     # Establishing connection to send results and write messages
     rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
 
@@ -143,6 +146,8 @@ def trainImages(jobPath, socketid):
 
 
 def caffe_classify_image(net, single_image, new_labels_cells):
+    import caffe
+
     topresults = []
     try:
         input_image = caffe.io.load_image(single_image)
@@ -169,6 +174,10 @@ def caffe_classify_image(net, single_image, new_labels_cells):
 # and classify_wrapper_local in trainaclass_views
 @app.task(ignore_result=True)
 def customClassifyImages(jobPath, socketid, result_path):
+
+    import caffe
+    import scipy.io as sio
+
     # Establishing connection to send results and write messages
     rs = redis.StrictRedis(host=config.REDIS_HOST, port=6379)
 
