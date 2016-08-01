@@ -22,6 +22,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files import File
+from django.conf import settings
 
 from PIL import Image
 from querystring_parser import parser
@@ -29,16 +30,17 @@ from os.path import splitext, basename
 import redis
 
 from cloudcv17.settings import BASE_DIR
+import cloudcv17.config as config 
 from app.models import Picture, RequestLog, Decaf, Classify, Vqa
 from celeryTasks.apiTasks.caffe_classify import caffe_classify, caffe_classify_image
 import app.conf as conf
 from celeryTasks.webTasks.VqaFeatTask import featExtraction
 from celeryTasks.webTasks.VqaTask import answerQuestion, answerQuestion2
 
-from app.database.vqa_database import *
+# from app.database.vqa_database import *
 
 
-redis_obj = redis.StrictRedis(host='localhost', port=6379, db=0)
+redis_obj = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
 # LOG File
 demo_log_file = conf.DEMO_VQA_LOG_FILE
@@ -166,8 +168,11 @@ class VqaCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(VqaCreateView, self).get_context_data(**kwargs)
         context['pictures'] = Classify.objects.all()
-        test_images_path = os.path.join(BASE_DIR, "cloudcv17/media/pictures/vqaDemo/test2014")
-        context['sample_images'] = [random.choice(next(os.walk(test_images_path))[2]) for i in range(6)]
+        try:
+            test_images_path = conf.LOCAL_DEMO_VQA_PIC_DIR
+            context['sample_images'] = [random.choice(next(os.walk(test_images_path))[2]) for i in range(6)]
+        except:
+            context['sample_images'] = os.listdir(os.path.join(settings.BASE_DIR, 'static', 'img', 'demo_images'))
         context['demo_time'] = conf.SHOW_KNOWN_DEMO_IMAGES
         return context
 
@@ -390,9 +395,9 @@ def handleCorrectAnswer(request):
         imageid = post_dict['imageid']
         questionid = post_dict['questionid']
         answer = post_dict['answer']
-        question = VQA_Question.select().where(VQA_Question.id == questionid).get()
-        data_row = VQA_CorrectAnswer.create(socketid = socketid, answer = answer, 
-            imageName = imageid, question = question)
+        # question = VQA_Question.select().where(VQA_Question.id == questionid).get()
+        # data_row = VQA_CorrectAnswer.create(socketid = socketid, answer = answer, 
+            # imageName = imageid, question = question)
 
         data = {'info': 'Answer Saved'}
 
@@ -404,5 +409,5 @@ def handleCorrectAnswer(request):
         data = {'result': 'Error'}
         response = JSONResponse(data, {}, response_mimetype(request))
         response['Content-Disposition'] = 'inline; filename=files.json'
-        return response
+#         return response
 
