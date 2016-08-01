@@ -1,6 +1,6 @@
 FROM cloudcv/base:latest
 
-MAINTAINER Prashant Jalan
+MAINTAINER Deshraj
 
 EXPOSE 8000
 

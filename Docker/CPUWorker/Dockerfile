@@ -2,9 +2,9 @@ FROM ubuntu:14.04
 
 MAINTAINER Deshraj
 
-# We will install opencv, graphlab and caffe in this container
+# We will install opencv and caffe in this container
 # This container will run the CPU worker which handles the image classification,
-# decaf, POI, image stitching and training a new model.
+# Decaf, POI, image stitching and training a new model.
 
 # Basics
 RUN sudo apt-get update
@@ -44,6 +44,8 @@ RUN cd /caffe && \
     cmake .. && \
     make -j 4 all 
 
+RUN apt-get install libjpeg-dev zlib1g-dev
+
 # In order to import caffe in python
 ENV PYTHONPATH /caffe/python
 
@@ -52,8 +54,10 @@ COPY ./bvlc_reference_caffenet.caffemodel /caffe/models/bvlc_reference_caffenet/
 
 # Requirements for celery
 RUN pip install celery redis
-
+ 
 # Starting celery worker
 ENV C_FORCE_ROOT TRUE
+
 WORKDIR /CloudCV_Server
+
 CMD ["celery","-A","celeryTasks","worker","--loglevel=debug", "--logfile=/CloudCV_Server/celery.log"]
