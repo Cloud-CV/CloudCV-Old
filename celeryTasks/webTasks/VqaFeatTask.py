@@ -2,12 +2,13 @@ __author__ = 'clint'
 import sys
 import os
 
+from celeryTasks.celery import app
 
-@celery.task
+
+@app.task
 def featExtraction(src_path, socketid, result_url_prefix,  feat_folder):
     try:
         #Entire Directory
-        from celery import Celery
 
         import json
         import operator
