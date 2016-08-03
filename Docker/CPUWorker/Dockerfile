@@ -20,7 +20,10 @@ RUN wget -O OpenCV-2.4.11.zip http://sourceforge.net/projects/opencvlibrary/file
 
 # OpenCV dependencies
 RUN apt-get install -y cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-RUN apt-get install -y python-dev libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev zlib1g-dev
+RUN apt-get install -y python-dev libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev zlib1g-dev 
+
+# Requirements for celery
+RUN pip install celery redis numpy pillow
 
 RUN cd /opencv && \
     mkdir release && \
@@ -51,9 +54,6 @@ ENV PYTHONPATH /caffe/python
 
 # Copying the required caffe model
 COPY ./bvlc_reference_caffenet.caffemodel /caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel
-
-# Requirements for celery
-RUN pip install celery redis
  
 # Starting celery worker
 ENV C_FORCE_ROOT TRUE

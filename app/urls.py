@@ -6,7 +6,7 @@ from app.decaf_views import DecafCreateView, DecafModelCreateView
 from app.classify_views import ClassifyCreateView
 from app.poi_views import PoiCreateView
 from app.trainaclass_views import TrainaclassCreateView
-# from app.vqa_views import VqaCreateView
+from app.vqa_views import VqaCreateView
 
 urlpatterns = patterns('',
                        url(r'^image-stitch/$', PictureCreateView.as_view(), name='upload-new'),
@@ -16,8 +16,7 @@ urlpatterns = patterns('',
                        (r'^classify/$', ClassifyCreateView.as_view(), {}, 'classify'),
                        (r'^vip/$', PoiCreateView.as_view(), {}, 'poi'),
                        (r'^trainaclass/$', TrainaclassCreateView.as_view(), {}, 'trainaclass'),
-                       # (r'^vqa/$', VqaCreateView.as_view(), {}, 'vqa'),
-
+                       (r'^vqa/$', VqaCreateView.as_view(), {}, 'vqa'),
                        )
 
 
