@@ -1,4 +1,3 @@
-# encoding: utf-8
 from django.views.generic import CreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
@@ -8,10 +7,10 @@ from cloudcv17 import config
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize
 from app.models import Picture, RequestLog
-from celeryTasks.webTasks.stitchTask import stitchImages
 from log import log_to_terminal, log_and_exit
 from app.core.job import Job
 from savefile import saveFilesAndProcess
+
 import app.thirdparty.dropbox_auth as dbauth
 import app.thirdparty.google_auth as gauth
 import app.conf as conf
@@ -42,121 +41,8 @@ class Request:
         r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
 
 
-class PictureCreateView(CreateView):
-    model = Picture
-
-    def form_valid(self, form):
-        try:
-            request_obj = Request()
-
-            request_obj.socketid = self.request.POST['socketid-hidden']
-            self.object = form.save()
-            serialize(self.object)
-            data = {'files': []}
-
-            old_save_dir = os.path.dirname(conf.PIC_DIR)
-
-            folder_name = str(shortuuid.uuid())
-            save_dir = os.path.join(conf.PIC_DIR, folder_name)
-
-            # Make the new directory based on time
-            if not os.path.exists(save_dir):
-                os.makedirs(save_dir)
-                os.makedirs(os.path.join(save_dir, 'results'))
-
-            all_files = self.request.FILES.getlist('file')
-
-            for file in all_files:
-                log_to_terminal(str('Saving file:' + file.name), request_obj.socketid)
-                a = Picture()
-                tick = time.time()
-                strtick = str(tick).replace('.', '_')
-                fileName, fileExtension = os.path.splitext(file.name)
-                file.name = fileName + strtick + fileExtension
-                a.file.save(file.name, file)
-
-                file.name = a.file.name
-
-                # imgstr = base64.b64encode(file.read())
-                # img_file = Image.open(BytesIO(base64.b64decode(imgstr)))
-                # img_file.thumbnail(size, Image.ANTIALIAS)
-                imgfile = Image.open(os.path.join(old_save_dir, file.name))
-                size = (500, 500)
-                imgfile.thumbnail(size, Image.ANTIALIAS)
-
-                imgfile.save(os.path.join(save_dir, file.name))
-                thumbPath = os.path.join(folder_name, file.name)
-                data['files'].append({
-                    'url': conf.PIC_URL + thumbPath,
-                    'name': file.name,
-                    'type': 'image/png',
-                    'thumbnailUrl': conf.PIC_URL + thumbPath,
-                    'size': 0,
-                })
-
-            request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'),
-                                       os.path.join(conf.PIC_URL, folder_name, 'results/result_stitch.jpg'))
-
-            response = JSONResponse(data, mimetype=response_mimetype(self.request))
-            response['Content-Disposition'] = 'inline; filename=files.json'
-
-            return response
-        except:
-            r.publish('chat', json.dumps({'message': str(traceback.format_exc()), 'socketid': str(self.socketid)}))
-
-
-class BasicPlusVersionCreateView(PictureCreateView):
-    template_name_suffix = '_basicplus_form'
-
-
 def homepage(request):
     return render(request, 'index.html')
-
-
-def ec2(request):
-    token = request.GET['dropbox_token']
-    emailid = request.GET['emailid']
-
-    dirname = str(uuid.uuid4())
-    result_path = '/home/cloudcv/detection_executable/detection_output/' + dirname + '/'
-
-    list = ['starcluster', 'sshmaster', 'demoCluster',
-            'cd /home/cloudcv/detection_executable/PascalImagenetDetector/distrib; '
-            'mkdir ' + result_path + ';' +
-            'qsub run_one_category.sh ' + result_path]
-
-    popen = subprocess.Popen(list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-    complete_output = ''
-    count = 0
-    errline = ''
-    line = ''
-
-    while popen.poll() is None:
-        if popen.stdout:
-            line = popen.stdout.readline()
-            popen.stdout.flush()
-
-        if popen.stderr:
-            errline = popen.stdout.readline()
-            popen.stderr.flush()
-
-        if line:
-            print count, line, '\n'
-            complete_output += str(line)
-            count += 1
-
-        if errline:
-            print count, errline, '\n'
-            complete_output += str(errline)
-            count += 1
-
-    complete_output += result_path
-    list = ['starcluster', 'sshmaster', 'demoCluster',
-            'cd /home/cloudcv/detection_executable/PascalImagenetDetector/distrib; '
-            'python sendJobs1.py ' + token + ' ' + emailid + ' ' + result_path + ' ' + dirname + ';']
-    popen = subprocess.Popen(list, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-    popen.communicate()
-    return HttpResponse(complete_output)
 
 
 @csrf_exempt
