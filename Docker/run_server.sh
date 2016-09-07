@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Server setup script
-# Author: Prashant Jalan, Harsh Agrawal
+# Author: Deshraj, Harsh Agrawal
 
 
 echo "Running the image and starting redis server."

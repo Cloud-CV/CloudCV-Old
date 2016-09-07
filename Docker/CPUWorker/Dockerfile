@@ -58,6 +58,13 @@ COPY ./bvlc_reference_caffenet.caffemodel /caffe/models/bvlc_reference_caffenet/
 # Starting celery worker
 ENV C_FORCE_ROOT TRUE
 
+
+RUN pip install flower
+
+EXPOSE 5555
+
 WORKDIR /CloudCV_Server
 
 CMD ["celery","-A","celeryTasks","worker","--loglevel=debug", "--logfile=/CloudCV_Server/celery.log"]
+
+# CMD ["celery","-A","celeryTasks","flower","--broker_api=http://guest:guest@localhost:15672/api/"]
