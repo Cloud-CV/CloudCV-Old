@@ -16,18 +16,18 @@ import operator
 
 from glob import glob
 
-# Caffe root directory
-
 
 
 # The functions are mostly copied from app.executable.LDA_files.train_fast
 @app.task(ignore_result=True)
 def trainImages(jobPath, socketid):
-    from app.conf import EXEC_DIR
     from caffe.proto import caffe_pb2
 
     import caffe
     import scipy.io as sio
+
+    # directory where all the executables reside
+    EXEC_DIR = os.path.join('/CloudCV_Server', 'app', 'executable')
 
     matWNID = sio.loadmat(os.path.join(EXEC_DIR, 'WNID.mat'))
     WNID_cells = matWNID['wordsortWNID']
@@ -70,6 +70,7 @@ def trainImages(jobPath, socketid):
         # Convert the train_features leveldb to numpy array
         rs.publish('chat', json.dumps({'message': os.path.join(Imagepath, 'features'), 'socketid': str(socketid)}))
         db = leveldb.LevelDB(os.path.join(Imagepath, 'features'))
+        
         for k in range(len(train_files)):
             datum = caffe_pb2.Datum.FromString(db.Get(str(k)))
             train_features = np.hstack([train_features, caffe.io.datum_to_array(datum)[0, :, :]])

@@ -1,5 +1,8 @@
 from __future__ import absolute_import
 from celery import Celery
+import os
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cloudcv17.settings')
 
 app = Celery('cloudcv',
              broker='amqp://guest:guest@rabbitmq:5672//',
@@ -8,7 +11,6 @@ app = Celery('cloudcv',
                  'celeryTasks.webTasks.classifyTask',
                  'celeryTasks.webTasks.decafTask',
                  'celeryTasks.webTasks.poiTask',
-                 'celeryTasks.webTasks.stitchTask',
                  'celeryTasks.webTasks.trainTask',
                  'celeryTasks.apiTasks.tasks'
              ])

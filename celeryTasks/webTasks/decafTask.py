@@ -16,6 +16,7 @@ from celeryTasks.celery import app
 @app.task(ignore_result=True)
 def decafImages(src_path, socketid, output_path, result_path):
     # Establishing connection to send results and write messages
+    print "The worker is working properly"
     from skimage import io
     from cloudcv17 import config
 
