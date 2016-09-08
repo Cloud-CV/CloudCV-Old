@@ -1,44 +1,25 @@
-from django.views.generic import CreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
 from cloudcv17 import config
 from .response import JSONResponse, response_mimetype
-from .serialize import serialize
-from app.models import Picture, RequestLog
+from app.models import RequestLog
 from log import log_to_terminal, log_and_exit
 from app.core.job import Job
 from savefile import saveFilesAndProcess
 
 import app.thirdparty.dropbox_auth as dbauth
 import app.thirdparty.google_auth as gauth
-import app.conf as conf
 
-from PIL import Image
 from querystring_parser import parser
 
-import time
-import subprocess
-import os
 import json
 import traceback
-import uuid
 import datetime
-import shortuuid
 import redis
 
 r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
-
-
-class Request:
-    socketid = None
-
-    def run_executable(self, src_path, output_path, result_path):
-        stitchImages.delay(src_path, self.socketid, output_path, result_path)
-
-    def log_to_terminal(self, message):
-        r.publish('chat', json.dumps({'message': str(message), 'socketid': str(self.socketid)}))
 
 
 def homepage(request):
