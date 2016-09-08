@@ -66,9 +66,9 @@ class TrainaclassCreateView(CreateView):
         self.socketid = socketid
         try:
             self.object = form.save()
-            fcountfile = open(os.path.join(conf.LOG_DIR, 'log_count.txt'), 'a')
-            fcountfile.write(str(self.request.META.get('REMOTE_ADDR')) + '\n')
-            fcountfile.close()
+            # fcountfile = open(os.path.join(conf.LOG_DIR, 'log_count.txt'), 'a')
+            # fcountfile.write(str(self.request.META.get('REMOTE_ADDR')) + '\n')
+            # fcountfile.close()
             self.count_hits += 1
 
             old_save_dir = os.path.dirname(conf.PIC_DIR)

@@ -24,7 +24,7 @@ for image in media_images:
         abs_image_path = os.path.join(dir_name, image)
         image_name = str(image).split("/")[-1]
         s3.Object('VqaImages', image_name).put(Body=open(str(abs_image_path), 'rb'))
-        os.remove(abs_image_path)        
-        print "File %s pushed successfully on S3" %(image_name, )
+        os.remove(abs_image_path)
+        print "File %s pushed successfully on S3" % (image_name, )
     except Exception as e:
         print str(e)

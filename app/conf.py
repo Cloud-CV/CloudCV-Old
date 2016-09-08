@@ -27,15 +27,11 @@ LOCAL_DEMO_POI_PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'poiDemo'
 # directory for imagestitch demo images
 LOCAL_DEMO1_PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'demo1')
 
-# directory where all the executables reside
-EXEC_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'executable')
 # directory for VQA demo images
+LOCAL_DEMO_VQA_PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'vqaDemo', 'test2014')
+
 SHOW_KNOWN_DEMO_IMAGES = False
 
-if SHOW_KNOWN_DEMO_IMAGES:
-    LOCAL_DEMO_VQA_PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'vqaDemo')
-else:
-    LOCAL_DEMO_VQA_PIC_DIR = os.path.join(settings.MEDIA_ROOT, 'pictures', 'vqaDemo', 'test2014')
 # PIC_URL
 PIC_URL = '/media/pictures/cloudcv/'
 
