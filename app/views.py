@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
@@ -8,8 +8,6 @@ from app.models import RequestLog
 from log import log_to_terminal, log_and_exit
 from app.core.job import Job
 from savefile import saveFilesAndProcess
-
-import app.thirdparty.dropbox_auth as dbauth
 
 from querystring_parser import parser
 
@@ -79,35 +77,6 @@ def matlabReadRequest(request):
         response['Content-Disposition'] = 'inline; filename=files.json'
         return response
 
-
-@csrf_exempt
-def demoUpload(request, executable):
-    try:
-        if request.method == 'POST':
-
-            request_obj = Request()
-
-            if 'socketid-hidden' in request.POST:
-                request_obj.socketid = request.POST['socketid-hidden']
-
-            print request_obj.socketid
-            data = []
-            save_dir = os.path.join(conf.LOCAL_DEMO1_PIC_DIR)
-
-            request_obj.log_to_terminal(str('Images Processed. Starting Executable'))
-            request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'),
-                                       '/app/media/pictures/demo1/results/result_stitch.jpg')
-
-            data.append({'text': str('')})
-            data.append({'result': '/app/media/pictures/demo/output/result_stitch.jpg'})
-            response = JSONResponse(data, {}, response_mimetype(request))
-            response['Content-Disposition'] = 'inline; filename=files.json'
-            return response
-
-    except Exception as e:
-        return HttpResponse(str(e))
-
-    return HttpResponse('Not a post request')
 
 # def authenticate(request, auth_name):
 #     if auth_name == 'dropbox':

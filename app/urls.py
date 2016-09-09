@@ -19,7 +19,6 @@ urlpatterns = [
 
 urlpatterns += [
     url(r'^$', views.homepage, name="home"),
-    url(r'^demoupload/(?P<executable>\w+)/$', views.demoUpload, name='demoUpload'),
     url(r'^matlab/$', views.matlabReadRequest, name='matlabReadRequest'),
     # url(r'^auth/(?P<auth_name>\w+)/$', views.authenticate, name='authenticate'),
     # url(r'^callback/(?P<auth_name>\w+)/$', views.callback, name='callback'),
