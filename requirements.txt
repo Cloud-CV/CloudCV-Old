@@ -1,13 +1,13 @@
 celery==3.1.23
 celery-with-redis==3.0
 cython==0.24.1
-Django==1.10
+Django==1.10.1
 dropbox==6.8.0
 Jinja2==2.8
 leveldb==0.193
 lmdb==0.89
-protobuf==2.6.1
-psycopg2==3.0.0
+protobuf==3.0.0
+psycopg2==2.6.2
 querystring-parser==1.2.3
 redis==2.10.5
 requests==2.11.1
