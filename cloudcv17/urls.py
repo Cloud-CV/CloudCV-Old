@@ -1,16 +1,25 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 
+import app.urls
 import os
+from django.contrib.staticfiles import views
 admin.autodiscover()
 
-urlpatterns = patterns('',
-                       url(r'^', include('app.urls')),
-                       url(r'^upload/', include('app.urls')),
-                       # url(r'^admin/', include(admin.site.urls)),
-                       )
+urlpatterns = [
+    url(r'^', include(app.urls)),
+]
 
-urlpatterns += patterns('',
-                        (r'^media/(.*)$', 'django.views.static.serve',
-                         {'document_root': os.path.join(os.path.abspath(os.path.dirname(__file__)), 'media')}),
-                        )
+# urlpatterns += [
+#     static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+#     static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# ]
+
+urlpatterns += [
+    url(r'^media/(.*)$', views.serve,
+        {'document_root': settings.MEDIA_ROOT}),
+    url(r'^static/(.*)$', views.serve,
+        {'document_root': settings.STATIC_ROOT}),
+]
