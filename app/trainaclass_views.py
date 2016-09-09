@@ -52,6 +52,7 @@ class TrainaclassCreateView(CreateView):
     r = None
     socketid = None
     count_hits = 0
+    fields = "__all__"
 
     def form_valid(self, form):
         """

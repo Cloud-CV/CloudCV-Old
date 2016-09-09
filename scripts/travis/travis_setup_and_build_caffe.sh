@@ -7,7 +7,9 @@ MAKE="make --jobs=$NUM_THREADS --keep-going"
 
 cd $TOOLS_DIR/caffe
 if $WITH_CMAKE; then
-  mkdir build
+  if [ ! -d "build" ]; then
+    mkdir build
+  fi
   cd build
   CPU_ONLY=" -DCPU_ONLY=ON"
   if ! $WITH_CUDA; then

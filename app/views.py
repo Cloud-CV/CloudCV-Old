@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
@@ -8,9 +8,6 @@ from app.models import RequestLog
 from log import log_to_terminal, log_and_exit
 from app.core.job import Job
 from savefile import saveFilesAndProcess
-
-import app.thirdparty.dropbox_auth as dbauth
-import app.thirdparty.google_auth as gauth
 
 from querystring_parser import parser
 
@@ -81,52 +78,52 @@ def matlabReadRequest(request):
         return response
 
 
-def authenticate(request, auth_name):
-    if auth_name == 'dropbox':
-        is_API = 'type' in request.GET and request.GET['type'] == 'api'
-        contains_UUID = 'userid' in request.GET
+# def authenticate(request, auth_name):
+#     if auth_name == 'dropbox':
+#         is_API = 'type' in request.GET and request.GET['type'] == 'api'
+#         contains_UUID = 'userid' in request.GET
 
-        str_response = dbauth.handleAuth(request, is_API, contains_UUID)
+#         str_response = dbauth.handleAuth(request, is_API, contains_UUID)
 
-        # if the call comes from Matlab or Python API, send the obtained JSON string
-        if is_API:
-            return HttpResponse(str_response)
+#         # if the call comes from Matlab or Python API, send the obtained JSON string
+#         if is_API:
+#             return HttpResponse(str_response)
 
-        # else if it comes from browser - redirect the browser
-        else:
-            return HttpResponseRedirect(str_response)
+#         # else if it comes from browser - redirect the browser
+#         else:
+#             return HttpResponseRedirect(str_response)
 
-    if auth_name == 'google':
-        is_API = 'type' in request.GET and request.GET['type'] == 'api'
-        contains_UUID = 'userid' in request.GET
+#     if auth_name == 'google':
+#         is_API = 'type' in request.GET and request.GET['type'] == 'api'
+#         contains_UUID = 'userid' in request.GET
 
-        str_response = gauth.handleAuth(request, is_API, contains_UUID)
+#         str_response = gauth.handleAuth(request, is_API, contains_UUID)
 
-        # if the call comes from Matlab or Python API, send the obtained JSON string
-        if is_API:
-            return HttpResponse(str_response)
+#         # if the call comes from Matlab or Python API, send the obtained JSON string
+#         if is_API:
+#             return HttpResponse(str_response)
 
-        # else if it comes from browser - redirect the browser
-        else:
-            return HttpResponseRedirect(str_response)
+#         # else if it comes from browser - redirect the browser
+#         else:
+#             return HttpResponseRedirect(str_response)
 
-    # Invalid URL if its not one of the above authentication system
-    return HttpResponse('Invalid URL')
+#     # Invalid URL if its not one of the above authentication system
+#     return HttpResponse('Invalid URL')
 
 
-@csrf_exempt
-def callback(request, auth_name):
-    if auth_name == 'dropbox':
-        post_dict = parser.parse(request.POST.urlencode())
-        code = str(post_dict['code'])
-        userid = str(post_dict['userid'])
-        json_response = dbauth.handleCallback(userid, code, request)
-        return HttpResponse(json_response)
+# @csrf_exempt
+# def callback(request, auth_name):
+#     if auth_name == 'dropbox':
+#         post_dict = parser.parse(request.POST.urlencode())
+#         code = str(post_dict['code'])
+#         userid = str(post_dict['userid'])
+#         json_response = dbauth.handleCallback(userid, code, request)
+#         return HttpResponse(json_response)
 
-    if auth_name == 'google':
-        post_dict = parser.parse(request.POST.urlencode())
-        code = str(post_dict['code'])
-        json_response = gauth.handleCallback(code, request)
-        return HttpResponse(json_response)
+#     if auth_name == 'google':
+#         post_dict = parser.parse(request.POST.urlencode())
+#         code = str(post_dict['code'])
+#         json_response = gauth.handleCallback(code, request)
+#         return HttpResponse(json_response)
 
-    return HttpResponse('Invalid URL')
+#     return HttpResponse('Invalid URL')

@@ -1,43 +1,46 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+
+from app import views, decaf_views, classify_views, poi_views, trainaclass_views
+
 from app.decaf_views import DecafCreateView, DecafModelCreateView
 from app.classify_views import ClassifyCreateView
 from app.poi_views import PoiCreateView
 from app.trainaclass_views import TrainaclassCreateView
 
-urlpatterns = patterns('',
-                       (r'^decaf-server/$', DecafCreateView.as_view(), {}, 'decaf'),
-                       (r'^decaf-server-new/$', DecafModelCreateView.as_view(), {}, 'decaf'),
-                       (r'^classify/$', ClassifyCreateView.as_view(), {}, 'classify'),
-                       (r'^vip/$', PoiCreateView.as_view(), {}, 'poi'),
-                       (r'^trainaclass/$', TrainaclassCreateView.as_view(), {}, 'trainaclass'),
-                       )
+
+urlpatterns = [
+    url(r'^decaf-server/$', DecafCreateView.as_view(), {}, 'decaf'),
+    url(r'^decaf-server-new/$', DecafModelCreateView.as_view(), {}, 'decaf'),
+    url(r'^classify/$', ClassifyCreateView.as_view(), {}, 'classify'),
+    url(r'^vip/$', PoiCreateView.as_view(), {}, 'poi'),
+    url(r'^trainaclass/$', TrainaclassCreateView.as_view(), {}, 'trainaclass'),
+]
 
 
-urlpatterns += patterns('app.views',
-                        url(r'^$', 'homepage', name="home"),
-                        url(r'^demoupload/(?P<executable>\w+)/$', 'demoUpload', name='demoUpload'),
-                        url(r'^auth/(?P<auth_name>\w+)/$', 'authenticate', name='authenticate'),
-                        url(r'^callback/(?P<auth_name>\w+)/$', 'callback', name='callback'),
-                        url(r'^matlab/$', 'matlabReadRequest', name='matlabReadRequest'),
-                        url(r'^api/$', 'matlabReadRequest', name='apiRequest'),
-                        url(r'^pass/$', 'pass1', name='pass1'),
-                        )
+urlpatterns += [
+    url(r'^$', views.homepage, name="home"),
+    url(r'^matlab/$', views.matlabReadRequest, name='matlabReadRequest'),
+    # url(r'^auth/(?P<auth_name>\w+)/$', views.authenticate, name='authenticate'),
+    # url(r'^callback/(?P<auth_name>\w+)/$', views.callback, name='callback'),
+    # url(r'^api/$', views.matlabReadRequest, name='apiRequest'),
+    # url(r'^pass/$', views.pass1, name='pass1'),
+]
 
-urlpatterns += patterns('app.decaf_views',
-                        url(r'^decaf_dropbox/$', 'decafDropbox', name="decafDropbox"),
-                        url(r'^decaf_train/$', 'decaf_train', name="decaf_train"),
-                        url(r'^demo_decaf/$', 'demoDecaf', name="demoDecaf"),
-                        )
+urlpatterns += [
+    url(r'^decaf_dropbox/$', decaf_views.decafDropbox, name="decafDropbox"),
+    url(r'^decaf_train/$', decaf_views.decaf_train, name="decaf_train"),
+    url(r'^demo_decaf/$', decaf_views.demoDecaf, name="demoDecaf"),
+]
 
-urlpatterns += patterns('app.classify_views',
-                        url(r'^demo_classify/$', 'demoClassify', name="demoClassify"),
-                        )
+urlpatterns += [
+    url(r'^demo_classify/$', classify_views.demoClassify, name="demoClassify"),
+]
 
-urlpatterns += patterns('app.poi_views',
-                        url(r'^demo_poi/$', 'demoPoi', name="demoPoi"),
-                        )
+urlpatterns += [
+    url(r'^demo_poi/$', poi_views.demoPoi, name="demoPoi"),
+]
 
-urlpatterns += patterns('app.trainaclass_views',
-                        url(r'^trainmodel/$', 'trainamodel', name="trainamodel"),
-                        url(r'^testmodel/$', 'testmodel', name="testmodel"),
-                        )
+urlpatterns += [
+    url(r'^trainmodel/$', trainaclass_views.trainamodel, name="trainamodel"),
+    url(r'^testmodel/$', trainaclass_views.testmodel, name="testmodel"),
+]

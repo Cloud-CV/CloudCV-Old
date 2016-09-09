@@ -1,9 +1,6 @@
 # encoding: utf-8
 from django.db import models
 
-from oauth2client.django_orm import CredentialsField
-from oauth2client.django_orm import FlowField
-
 
 class Picture(models.Model):
     """This is a small demo using just two fields. The slug field is really not
@@ -173,12 +170,6 @@ class CloudCV_Users(models.Model):
     userid = models.CharField(max_length=100, primary_key=True)
     emailid = models.EmailField(max_length=254, unique=True)
     is_active = models.BooleanField(default=False)
-
-
-class GoogleAccountInfo(models.Model):
-    cloudcvid = models.ForeignKey(CloudCV_Users, unique=True)
-    credential = CredentialsField()
-    flow = FlowField()
 
 
 class DropboxAccount(models.Model):
