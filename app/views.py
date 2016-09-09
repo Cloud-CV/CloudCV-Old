@@ -10,7 +10,6 @@ from app.core.job import Job
 from savefile import saveFilesAndProcess
 
 import app.thirdparty.dropbox_auth as dbauth
-import app.thirdparty.google_auth as gauth
 
 from querystring_parser import parser
 
@@ -81,52 +80,81 @@ def matlabReadRequest(request):
         return response
 
 
-def authenticate(request, auth_name):
-    if auth_name == 'dropbox':
-        is_API = 'type' in request.GET and request.GET['type'] == 'api'
-        contains_UUID = 'userid' in request.GET
-
-        str_response = dbauth.handleAuth(request, is_API, contains_UUID)
-
-        # if the call comes from Matlab or Python API, send the obtained JSON string
-        if is_API:
-            return HttpResponse(str_response)
-
-        # else if it comes from browser - redirect the browser
-        else:
-            return HttpResponseRedirect(str_response)
-
-    if auth_name == 'google':
-        is_API = 'type' in request.GET and request.GET['type'] == 'api'
-        contains_UUID = 'userid' in request.GET
-
-        str_response = gauth.handleAuth(request, is_API, contains_UUID)
-
-        # if the call comes from Matlab or Python API, send the obtained JSON string
-        if is_API:
-            return HttpResponse(str_response)
-
-        # else if it comes from browser - redirect the browser
-        else:
-            return HttpResponseRedirect(str_response)
-
-    # Invalid URL if its not one of the above authentication system
-    return HttpResponse('Invalid URL')
-
-
 @csrf_exempt
-def callback(request, auth_name):
-    if auth_name == 'dropbox':
-        post_dict = parser.parse(request.POST.urlencode())
-        code = str(post_dict['code'])
-        userid = str(post_dict['userid'])
-        json_response = dbauth.handleCallback(userid, code, request)
-        return HttpResponse(json_response)
+def demoUpload(request, executable):
+    try:
+        if request.method == 'POST':
 
-    if auth_name == 'google':
-        post_dict = parser.parse(request.POST.urlencode())
-        code = str(post_dict['code'])
-        json_response = gauth.handleCallback(code, request)
-        return HttpResponse(json_response)
+            request_obj = Request()
 
-    return HttpResponse('Invalid URL')
+            if 'socketid-hidden' in request.POST:
+                request_obj.socketid = request.POST['socketid-hidden']
+
+            print request_obj.socketid
+            data = []
+            save_dir = os.path.join(conf.LOCAL_DEMO1_PIC_DIR)
+
+            request_obj.log_to_terminal(str('Images Processed. Starting Executable'))
+            request_obj.run_executable(save_dir, os.path.join(save_dir, 'results/'),
+                                       '/app/media/pictures/demo1/results/result_stitch.jpg')
+
+            data.append({'text': str('')})
+            data.append({'result': '/app/media/pictures/demo/output/result_stitch.jpg'})
+            response = JSONResponse(data, {}, response_mimetype(request))
+            response['Content-Disposition'] = 'inline; filename=files.json'
+            return response
+
+    except Exception as e:
+        return HttpResponse(str(e))
+
+    return HttpResponse('Not a post request')
+
+# def authenticate(request, auth_name):
+#     if auth_name == 'dropbox':
+#         is_API = 'type' in request.GET and request.GET['type'] == 'api'
+#         contains_UUID = 'userid' in request.GET
+
+#         str_response = dbauth.handleAuth(request, is_API, contains_UUID)
+
+#         # if the call comes from Matlab or Python API, send the obtained JSON string
+#         if is_API:
+#             return HttpResponse(str_response)
+
+#         # else if it comes from browser - redirect the browser
+#         else:
+#             return HttpResponseRedirect(str_response)
+
+#     if auth_name == 'google':
+#         is_API = 'type' in request.GET and request.GET['type'] == 'api'
+#         contains_UUID = 'userid' in request.GET
+
+#         str_response = gauth.handleAuth(request, is_API, contains_UUID)
+
+#         # if the call comes from Matlab or Python API, send the obtained JSON string
+#         if is_API:
+#             return HttpResponse(str_response)
+
+#         # else if it comes from browser - redirect the browser
+#         else:
+#             return HttpResponseRedirect(str_response)
+
+#     # Invalid URL if its not one of the above authentication system
+#     return HttpResponse('Invalid URL')
+
+
+# @csrf_exempt
+# def callback(request, auth_name):
+#     if auth_name == 'dropbox':
+#         post_dict = parser.parse(request.POST.urlencode())
+#         code = str(post_dict['code'])
+#         userid = str(post_dict['userid'])
+#         json_response = dbauth.handleCallback(userid, code, request)
+#         return HttpResponse(json_response)
+
+#     if auth_name == 'google':
+#         post_dict = parser.parse(request.POST.urlencode())
+#         code = str(post_dict['code'])
+#         json_response = gauth.handleCallback(code, request)
+#         return HttpResponse(json_response)
+
+#     return HttpResponse('Invalid URL')
