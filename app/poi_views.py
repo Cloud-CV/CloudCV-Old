@@ -79,6 +79,7 @@ class PoiCreateView(CreateView):
     r = None
     socketid = None
     count_hits = 0
+    fields= "__all__"
 
     def form_valid(self, form):
         self.r = redis_obj

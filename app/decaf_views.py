@@ -52,6 +52,7 @@ class DecafCreateView(CreateView):
     model = Decaf
     r = None
     socketid = None
+    fields = "__all__"
 
     def getThumbnail(self, image_url_prefix, name):
         im = Image.open('/var/www/html/cloudcv/fileupload' + image_url_prefix + name)
