@@ -250,14 +250,12 @@
     {
             $('.demo_img').each(function(){
             var width = $(this).width();
-            console.log(width);
             $(this).css("height", width * 0.7);
         });
 
         $(window).on('resize', function(){
         $('.demo_img').each(function(){
             var width = $(this).width();
-            console.log(width);
             $(this).css("height", width * 0.7);
         });
         });
@@ -265,7 +263,6 @@
         socket = io.connect(host,{transports: ["websocket"]});
 
         socket.on('connect', function(){
-            console.log("connect");
         });
 
         socket.on('message', function(message)
@@ -279,11 +276,9 @@
             if(message.visit)
             {
                 $('#statcounter').append('<p>' + message.visit );
-                console.log(message.visit);
             }
             if(message.name)
             {
-                console.log(message.name);
                 $('#comments').prepend('<li>' + message.name + '</li>');
 
             }
@@ -294,9 +289,7 @@
                 var newImageURL = message.web_result
                 var url_token = message.web_result.split('/');
 
-                console.log("URL_TOKEN" + url_token);
                 fileName.push(message.web_result);
-                console.log(fileName[fileName.length-1]);
 
                 var newrow = table.insertRow(table.rows.length);
                 newrow.id = 'result_'+newrow.rowIndex;
@@ -309,21 +302,17 @@
                     scrollToElement($(table));
                     flag = false;
                 }
-                console.log(result_list);
-                console.log(fileName);
             }
         });
         socket.on('error', function(message){
             if(message.error)
             {
-                console.log(message.error);
                 $('#comments').prepend('<li>' + message.error + '</li>');
 
             }
         });
 
         socket.on('tarFile', function(message){
-            console.log(message);
             if(message.tarFile)
             {
 
@@ -335,10 +324,8 @@
 
                 newa.innerHTML = token[token.length - 1];
 
-                console.log($("#tar_link").length);
                 if ($("#tar_link").length==0)
                 {
-                    console.log("Empty Inner HTML");
 
                     tardiv.appendChild(newa);
                 }
@@ -363,10 +350,8 @@
 
                 newa.innerHTML = 'Generating Tar Files...';
 
-                console.log($("#tar_link").length);
                 if ($("#tar_link").length==0)
                 {
-                    console.log("Empty Inner HTML");
                     tardiv.appendChild(newa);
                 }
                 else
@@ -374,7 +359,6 @@
                     tardiv.replaceChild(newa, document.getElementById("tar_link"));
                 }
 
-                    console.log(fileName);
                     socket.emit('get_tar', {list_of_files: fileName });
                     fileName = [];
             }
@@ -395,12 +379,8 @@
 
         function submitDemoImage(src){
             flag = true;
-            console.log("Submitted demo image");
             $('#comments').prepend('<br>');
             $('#comments').prepend('<li>' + "Submitted demo image" + '</li>');
-            console.log(src);
-            console.log($("#termstart").offset().top);
-            console.log($(".navbar-fixed-top").height());
 
             scrollToElement($("#termstart"));
 
@@ -411,7 +391,6 @@
                 data 		: {'src':src, 'socketid': window.socketid} // our data object
             })// using the done promise callback
                 .done(function(data) {
-                    console.log(data);
                 });
             //Change back to original image
         }
@@ -424,23 +403,18 @@
                 data 		: {'urls':as, 'socketid': window.socketid} // our data object
             })// using the done promise callback
                 .done(function(data) {
-                    console.log(data);
                 });
 
     }
 
     function submitDBImages(){
         flag = true;
-        console.log("Submitted");
         $('#comments').prepend('<br>');
 
         $('#link').each(function(i, obj){
-           console.log(i);
             var as = obj.getElementsByTagName('a');
-            console.log(as);
             var aslength = as.length;
             for (var i =0; i<aslength;i++){
-                console.log(as[i].href);
             }
         });
             var temp_list = [];
@@ -448,7 +422,6 @@
                 temp_list.push(temp_dict[i]['url'])
             }
             temp_list.push("Done");
-            console.log(temp_list);
             scrollToElement($("#termstart"));
             $.ajax({
 			type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
@@ -456,7 +429,6 @@
 			data 		: {'urls':temp_list, 'socketid': window.socketid} // our data object
 		})// using the done promise callback
 			.done(function(data) {
-                console.log(data);
 			});
 
     }
@@ -468,7 +440,6 @@
                 result_list = [];
             },
             error: function (errorMessage) {
-                console.log(errorMessage);
             }
         });
     }
@@ -481,10 +452,8 @@
         li_decaf_server.className = "active";
         // Append trailing slash at the end of the URL
         var url = window.location.pathname;
-        console.log(url);
         var urlParts = url.split("/")
         var result = '';
-        console.log(urlParts);
         for (i = urlParts.length -1 ; i < urlParts.length; i++)
         {
             if (urlParts[i]!='')
@@ -503,7 +472,6 @@
             }
         }
         url=result;
-        console.log(url);
         //window.location.pathname=result;
 
     };
@@ -514,7 +482,6 @@
 
         $('#demoupload').submit(function(event){
             flag = true;
-            console.log("Submitted");
             $('#comments').prepend('<br>');
             scrollToElement($("#termstart"));
 
@@ -524,7 +491,6 @@
 			data 		: {'socketid': window.socketid} // our data object
 		})// using the done promise callback
 			.done(function(data) {
-                console.log(data);
 			});
 
         event.preventDefault();
