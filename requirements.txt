@@ -15,3 +15,4 @@ scikit-image==0.12.3
 shortuuid==0.4.3
 six==1.10.0
 uWSGI==2.0.13.1
+channels==0.17.2
