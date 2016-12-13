@@ -127,3 +127,13 @@ r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 r.set('CLOUDCV_ABS_DIR', BASE_ABS_DIR)
 r.set('CLOUDCV_MEDIA_ROOT', MEDIA_ROOT)
 r.set('CLOUDCV_PIC_ROOT', os.path.join(MEDIA_ROOT, 'pictures', 'cloudcv'))
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+            "prefix": u"cloudcv17:",
+        },
+        "ROUTING": "cloudcv17.routing.channel_routing",
+    },
