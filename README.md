@@ -23,7 +23,7 @@ Steps for setting the development environment
 
 1. Run the following git clone (specify a directory of your choosing if you like):
 
-        git clone https://github.com/batra-mlp-lab/CloudCV.git cloudcv
+        git clone https://github.com/Cloud-CV/CloudCV.git cloudcv
 
 2. Run virtualenv on the git cloned directory to setup the Python virtual environment:
 
