@@ -1,7 +1,7 @@
 CloudCV
 =======
 
-# Note: This repository is deprecated now. We will soon start working on the revamped version of CloudCV website very soon.
+# Note: This repository is deprecated now. We will start working on the revamped version of CloudCV website very soon.
 
 [![Join the chat at https://gitter.im/batra-mlp-lab/CloudCV](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/batra-mlp-lab/CloudCV?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/Cloud-CV/CloudCV.svg?branch=master)](https://travis-ci.org/Cloud-CV/CloudCV)
