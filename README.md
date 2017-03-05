@@ -66,3 +66,13 @@ Additional Information
   * For any other queries, open issues or you can chat with developers at our [gitter]() channel.
 
   * Official Documentation available at [this link](http://batra-mlp-lab.github.io/CloudCV/).
+  
+Troubleshooting
+----------------
+
+   * If you see errors like this :
+   
+      ```php
+      docker: Error response from daemon: Conflict.
+      ```
+      remove all the images, run the command docker rm $(docker ps -a -q)
