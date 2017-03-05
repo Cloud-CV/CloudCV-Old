@@ -18,15 +18,19 @@ def caffe_classify_image(single_image):
     import caffe
     import os
 
-    matWNID = sio.loadmat(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'WNID.mat'))
+    matWNID = sio.loadmat(os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'WNID.mat'))
     WNID_cells = matWNID['wordsortWNID']
 
-    CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
+    CAFFE_DIR = os.path.normpath(os.path.join(
+        os.path.dirname(caffe.__file__), "..", ".."))
 
     # Set the right path to your model file, pretrained model,
     # and the image you would like to classify.
-    MODEL_FILE = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
-    PRETRAINED = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
+    MODEL_FILE = os.path.join(
+        CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
+    PRETRAINED = os.path.join(
+        CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
 
     # caffe.set_phase_test()
     caffe.set_mode_cpu()
@@ -44,7 +48,8 @@ def caffe_classify_image(single_image):
     for i, j in enumerate(prediction[0]):
         map[i] = j
 
-    predsorted = sorted(map.iteritems(), key=operator.itemgetter(1), reverse=True)
+    predsorted = sorted(
+        map.iteritems(), key=operator.itemgetter(1), reverse=True)
     top5 = predsorted[0:5]
     topresults = []
 

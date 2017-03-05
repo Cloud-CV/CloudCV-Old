@@ -25,14 +25,17 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
 
     os.environ['OMP_NUM_THREADS'] = '4'
 
-    CAFFE_DIR = os.path.normpath(os.path.join(os.path.dirname(caffe.__file__), "..", ".."))
+    CAFFE_DIR = os.path.normpath(os.path.join(
+        os.path.dirname(caffe.__file__), "..", ".."))
 
     r = redis.StrictRedis(host=config.REDIS_HOST, port=6379, db=0)
 
     # Set the right path to your model file, pretrained model,
     # and the image you would like to classify.
-    MODEL_FILE = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
-    PRETRAINED = os.path.join(CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
+    MODEL_FILE = os.path.join(
+        CAFFE_DIR, 'models/bvlc_reference_caffenet/deploy.prototxt')
+    PRETRAINED = os.path.join(
+        CAFFE_DIR, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
     caffe.set_mode_cpu()
     net = caffe.Classifier(MODEL_FILE, PRETRAINED)
 
@@ -71,12 +74,14 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
             matfile = {}
 
         image = os.path.join(imagepath, file)
-        r.publish('chat', json.dumps({'error': str(image), 'socketid': socketid}))
+        r.publish('chat', json.dumps(
+            {'error': str(image), 'socketid': socketid}))
         if int(flag) & 1 == 1:
             results = decaf_features(image, modelnet)
             matfile['decaf'] = results
             all_results[str(file)] = {'decaf': results}
-            r.publish('chat', json.dumps({'error': str('Decaf Feature Calculated'), 'socketid': socketid}))
+            r.publish('chat', json.dumps(
+                {'error': str('Decaf Feature Calculated'), 'socketid': socketid}))
 
         if int(flag) & 2 == 2:
             results = decaf_features_centre(image, modelnet)
@@ -85,14 +90,17 @@ def calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_resul
                 all_results[str(file)]['decaf_centre'] = results
             else:
                 all_results[str(file)] = {'decaf_centre': results}
-            r.publish('chat', json.dumps({'error': str('Decaf-Centre Feature Calculated'), 'socketid': socketid}))
+            r.publish('chat', json.dumps(
+                {'error': str('Decaf-Centre Feature Calculated'), 'socketid': socketid}))
 
         sio.savemat(os.path.join(resultpath, file + '.mat'), matfile)
-        r.publish('chat', json.dumps({'error': str(file), 'socketid': socketid}))
+        r.publish('chat', json.dumps(
+            {'error': str(file), 'socketid': socketid}))
 
     except Exception as e:
         r.publish('chat', json.dumps({'error': str(e), 'socketid': socketid}))
-        r.publish('chat', json.dumps({'error': str(traceback.format_exc()), 'socketid': socketid}))
+        r.publish('chat', json.dumps(
+            {'error': str(traceback.format_exc()), 'socketid': socketid}))
 
     return str(os.path.join(resultpath, file + '.mat'))
 
@@ -103,7 +111,8 @@ def calculate_decaf(imagepath, resultpath, flag, socketid, all_results):
     mat_files_paths = {}
     for file in os.listdir(imagepath):
         if os.path.isfile(os.path.join(imagepath, file)):
-            mat_file_path = calculate_decaf_image(file, imagepath, resultpath, flag, socketid, all_results)
+            mat_file_path = calculate_decaf_image(
+                file, imagepath, resultpath, flag, socketid, all_results)
             mat_files_paths[file] = mat_file_path
     return mat_files_paths
 

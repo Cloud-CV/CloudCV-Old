@@ -112,7 +112,8 @@ class svm_parameter(Structure):
               "cache_size", "eps", "C", "nr_weight", "weight_label", "weight",
               "nu", "p", "shrinking", "probability"]
     _types = [c_int, c_int, c_int, c_double, c_double,
-              c_double, c_double, c_double, c_int, POINTER(c_int), POINTER(c_double),
+              c_double, c_double, c_double, c_int, POINTER(
+                  c_int), POINTER(c_double),
               c_double, c_double, c_int, c_int]
     _fields_ = genFields(_names, _types)
 
@@ -303,7 +304,8 @@ def toPyModel(model_ptr):
     m.__createfrom__ = 'C'
     return m
 
-fillprototype(libsvm.svm_train, POINTER(svm_model), [POINTER(svm_problem), POINTER(svm_parameter)])
+fillprototype(libsvm.svm_train, POINTER(svm_model), [
+              POINTER(svm_problem), POINTER(svm_parameter)])
 fillprototype(libsvm.svm_cross_validation, None, [POINTER(
     svm_problem), POINTER(svm_parameter), c_int, POINTER(c_double)])
 
@@ -312,19 +314,26 @@ fillprototype(libsvm.svm_load_model, POINTER(svm_model), [c_char_p])
 
 fillprototype(libsvm.svm_get_svm_type, c_int, [POINTER(svm_model)])
 fillprototype(libsvm.svm_get_nr_class, c_int, [POINTER(svm_model)])
-fillprototype(libsvm.svm_get_labels, None, [POINTER(svm_model), POINTER(c_int)])
-fillprototype(libsvm.svm_get_sv_indices, None, [POINTER(svm_model), POINTER(c_int)])
+fillprototype(libsvm.svm_get_labels, None, [
+              POINTER(svm_model), POINTER(c_int)])
+fillprototype(libsvm.svm_get_sv_indices, None, [
+              POINTER(svm_model), POINTER(c_int)])
 fillprototype(libsvm.svm_get_nr_sv, c_int, [POINTER(svm_model)])
 fillprototype(libsvm.svm_get_svr_probability, c_double, [POINTER(svm_model)])
 
-fillprototype(libsvm.svm_predict_values, c_double, [POINTER(svm_model), POINTER(svm_node), POINTER(c_double)])
-fillprototype(libsvm.svm_predict, c_double, [POINTER(svm_model), POINTER(svm_node)])
-fillprototype(libsvm.svm_predict_probability, c_double, [POINTER(svm_model), POINTER(svm_node), POINTER(c_double)])
+fillprototype(libsvm.svm_predict_values, c_double, [
+              POINTER(svm_model), POINTER(svm_node), POINTER(c_double)])
+fillprototype(libsvm.svm_predict, c_double, [
+              POINTER(svm_model), POINTER(svm_node)])
+fillprototype(libsvm.svm_predict_probability, c_double, [
+              POINTER(svm_model), POINTER(svm_node), POINTER(c_double)])
 
 fillprototype(libsvm.svm_free_model_content, None, [POINTER(svm_model)])
-fillprototype(libsvm.svm_free_and_destroy_model, None, [POINTER(POINTER(svm_model))])
+fillprototype(libsvm.svm_free_and_destroy_model,
+              None, [POINTER(POINTER(svm_model))])
 fillprototype(libsvm.svm_destroy_param, None, [POINTER(svm_parameter)])
 
-fillprototype(libsvm.svm_check_parameter, c_char_p, [POINTER(svm_problem), POINTER(svm_parameter)])
+fillprototype(libsvm.svm_check_parameter, c_char_p, [
+              POINTER(svm_problem), POINTER(svm_parameter)])
 fillprototype(libsvm.svm_check_probability_model, c_int, [POINTER(svm_model)])
 fillprototype(libsvm.svm_set_print_string_function, None, [PRINT_STRING_FUN])

@@ -17,13 +17,17 @@ class Logger:
 
     def open(self, choice, type='w'):
         if(choice == 'S'):
-            self._fi_server = open(os.path.join(self.log_path, 'log_server.txt'), type)
+            self._fi_server = open(os.path.join(
+                self.log_path, 'log_server.txt'), type)
         if(choice == 'E'):
-            self._fi_exec = open(os.path.join(self.log_path, 'log_error.txt'), type)
+            self._fi_exec = open(os.path.join(
+                self.log_path, 'log_error.txt'), type)
         if(choice == 'R'):
-            self._fi_run = open(os.path.join(self.log_path, 'log_run.txt'), type)
+            self._fi_run = open(os.path.join(
+                self.log_path, 'log_run.txt'), type)
         if(choice == 'P'):
-            self._fi_process = open(os.path.join(self.log_path, 'log_process.txt'), type)
+            self._fi_process = open(os.path.join(
+                self.log_path, 'log_process.txt'), type)
 
     def getData(self):
         return str(strftime("%Y-%m-%d %H:%M:%S", gmtime())) + ' : '
@@ -62,16 +66,19 @@ def log(message, name):
 
 
 def log_to_terminal(message, socketid):
-    r.publish('chat', json.dumps({'message': str(message), 'socketid': str(socketid)}))
+    r.publish('chat', json.dumps(
+        {'message': str(message), 'socketid': str(socketid)}))
 
 
 def log_and_exit(message, socketid):
-    r.publish('chat', json.dumps({'exit': str(message), 'socketid': str(socketid)}))
+    r.publish('chat', json.dumps(
+        {'exit': str(message), 'socketid': str(socketid)}))
 
 
 def log_error_to_terminal(message, socketid, end):
 
     if(end):
-        r.publish('chat', json.dumps({'error': message, 'socketid': socketid, 'end': 'yes'}))
+        r.publish('chat', json.dumps(
+            {'error': message, 'socketid': socketid, 'end': 'yes'}))
     else:
         r.publish('chat', json.dumps({'error': message, 'socketid': socketid}))
