@@ -13,17 +13,17 @@ Large-Scale Distributed Computer Vision As A Cloud Service
 
 We are witnessing a proliferation of massive visual data. Unfortunately scaling existing computer vision algorithms to large datasets leaves researchers repeatedly solving the same algorithmic and infrastructural problems. 
 
-Our goal is to democratize computer vision; one should not have to be a computer vision, deep learning, and distributed computing expert to have access to state-of-the-art distributed computer vision algorithms. We provide access to state-of-art distributed computer vision algorithms as a cloud service through Web Interface & APIs. Researchers, Students and Developers will be able to access these distributed computer vision algorithms and the computation power through small number of click and minimal lines of code. 
+Our goal is to democratize computer vision; one should not have to be a computer vision, deep learning, and distributed computing expert to have access to state-of-the-art distributed computer vision algorithms. We provide access to state-of-art distributed computer vision algorithms as a cloud service through Web Interface & APIs. Researchers, Students, and Developers will be able to access these distributed computer vision algorithms and the computation power through small number of click and minimal lines of code. 
 
 Instructions to get started with CloudCV development
 -----------------------------------------------------
 
-To setup project cloudcv on your local machine, you need install [docker](https://docs.docker.com/mac/) first. After installing docker on your machine, just follow the instructions given in the next section. 
+To set up project cloudcv on your local machine, you need to install [docker](https://docs.docker.com/mac/) first. After installing the docker on your machine, just follow the instructions given in the next section. 
 
 Steps for setting the development environment
 ---------------------------------------------
 
-1. Run the following git clone (specify a directory of your choosing if you like):
+1. Run the following git clone (specify a directory of your choice if you like):
 
         git clone https://github.com/batra-mlp-lab/CloudCV.git cloudcv
 
@@ -35,7 +35,7 @@ Steps for setting the development environment
 
         cd cloudcv
 
-4. Activate the virtual environment(it is recommended to use virtual environment):
+4. Activate the virtual environment(it is recommended to use the virtual environment):
 
         source bin/activate
 
@@ -65,4 +65,4 @@ Additional Information
 
   * For any other queries, open issues or you can chat with developers at our [gitter]() channel.
 
-  * Official Documentation available at [this link](http://batra-mlp-lab.github.io/CloudCV/).
+  * Official Documentation is available at [this link](http://batra-mlp-lab.github.io/CloudCV/).
